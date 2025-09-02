@@ -7,6 +7,7 @@ from app.models.stat_models import (
     StoryResponse
 )
 from app.services.crawler_service import CrawlerService
+from app.services.enhanced_crawler_service import enhanced_crawler_service
 from app.services.ai_service import AIService
 from app.services.data_storage import DataStorageService
 import asyncio
@@ -482,3 +483,147 @@ async def clear_storage_cache():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# === MCP 강화 크롤링 엔드포인트들 ===
+
+@router.get("/mcp/recent-stats")
+async def get_recent_stats_with_mcp():
+    """MCP 브라우저 자동화를 통한 최신 통계 수집"""
+    try:
+        print("=== MCP 강화 크롤링으로 최신 통계 수집 ===")
+        stats = await enhanced_crawler_service.get_recent_stats_with_mcp()
+        
+        response = RecentStatsResponse(
+            stats=stats,
+            total_count=len(stats)
+        )
+        
+        return response
+    except Exception as e:
+        print(f"MCP 크롤링 오류: {e}")
+        raise HTTPException(status_code=500, detail=f"MCP 크롤링 실패: {str(e)}")
+
+@router.post("/mcp/analyze-basic")
+async def analyze_basic_with_mcp(request: GenerateStoryRequest):
+    """MCP 기반 기본 분석"""
+    try:
+        stat_url = request.stat_url or "https://stat.molit.go.kr/portal/cate/statView.do"
+        
+        print(f"=== MCP 기반 기본 분석: {request.stat_name} ===")
+        
+        # 1. MCP로 메타데이터 수집
+        metadata = await enhanced_crawler_service.get_stat_metadata_with_mcp(stat_url)
+        
+        # 2. MCP로 통계 데이터 수집
+        stat_data = await enhanced_crawler_service.get_stat_data_with_mcp(stat_url, request.period)
+        
+        # 3. MCP로 데이터 저장
+        save_data = {
+            "metadata": metadata.dict(),
+            "stat_data": [{"year": d.year, "data": d.data} for d in stat_data],
+            "collected_at": datetime.now().isoformat(),
+            "collection_method": "MCP"
+        }
+        await enhanced_crawler_service.save_crawled_data_with_mcp(
+            save_data, 
+            f"basic_analysis_{metadata.id}.json"
+        )
+        
+        # 4. 기본 분석 수행
+        basic_analysis = await ai_service.analyze_basic_data(stat_data, metadata)
+        
+        return {
+            "stat_name": request.stat_name,
+            "analysis_date": datetime.now().isoformat(),
+            "collection_method": "MCP 강화 크롤링",
+            "metadata": metadata.dict(),
+            "data_structure": {
+                "total_years": len(stat_data),
+                "data_keys": list(stat_data[0].data.keys()) if stat_data else [],
+                "year_range": {
+                    "start": min([int(d.year) for d in stat_data]) if stat_data else None,
+                    "end": max([int(d.year) for d in stat_data]) if stat_data else None
+                }
+            },
+            "basic_analysis": basic_analysis,
+            "mcp_status": enhanced_crawler_service.get_mcp_status()
+        }
+        
+    except Exception as e:
+        print(f"MCP 기본 분석 오류: {e}")
+        raise HTTPException(status_code=500, detail=f"MCP 기본 분석 실패: {str(e)}")
+
+@router.post("/mcp/search-stats")
+async def search_stats_with_mcp(keyword: str):
+    """MCP를 통한 통계 검색"""
+    try:
+        print(f"=== MCP 통계 검색: {keyword} ===")
+        
+        stats = await enhanced_crawler_service.search_stats_with_mcp(keyword)
+        
+        return {
+            "keyword": keyword,
+            "search_date": datetime.now().isoformat(),
+            "collection_method": "MCP 검색",
+            "results": [stat.dict() for stat in stats],
+            "total_count": len(stats),
+            "mcp_status": enhanced_crawler_service.get_mcp_status()
+        }
+        
+    except Exception as e:
+        print(f"MCP 검색 오류: {e}")
+        raise HTTPException(status_code=500, detail=f"MCP 검색 실패: {str(e)}")
+
+@router.get("/mcp/status")
+async def get_mcp_status():
+    """MCP 서버 상태 확인"""
+    try:
+        status = enhanced_crawler_service.get_mcp_status()
+        return {
+            "mcp_status": status,
+            "timestamp": datetime.now().isoformat(),
+            "message": "MCP 서버 상태 조회 완료"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"MCP 상태 조회 실패: {str(e)}")
+
+@router.post("/mcp/test-browser")
+async def test_mcp_browser():
+    """MCP 브라우저 기능 테스트"""
+    try:
+        print("=== MCP 브라우저 기능 테스트 ===")
+        
+        # 1. 네이버 접속 테스트
+        nav_result = await enhanced_crawler_service.mcp_client.call_browser_navigate("https://www.naver.com")
+        
+        # 2. 통계청 접속 테스트
+        stat_result = await enhanced_crawler_service.mcp_client.call_browser_navigate("https://kostat.go.kr")
+        
+        return {
+            "test_results": {
+                "naver_test": nav_result,
+                "kostat_test": stat_result
+            },
+            "test_date": datetime.now().isoformat(),
+            "mcp_status": enhanced_crawler_service.get_mcp_status()
+        }
+        
+    except Exception as e:
+        print(f"MCP 브라우저 테스트 오류: {e}")
+        raise HTTPException(status_code=500, detail=f"MCP 테스트 실패: {str(e)}")
+
+@router.get("/mcp/cached-data")
+async def list_mcp_cached_data():
+    """MCP로 수집된 캐시 데이터 목록"""
+    try:
+        # 캐시 디렉토리 내용 조회 (파일시스템 MCP 사용)
+        cache_result = await enhanced_crawler_service.mcp_client.call_filesystem_read("backend/data/mcp_crawled/")
+        
+        return {
+            "cached_files": cache_result if cache_result else [],
+            "query_date": datetime.now().isoformat(),
+            "mcp_status": enhanced_crawler_service.get_mcp_status()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"MCP 캐시 조회 실패: {str(e)}")

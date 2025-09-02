@@ -10,3 +10,7 @@ httpx
 aiohttp
 selenium
 webdriver-manager
+# MCP 관련 패키지
+mcp
+anthropic
+subprocess-run

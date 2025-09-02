@@ -1,0 +1,17 @@
+{
+  "name": "mcp-servers",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@agent-infra/mcp-server-browser": "^1.2.20",
+    "@modelcontextprotocol/server-filesystem": "^2025.8.21",
+    "puppeteer": "^24.18.0"
+  }
+}

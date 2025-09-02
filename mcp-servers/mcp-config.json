@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "browser": {
+      "command": "npx",
+      "args": ["@agent-infra/mcp-server-browser"],
+      "description": "브라우저 자동화 및 웹 크롤링",
+      "env": {}
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-filesystem", "../"],
+      "description": "파일시스템 접근 및 관리",
+      "env": {}
+    }
+  }
+}
