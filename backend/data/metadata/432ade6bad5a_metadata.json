@@ -1,16 +1,16 @@
 {
   "cache_key": "432ade6bad5a",
   "stat_url": "https://stat.molit.go.kr/portal/cate/statView.do?hRsId=437&hFormId=4392&hDivEng=&month_yn=",
-  "saved_at": "2025-09-01T22:56:45.356849",
+  "saved_at": "2025-09-02T14:33:29.633253",
   "metadata": {
-    "id": "test_api",
-    "title": "국토교통부 자동차관리업체 현황",
-    "purpose": "테스트 저장",
-    "frequency": "분기별",
+    "id": "",
+    "title": "국토교통 통계누리통계표 보기",
+    "purpose": "통계 작성 목적",
+    "frequency": "정기",
     "department": "국토교통부",
-    "contact": "",
+    "contact": "담당자 연락처",
     "keywords": [
-      "자동차"
+      "교통"
     ],
     "related_terms": {}
   }
