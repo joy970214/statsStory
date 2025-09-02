@@ -1,0 +1,9 @@
+{
+  "mcpServers": [
+    {
+      "name": "firecrawl",
+      "command": "npx",
+      "args": ["-y", "@mendable/firecrawl-mcp"]
+    }
+  ]
+}

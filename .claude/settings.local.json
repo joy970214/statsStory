@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:stat.molit.go.kr)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

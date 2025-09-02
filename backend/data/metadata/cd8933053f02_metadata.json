@@ -1,0 +1,19 @@
+{
+  "cache_key": "cd8933053f02",
+  "stat_url": "https://test.example.com/stat1",
+  "saved_at": "2025-09-01T22:53:47.444568",
+  "metadata": {
+    "id": "test_stat",
+    "title": "테스트 통계",
+    "purpose": "테스트용 데이터",
+    "frequency": "연간",
+    "department": "테스트부서",
+    "contact": "test@test.com",
+    "keywords": [
+      "테스트"
+    ],
+    "related_terms": {
+      "test": "테스트"
+    }
+  }
+}

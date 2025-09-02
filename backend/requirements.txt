@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+beautifulsoup4
+requests
+pydantic
+python-multipart
+aiofiles
+python-dotenv
+httpx
+aiohttp
+selenium
+webdriver-manager
