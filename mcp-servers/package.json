@@ -12,6 +12,8 @@
   "dependencies": {
     "@agent-infra/mcp-server-browser": "^1.2.20",
     "@modelcontextprotocol/server-filesystem": "^2025.8.21",
+    "cross-fetch": "^4.1.0",
+    "node-fetch": "^3.3.2",
     "puppeteer": "^24.18.0"
   }
 }

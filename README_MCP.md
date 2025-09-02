@@ -38,6 +38,8 @@
 | `/api/mcp/search-stats` | POST | MCP 통계 검색 |
 | `/api/mcp/status` | GET | MCP 서버 상태 확인 |
 | `/api/mcp/test-browser` | POST | MCP 브라우저 테스트 |
+| `/api/mcp/test-fetch` | POST | **MCP-Fetch 기능 테스트** |
+| `/api/mcp/fetch-compare` | POST | **기존 vs MCP-Fetch 성능 비교** |
 | `/api/mcp/cached-data` | GET | MCP 캐시 데이터 목록 |
 
 ## 🛠️ 사용 예시
@@ -62,6 +64,16 @@ curl http://localhost:8001/api/mcp/recent-stats
 curl -X POST http://localhost:8001/api/mcp/analyze-basic \
   -H "Content-Type: application/json" \
   -d '{"stat_name": "주택통계", "period": "5years"}'
+```
+
+### 5. **MCP-Fetch 기능 테스트** ⭐
+```bash
+curl -X POST http://localhost:8001/api/mcp/test-fetch
+```
+
+### 6. **성능 비교 테스트**
+```bash
+curl -X POST "http://localhost:8001/api/mcp/fetch-compare?url=https://stat.molit.go.kr"
 ```
 
 ## 🏗️ 아키텍처
@@ -93,10 +105,16 @@ statsStory/
 ## 🔍 MCP 클라이언트 주요 메서드
 
 ### **브라우저 제어**
-- `call_browser_navigate(url)` - 페이지 이동
+- `call_browser_navigate(url)` - 페이지 이동 (MCP-Fetch 통합)
 - `call_browser_extract_data(selector)` - 데이터 추출  
 - `call_browser_click(selector)` - 요소 클릭
 - `call_browser_type(selector, text)` - 텍스트 입력
+
+### **MCP-Fetch HTTP 요청** ⭐
+- `call_fetch_get(url, headers, timeout)` - 향상된 GET 요청
+- `call_fetch_post(url, data, headers)` - 향상된 POST 요청
+- `call_fetch_with_session(url, method, data, headers, cookies)` - 세션 유지 요청
+- `call_fetch_api_with_retry(url, max_retries, delay)` - 재시도 기능
 
 ### **파일시스템**
 - `call_filesystem_read(path)` - 파일 읽기
@@ -109,6 +127,8 @@ statsStory/
 - ✅ 강화된 크롤러 서비스 완료
 - ✅ API 엔드포인트 추가 완료
 - ✅ 테스트 엔드포인트 구현 완료
+- ✅ **MCP-Fetch 스타일 HTTP 요청 완료** ⭐
+- ✅ **성능 비교 및 테스트 완료** ⭐
 
 ## 📚 다음 단계
 

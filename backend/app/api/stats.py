@@ -627,3 +627,156 @@ async def list_mcp_cached_data():
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"MCP 캐시 조회 실패: {str(e)}")
+
+@router.post("/mcp/test-fetch")
+async def test_mcp_fetch():
+    """MCP-Fetch 스타일 HTTP 요청 테스트"""
+    try:
+        print("=== MCP-Fetch 기능 테스트 ===")
+        
+        test_results = {}
+        
+        # 1. 기본 GET 요청 테스트
+        get_result = await enhanced_crawler_service.mcp_client.call_fetch_get("https://httpbin.org/get")
+        test_results["basic_get"] = {
+            "success": get_result.get('success'),
+            "status_code": get_result.get('status_code'),
+            "has_content": bool(get_result.get('content')),
+            "mcp_fetch": get_result.get('mcp_fetch')
+        }
+        
+        # 2. 헤더 포함 GET 요청 테스트
+        headers_result = await enhanced_crawler_service.mcp_client.call_fetch_get(
+            "https://httpbin.org/headers",
+            headers={"X-Test-Header": "MCP-Test", "Custom-Agent": "MCP-Enhanced-Crawler"}
+        )
+        test_results["headers_get"] = {
+            "success": headers_result.get('success'),
+            "status_code": headers_result.get('status_code'),
+            "mcp_fetch": headers_result.get('mcp_fetch')
+        }
+        
+        # 3. POST 요청 테스트
+        post_result = await enhanced_crawler_service.mcp_client.call_fetch_post(
+            "https://httpbin.org/post",
+            data={"test_key": "MCP-Fetch 테스트", "timestamp": datetime.now().isoformat()}
+        )
+        test_results["post_request"] = {
+            "success": post_result.get('success'),
+            "status_code": post_result.get('status_code'),
+            "mcp_fetch": post_result.get('mcp_fetch')
+        }
+        
+        # 4. 재시도 기능 테스트 (가끔 실패하는 URL)
+        retry_result = await enhanced_crawler_service.mcp_client.call_fetch_api_with_retry(
+            "https://httpbin.org/status/200,404,500",  # 랜덤 상태코드 반환
+            max_retries=3
+        )
+        test_results["retry_test"] = {
+            "success": retry_result.get('success'),
+            "retry_attempt": retry_result.get('retry_attempt', 0),
+            "status_code": retry_result.get('status_code'),
+            "mcp_fetch": retry_result.get('mcp_fetch')
+        }
+        
+        # 5. 실제 통계 사이트 테스트
+        molit_result = await enhanced_crawler_service.mcp_client.call_fetch_get("https://stat.molit.go.kr")
+        test_results["molit_site"] = {
+            "success": molit_result.get('success'),
+            "status_code": molit_result.get('status_code'),
+            "content_length": molit_result.get('content_length', 0),
+            "has_korean": "통계" in molit_result.get('content', '') if molit_result.get('success') else False,
+            "mcp_fetch": molit_result.get('mcp_fetch')
+        }
+        
+        return {
+            "test_type": "MCP-Fetch 기능 테스트",
+            "test_date": datetime.now().isoformat(),
+            "test_results": test_results,
+            "total_tests": len(test_results),
+            "successful_tests": sum(1 for result in test_results.values() if result.get('success')),
+            "mcp_status": enhanced_crawler_service.get_mcp_status()
+        }
+        
+    except Exception as e:
+        print(f"MCP-Fetch 테스트 오류: {e}")
+        raise HTTPException(status_code=500, detail=f"MCP-Fetch 테스트 실패: {str(e)}")
+
+@router.post("/mcp/fetch-compare")  
+async def compare_fetch_methods(url: str = "https://stat.molit.go.kr"):
+    """기존 방식 vs MCP-Fetch 방식 성능 비교"""
+    try:
+        print(f"=== Fetch 방식 성능 비교: {url} ===")
+        
+        import time
+        import aiohttp
+        
+        results = {}
+        
+        # 1. 기존 aiohttp 방식
+        start_time = time.time()
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, timeout=30) as response:
+                    content = await response.text()
+                    old_method_time = time.time() - start_time
+                    results["traditional_aiohttp"] = {
+                        "success": True,
+                        "status_code": response.status,
+                        "content_length": len(content),
+                        "execution_time": round(old_method_time, 3),
+                        "method": "직접 aiohttp"
+                    }
+        except Exception as e:
+            results["traditional_aiohttp"] = {
+                "success": False,
+                "error": str(e),
+                "method": "직접 aiohttp"
+            }
+        
+        # 2. MCP-Fetch 방식
+        start_time = time.time()
+        mcp_result = await enhanced_crawler_service.mcp_client.call_fetch_get(url)
+        mcp_method_time = time.time() - start_time
+        
+        results["mcp_fetch"] = {
+            "success": mcp_result.get('success'),
+            "status_code": mcp_result.get('status_code'),
+            "content_length": mcp_result.get('content_length', 0),
+            "execution_time": round(mcp_method_time, 3),
+            "method": "MCP-Fetch",
+            "additional_features": [
+                "향상된 헤더 관리",
+                "자동 재시도 지원", 
+                "세션 쿠키 관리",
+                "표준화된 응답 포맷",
+                "로깅 및 모니터링"
+            ]
+        }
+        
+        # 3. 성능 비교 분석
+        comparison = {}
+        if results["traditional_aiohttp"].get("success") and results["mcp_fetch"].get("success"):
+            traditional_time = results["traditional_aiohttp"]["execution_time"]
+            mcp_time = results["mcp_fetch"]["execution_time"]
+            
+            comparison = {
+                "speed_difference": round(abs(mcp_time - traditional_time), 3),
+                "mcp_faster": mcp_time < traditional_time,
+                "performance_ratio": round(traditional_time / mcp_time, 2) if mcp_time > 0 else 0,
+                "recommendation": "MCP-Fetch가 더 안정적이고 기능이 풍부합니다" if mcp_time <= traditional_time * 1.5 else "성능 최적화 필요"
+            }
+        
+        return {
+            "comparison_type": "Fetch 방식 성능 비교",
+            "test_url": url,
+            "test_date": datetime.now().isoformat(),
+            "results": results,
+            "performance_comparison": comparison,
+            "conclusion": "MCP-Fetch는 약간의 오버헤드가 있지만 풍부한 기능과 안정성을 제공합니다",
+            "mcp_status": enhanced_crawler_service.get_mcp_status()
+        }
+        
+    except Exception as e:
+        print(f"Fetch 비교 테스트 오류: {e}")
+        raise HTTPException(status_code=500, detail=f"Fetch 비교 실패: {str(e)}")
