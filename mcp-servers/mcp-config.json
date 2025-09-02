@@ -11,6 +11,44 @@
       "args": ["@modelcontextprotocol/server-filesystem", "../"],
       "description": "파일시스템 접근 및 관리",
       "env": {}
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": ["mcp-sqlite", "../backend/data/statsStory.db"],
+      "description": "SQLite 데이터베이스 관리",
+      "env": {}
+    },
+    "pandas-analysis": {
+      "command": "python",
+      "args": ["pandas_analysis_server.py"],
+      "description": "pandas 기반 데이터 분석 및 통계 계산",
+      "env": {
+        "PYTHONPATH": "."
+      }
+    },
+    "file-analysis": {
+      "command": "python", 
+      "args": ["file_analysis_server.py"],
+      "description": "파일 구조 분석 및 데이터 프로파일링",
+      "env": {
+        "PYTHONPATH": "."
+      }
+    },
+    "math-calculation": {
+      "command": "python",
+      "args": ["math_calculation_server.py"], 
+      "description": "수학적 계산, 통계 검정, 회귀 분석",
+      "env": {
+        "PYTHONPATH": "."
+      }
+    },
+    "visualization": {
+      "command": "python",
+      "args": ["visualization_server.py"],
+      "description": "데이터 시각화 및 차트 생성 (matplotlib, plotly)",
+      "env": {
+        "PYTHONPATH": "."
+      }
     }
   }
 }

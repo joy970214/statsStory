@@ -24,10 +24,13 @@ class StatMetadata(BaseModel):
     contact: Optional[str] = None
     keywords: List[str] = []
     related_terms: Dict[str, str] = {}
+    url: Optional[str] = None
 
 class StatData(BaseModel):
-    year: str
+    year: int
     data: Dict[str, Any]
+    table_name: Optional[str] = None
+    period_text: Optional[str] = None
 
 class GenerateStoryRequest(BaseModel):
     stat_name: str

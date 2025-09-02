@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { AnalysisActionButtons } from './AnalysisActionButtons';
+import { downloadPDF, openOriginalUrl } from '../utils/downloadUtils';
 
 interface ComprehensiveAnalysisData {
   stat_name: string;
@@ -41,18 +43,40 @@ export const ComprehensiveAnalysisViewer: React.FC<ComprehensiveAnalysisViewerPr
   onBack
 }) => {
   const [activeTab, setActiveTab] = useState<'stats' | 'trends' | 'policy' | 'cardnews'>('stats');
+  const contentRef = useRef<HTMLDivElement>(null);
 
-  const downloadAnalysis = () => {
+  const handleDownloadMD = () => {
     const content = generateAnalysisContent();
     const blob = new Blob([content], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${analysisData.stat_name}_종합분석.md`;
+    a.download = `종합분석_${analysisData.stat_name}_${new Date().toISOString().split('T')[0]}.md`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadPDF = async () => {
+    if (contentRef.current) {
+      try {
+        const filename = `종합분석_${analysisData.stat_name}_${new Date().toISOString().split('T')[0]}`;
+        await downloadPDF(contentRef.current, filename);
+      } catch (error) {
+        console.error('PDF 다운로드 실패:', error);
+        alert('PDF 파일 다운로드에 실패했습니다.');
+      }
+    }
+  };
+
+  const handleViewOriginal = () => {
+    const originalUrl = analysisData.metadata?.url;
+    if (originalUrl) {
+      openOriginalUrl(originalUrl);
+    } else {
+      alert('원본 URL 정보가 없습니다.');
+    }
   };
 
   const generateAnalysisContent = () => {
@@ -119,22 +143,29 @@ export const ComprehensiveAnalysisViewer: React.FC<ComprehensiveAnalysisViewerPr
   return (
     <div className="max-w-6xl mx-auto p-6">
       {/* 헤더 */}
-      <div className="flex justify-between items-center mb-8">
-        <button
-          onClick={onBack}
-          className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
-        >
-          ← 목록으로 돌아가기
-        </button>
+      <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
+          <h1 className="text-2xl font-bold text-gray-900">📊 종합분석 결과</h1>
+          <AnalysisActionButtons
+            onBack={onBack}
+            onDownloadMD={handleDownloadMD}
+            onDownloadPDF={handleDownloadPDF}
+            onViewOriginal={handleViewOriginal}
+            originalUrl={analysisData.metadata?.url}
+            analysisTitle={analysisData.stat_name}
+          />
+        </div>
         
-        <button
-          onClick={downloadAnalysis}
-          className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
-        >
-          📄 전체 분석 다운로드
-        </button>
+        <div className="bg-blue-50 rounded-lg p-4">
+          <h2 className="text-lg font-semibold text-blue-900 mb-2">{analysisData.stat_name}</h2>
+          <p className="text-blue-700 text-sm">
+            분석 완료: {new Date(analysisData.analysis_date).toLocaleString('ko-KR')}
+          </p>
+        </div>
       </div>
 
+      {/* 분석 내용 - PDF 다운로드 대상 */}
+      <div ref={contentRef}>
       {/* 제목 */}
       <div className="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-8 rounded-lg mb-8">
         <h1 className="text-3xl font-bold mb-4">🔍 {analysisData.stat_name} 종합 분석</h1>
@@ -285,6 +316,7 @@ export const ComprehensiveAnalysisViewer: React.FC<ComprehensiveAnalysisViewerPr
             <p className="text-gray-800 mt-1">{analysisData.metadata.frequency || 'N/A'}</p>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

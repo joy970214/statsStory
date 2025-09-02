@@ -1,5 +1,12 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { AdvancedCardNewsResponse } from '../services/api';
+import { AnalysisActionButtons } from './AnalysisActionButtons';
+import { 
+  downloadMarkdown, 
+  downloadPDF, 
+  openOriginalUrl, 
+  generateBasicStatisticsMarkdown 
+} from '../utils/downloadUtils';
 
 interface BasicStatisticsViewerProps {
   analysisData: AdvancedCardNewsResponse;
@@ -8,23 +15,58 @@ interface BasicStatisticsViewerProps {
 
 export const BasicStatisticsViewer: React.FC<BasicStatisticsViewerProps> = ({ analysisData, onBack }) => {
   const { basic_statistics } = analysisData;
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 2 }).format(num);
+  };
+
+  const handleDownloadMD = () => {
+    try {
+      const markdown = generateBasicStatisticsMarkdown(analysisData);
+      const filename = `기본통계현황분석_${analysisData.stat_name}_${new Date().toISOString().split('T')[0]}`;
+      downloadMarkdown(markdown, filename);
+    } catch (error) {
+      console.error('MD 다운로드 실패:', error);
+      alert('마크다운 파일 다운로드에 실패했습니다.');
+    }
+  };
+
+  const handleDownloadPDF = async () => {
+    if (contentRef.current) {
+      try {
+        const filename = `기본통계현황분석_${analysisData.stat_name}_${new Date().toISOString().split('T')[0]}`;
+        await downloadPDF(contentRef.current, filename);
+      } catch (error) {
+        console.error('PDF 다운로드 실패:', error);
+        alert('PDF 파일 다운로드에 실패했습니다.');
+      }
+    }
+  };
+
+  const handleViewOriginal = () => {
+    const originalUrl = analysisData.metadata?.url;
+    if (originalUrl) {
+      openOriginalUrl(originalUrl);
+    } else {
+      alert('원본 URL 정보가 없습니다.');
+    }
   };
 
   return (
     <div className="max-w-6xl mx-auto">
       {/* 헤더 */}
       <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
           <h1 className="text-2xl font-bold text-gray-900">📈 기본통계현황분석 결과</h1>
-          <button
-            onClick={onBack}
-            className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors"
-          >
-            ← 목록으로
-          </button>
+          <AnalysisActionButtons
+            onBack={onBack}
+            onDownloadMD={handleDownloadMD}
+            onDownloadPDF={handleDownloadPDF}
+            onViewOriginal={handleViewOriginal}
+            originalUrl={analysisData.metadata?.url}
+            analysisTitle={analysisData.stat_name}
+          />
         </div>
         
         <div className="bg-pink-50 rounded-lg p-4">
@@ -36,8 +78,10 @@ export const BasicStatisticsViewer: React.FC<BasicStatisticsViewerProps> = ({ an
         </div>
       </div>
 
-      {/* 분석 요약 */}
-      <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+      {/* 분석 내용 - PDF 다운로드 대상 */}
+      <div ref={contentRef}>
+        {/* 분석 요약 */}
+        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
         <h3 className="text-xl font-semibold text-gray-900 mb-4">📊 분석 개요</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-blue-50 rounded-lg p-4 text-center">
@@ -207,6 +251,7 @@ export const BasicStatisticsViewer: React.FC<BasicStatisticsViewerProps> = ({ an
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

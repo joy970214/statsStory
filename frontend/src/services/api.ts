@@ -31,6 +31,7 @@ export interface StatMetadata {
   contact?: string;
   keywords: string[];
   related_terms: Record<string, string>;
+  url?: string;
 }
 
 export interface CardNewsSection {
@@ -149,6 +150,7 @@ export interface AdvancedCardNewsResponse {
   stat_name: string;
   analysis_date: string;
   analysis_type: string;
+  metadata?: StatMetadata;
   basic_statistics: {
     mean: number;
     median: number;
@@ -210,6 +212,32 @@ export const statsAPI = {
   // 고급 카드뉴스 생성
   async generateAdvancedCardNews(request: GenerateStoryRequest): Promise<AdvancedCardNewsResponse> {
     const response = await api.post<AdvancedCardNewsResponse>('/generate-advanced-cardnews', request);
+    return response.data;
+  },
+
+  // 데이터 검사 및 탐색
+  async inspectData(request: GenerateStoryRequest): Promise<any> {
+    const response = await api.post<any>('/data/inspect', request);
+    return response.data;
+  },
+
+  async viewRawData(request: GenerateStoryRequest): Promise<any> {
+    const response = await api.post<any>('/data/raw-view', request);
+    return response.data;
+  },
+
+  async getDataSummary(request: GenerateStoryRequest): Promise<any> {
+    const response = await api.post<any>('/data/summary', request);
+    return response.data;
+  },
+
+  async exploreDataByYear(year: number, request: GenerateStoryRequest): Promise<any> {
+    const response = await api.post<any>(`/data/explore-by-year/${year}`, request);
+    return response.data;
+  },
+
+  async getCollectionLog(request: GenerateStoryRequest): Promise<any> {
+    const response = await api.post<any>('/data/collection-log', request);
     return response.data;
   },
 };

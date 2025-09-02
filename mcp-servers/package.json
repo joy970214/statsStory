@@ -12,8 +12,17 @@
   "dependencies": {
     "@agent-infra/mcp-server-browser": "^1.2.20",
     "@modelcontextprotocol/server-filesystem": "^2025.8.21",
+    "better-sqlite3": "^12.2.0",
     "cross-fetch": "^4.1.0",
+    "matplotlib": "^1.0.0",
+    "mcp-sqlite": "^1.0.7",
     "node-fetch": "^3.3.2",
-    "puppeteer": "^24.18.0"
+    "numpy": "^0.0.1",
+    "pandas": "^0.0.3",
+    "plotly": "^1.0.6",
+    "puppeteer": "^24.18.0",
+    "scipy": "^0.1.4",
+    "seaborn": "^0.0.1-security",
+    "sqlite3": "^5.1.7"
   }
 }
