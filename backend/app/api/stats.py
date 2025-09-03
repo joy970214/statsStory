@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, BackgroundTasks
+from fastapi.responses import StreamingResponse
 from typing import List, Optional, Dict, Any
 from app.models.stat_models import (
     RecentStatsResponse, 
@@ -11,6 +12,12 @@ from app.services.ai_service import AIService
 from app.services.data_storage import DataStorageService
 from app.services.mcp_client import mcp_client
 from app.services.mcp_analysis_service import mcp_analysis_service
+from app.services.progress_service import progress_tracker, stream_progress, ProgressCallback
+try:
+    from app.crawlers.optimized_molit_crawler import OptimizedMolitCrawler
+except ImportError as e:
+    print(f"OptimizedMolitCrawler import 실패: {e}")
+    OptimizedMolitCrawler = None
 import asyncio
 import time
 import uuid
@@ -79,7 +86,7 @@ async def get_stat_metadata(stat_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/analyze-basic")
+# @router.post("/analyze-basic")  # 기본통계현황분석으로 통합됨
 async def analyze_basic(request: GenerateStoryRequest):
     """기본 분석 - 메타데이터와 데이터 정리"""
     try:
@@ -197,19 +204,15 @@ async def analyze_comprehensive(request: GenerateStoryRequest):
                     StatData(year=2024, data={"총합": 1400})
                 ]
         
-        # 3. 종합 분석 수행 (MCP 우선, AI 실패 시 로컬 분석으로 대체)
+        # 3. 로컬 LLM 종합 분석 수행 (API 토큰 없이)
         try:
-            # MCP 분석 서비스 우선 시도
-            analysis_result = await mcp_analysis_service.generate_comprehensive_analysis(stat_data, metadata)
-            print("MCP 종합 분석 서비스로 분석 완료")
-        except Exception as mcp_error:
-            print(f"MCP 서비스 오류, AI 서비스로 대체: {mcp_error}")
-            try:
-                analysis_result = await ai_service.generate_comprehensive_analysis(stat_data, metadata)
-            except Exception as ai_error:
-                print(f"AI 서비스 오류, 기본 분석으로 대체: {ai_error}")
-                # 기본 분석 결과 생성
-                analysis_result = f"{metadata.title}에 대한 종합적인 분석 결과를 제공합니다."
+            from app.services.local_llm_service import local_llm_service
+            analysis_result = await local_llm_service.generate_comprehensive_analysis(stat_data, metadata)
+            print("로컬 LLM 종합 분석 완료")
+        except Exception as llm_error:
+            print(f"로컬 LLM 서비스 오류, 기본 분석으로 대체: {llm_error}")
+            # 기본 분석 결과 생성
+            analysis_result = f"{metadata.title}에 대한 종합적인 분석 결과를 제공합니다."
         
         return {
             "stat_name": request.stat_name,
@@ -221,11 +224,332 @@ async def analyze_comprehensive(request: GenerateStoryRequest):
         print("종합 분석 오류 발생")
         raise HTTPException(status_code=500, detail="종합 분석 중 오류가 발생했습니다")
 
+# 기존 동기식 API는 유지하되, 새로운 비동기 API 추가
+
+@router.post("/generate-advanced-cardnews")
+async def generate_advanced_cardnews(request: GenerateStoryRequest):
+    """기본통계현황분석 - 즉시 응답 (기존 버전)"""
+    try:
+        stat_url = request.stat_url or "https://stat.molit.go.kr/portal/cate/statView.do"
+        
+        print(f"기본통계현황분석 요청: {request.stat_name}")
+        
+        # 1. 캐시된 데이터 확인
+        cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
+        
+        if cached_metadata and cached_stat_data:
+            print(f"캐시에서 데이터 로드: {cached_metadata.title}")
+            metadata = cached_metadata
+            stat_data = cached_stat_data
+        else:
+            # 2. 새로 수집
+            try:
+                print("=== 메타데이터 및 데이터 수집 시작 ===")
+                metadata = await crawler_service.get_stat_metadata_for_analysis(stat_url)
+                stat_data = await crawler_service.get_stat_data_for_analysis(stat_url, request.period)
+                storage_service.save_complete_data(stat_url, metadata, stat_data)
+            except Exception as crawl_error:
+                print("크롤링 오류, 더미 데이터 사용")
+                from app.models.stat_models import StatMetadata, StatData
+                metadata = StatMetadata(
+                    id="dummy",
+                    title=request.stat_name,
+                    purpose="기본통계현황분석용 더미 데이터",
+                    frequency="연간",
+                    department="국토교통부",
+                    contact="test@molit.go.kr",
+                    keywords=["기본통계현황분석"],
+                    related_terms={}
+                )
+                stat_data = [
+                    StatData(year=2020, data={"총합": 1000, "증가율": 5.2}),
+                    StatData(year=2021, data={"총합": 1100, "증가율": 10.0}),
+                    StatData(year=2022, data={"총합": 1200, "증가율": 9.1}),
+                    StatData(year=2023, data={"총합": 1300, "증가율": 8.3}),
+                    StatData(year=2024, data={"총합": 1400, "증가율": 7.7})
+                ]
+        
+        # 3. 기초통계 분석 수행
+        try:
+            from app.services.mcp_client import mcp_client
+            basic_stats_result = await mcp_client.call_pandas_analysis("basic_statistics", 
+                                                                     cache_key=f"stat_{hash(stat_url)}")
+            print("MCP 기초통계 분석 완료")
+        except Exception as mcp_error:
+            print(f"MCP 서비스 오류, 기본 통계 분석으로 대체: {mcp_error}")
+            # 기본 통계 분석 수행
+            basic_stats_result = _calculate_basic_statistics(stat_data)
+        
+        # 4. 분석 요약 생성
+        analysis_summary = {
+            "analysis_period": f"{min([d.year for d in stat_data])} - {max([d.year for d in stat_data])}" if stat_data else "N/A",
+            "total_data_points": len(stat_data),
+            "data_completeness": "완료",
+            "analysis_quality": "높음"
+        }
+        
+        return {
+            "stat_name": request.stat_name,
+            "analysis_date": datetime.now().isoformat(),
+            "analysis_type": "기본통계현황분석",
+            "metadata": metadata.dict() if metadata else None,
+            "analysis_summary": analysis_summary,
+            "basic_statistics": basic_stats_result,
+            "insights": f"{metadata.title if metadata else request.stat_name}에 대한 기초통계 현황 분석이 완료되었습니다."
+        }
+        
+    except Exception as e:
+        print(f"기본통계현황분석 오류 발생: {e}")
+        raise HTTPException(status_code=500, detail="기본통계현황분석 중 오류가 발생했습니다")
+
+# 새로운 최적화된 비동기 API들
+@router.post("/start-analysis")
+async def start_optimized_analysis(request: GenerateStoryRequest, background_tasks: BackgroundTasks):
+    """최적화된 기본통계현황분석 시작 - 작업 ID 반환"""
+    try:
+        # 작업 ID 생성
+        task_id = progress_tracker.create_task(f"기본통계현황분석: {request.stat_name}")
+        
+        # 백그라운드에서 분석 실행
+        background_tasks.add_task(run_optimized_analysis, task_id, request)
+        
+        return {
+            "task_id": task_id,
+            "message": "분석이 시작되었습니다",
+            "stat_name": request.stat_name,
+            "estimated_time": "3-5분"
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"분석 시작 실패: {str(e)}")
+
+@router.get("/analysis/progress/{task_id}")
+async def get_analysis_progress(task_id: str):
+    """분석 진행률 스트림 (SSE)"""
+    try:
+        print(f"[API] SSE 진행률 요청: {task_id}")
+        
+        # Task ID 존재 여부 확인
+        if not progress_tracker.task_exists(task_id):
+            print(f"[API] 존재하지 않는 작업: {task_id}")
+            raise HTTPException(status_code=404, detail=f"작업을 찾을 수 없습니다: {task_id}")
+        
+        return await stream_progress(task_id)
+    except Exception as e:
+        print(f"[API] SSE 스트림 오류: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"진행률 스트림 오류: {str(e)}")
+
+@router.get("/analysis/status/{task_id}")
+async def get_analysis_status(task_id: str):
+    """분석 상태 조회"""
+    try:
+        status = progress_tracker.get_task_status(task_id)
+        if not status:
+            raise HTTPException(status_code=404, detail="작업을 찾을 수 없습니다")
+        
+        return {
+            "task_id": task_id,
+            "status": status,
+            "completed": status.get("completed", False),
+            "progress": status.get("current_progress", 0),
+            "stage": status.get("current_stage", "알 수 없음"),
+            "message": status.get("current_message", "")
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"상태 조회 오류: {str(e)}")
+
+async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
+    """최적화된 분석 실행 (백그라운드)"""
+    try:
+        stat_url = request.stat_url or "https://stat.molit.go.kr/portal/cate/statView.do"
+        
+        # 진행률 콜백 생성
+        progress_callback = ProgressCallback(task_id)
+        progress_callback.update("준비", 0, "최적화된 크롤러 초기화 중...")
+        
+        # 최적화된 크롤러 사용
+        if OptimizedMolitCrawler is None:
+            progress_callback.update("오류", 100, "최적화된 크롤러를 로드할 수 없습니다")
+            return
+            
+        optimized_crawler = OptimizedMolitCrawler(pool_size=3, max_concurrent_tables=3)
+        
+        # 종합 분석 실행
+        analysis_result = await optimized_crawler.get_comprehensive_stat_analysis_optimized(
+            stat_url, progress_callback
+        )
+        
+        # 분석 결과를 기존 API 형태로 변환
+        basic_statistics = _calculate_basic_statistics_from_comprehensive(analysis_result)
+        
+        # 결과를 기존 형태로 변환하여 저장
+        task_results[task_id] = {
+            "stat_name": request.stat_name,
+            "analysis_date": datetime.now().isoformat(),
+            "analysis_type": "기본통계현황분석",
+            "metadata": analysis_result.metadata.dict() if analysis_result.metadata else None,
+            "analysis_summary": {
+                "analysis_period": f"수집된 데이터 기간",
+                "total_data_points": analysis_result.total_data_points,
+                "data_completeness": "완료",
+                "analysis_quality": "높음"
+            },
+            "basic_statistics": basic_statistics,
+            "insights": f"{analysis_result.stat_title}에 대한 최적화된 기초통계 현황 분석이 완료되었습니다.",
+            "comprehensive_analysis": analysis_result,  # 종합 분석 결과도 포함
+            "completed_at": datetime.now().isoformat()
+        }
+        
+        progress_callback.update("완료", 100, "분석이 완료되었습니다")
+        
+    except Exception as e:
+        print(f"최적화된 분석 실행 오류: {e}")
+        progress_callback.update("오류", 100, f"분석 중 오류 발생: {str(e)}")
+
+def _calculate_basic_statistics_from_comprehensive(analysis_result) -> dict:
+    """종합 분석 결과에서 기초 통계 추출"""
+    try:
+        # 수집된 데이터에서 숫자 데이터 추출
+        all_numeric_values = []
+        
+        for table_name, table_data_list in analysis_result.data_by_table.items():
+            for data_item in table_data_list:
+                if data_item.data:
+                    for key, value in data_item.data.items():
+                        try:
+                            if isinstance(value, dict) and value.get("unit") == "number":
+                                all_numeric_values.append(value.get("value", 0))
+                            elif isinstance(value, (int, float)):
+                                all_numeric_values.append(value)
+                        except:
+                            continue
+        
+        if all_numeric_values:
+            import numpy as np
+            return {
+                "mean": float(np.mean(all_numeric_values)),
+                "median": float(np.median(all_numeric_values)),
+                "max": float(np.max(all_numeric_values)),
+                "min": float(np.min(all_numeric_values)),
+                "total": float(np.sum(all_numeric_values)),
+                "count": len(all_numeric_values)
+            }
+        else:
+            return {
+                "mean": 0, "median": 0, "max": 0, "min": 0, "total": 0, "count": 0
+            }
+    except Exception as e:
+        print(f"기초통계 계산 오류: {e}")
+        return {
+            "mean": 0, "median": 0, "max": 0, "min": 0, "total": 0, "count": 0
+        }
+
+# 작업 결과 저장소 (실제로는 Redis나 DB 사용 권장)
+task_results: Dict[str, Any] = {}
+
+@router.get("/analysis/result/{task_id}")
+async def get_analysis_result(task_id: str):
+    """분석 결과 조회"""
+    try:
+        if task_id not in task_results:
+            # 아직 완료되지 않았는지 확인
+            status = progress_tracker.get_task_status(task_id)
+            if not status:
+                raise HTTPException(status_code=404, detail="작업을 찾을 수 없습니다")
+            
+            if not status.get("completed", False):
+                raise HTTPException(status_code=202, detail="분석이 아직 진행 중입니다")
+            else:
+                raise HTTPException(status_code=404, detail="분석 결과를 찾을 수 없습니다")
+        
+        return task_results[task_id]
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"결과 조회 오류: {str(e)}")
+
 @router.post("/test-simple")
 async def test_simple():
     """가장 간단한 테스트 엔드포인트"""
     return {"message": "success"}
 
+@router.get("/health")
+async def health_check():
+    """서버 상태 확인"""
+    return {
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "optimized_crawler_available": OptimizedMolitCrawler is not None
+    }
+
+
+def _calculate_basic_statistics(stat_data):
+    """기본 통계 분석 수행"""
+    if not stat_data:
+        return {
+            "mean": 0,
+            "median": 0,
+            "max": 0,
+            "min": 0,
+            "total": 0,
+            "count": 0
+        }
+    
+    # 첫 번째 데이터의 모든 키를 가져와서 수치형 데이터만 분석
+    numeric_data = {}
+    
+    for item in stat_data:
+        if item.data:
+            for key, value in item.data.items():
+                if key not in numeric_data:
+                    numeric_data[key] = []
+                
+                try:
+                    # 문자열인 경우 숫자로 변환 시도
+                    if isinstance(value, str):
+                        cleaned = value.replace(',', '').replace('%', '').strip()
+                        numeric_value = float(cleaned)
+                    else:
+                        numeric_value = float(value)
+                    
+                    numeric_data[key].append(numeric_value)
+                except (ValueError, TypeError):
+                    # 숫자로 변환할 수 없는 경우 무시
+                    continue
+    
+    # 각 필드별 통계 계산
+    result = {}
+    for key, values in numeric_data.items():
+        if values:
+            import numpy as np
+            result[key] = {
+                "mean": float(np.mean(values)),
+                "median": float(np.median(values)),
+                "max": float(np.max(values)),
+                "min": float(np.min(values)),
+                "total": float(np.sum(values)),
+                "count": len(values),
+                "std": float(np.std(values)) if len(values) > 1 else 0
+            }
+    
+    # 전체 통계가 없으면 기본값 반환
+    if not result:
+        return {
+            "mean": 0,
+            "median": 0,
+            "max": 0,
+            "min": 0,
+            "total": 0,
+            "count": 0
+        }
+    
+    # 첫 번째 필드의 통계를 기본값으로 반환 (호환성을 위해)
+    first_key = list(result.keys())[0]
+    return result[first_key]
 
 # 데이터 분석 타입별 추가 함수들
 def _analyze_data_types(stat_data):
@@ -332,10 +656,23 @@ async def _collect_stat_data(request: GenerateStoryRequest):
 # 데이터 검사 및 탐색 엔드포인트들
 @router.post("/data/inspect")
 async def inspect_collected_data(request: GenerateStoryRequest):
-    """수집된 데이터의 구조와 품질을 상세 분석"""
+    """이미 수집된 데이터의 구조와 품질을 상세 분석 (새로 수집하지 않음)"""
     try:
-        # 1. 데이터 수집 (분석과 동일한 로직)
-        stat_data, metadata = await _collect_stat_data(request)
+        stat_url = request.stat_url or "https://stat.molit.go.kr/portal/cate/statView.do"
+        
+        # 1. 캐시된 데이터만 확인 (새로 수집하지 않음)
+        cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
+        
+        if not cached_metadata or not cached_stat_data:
+            return {
+                "message": "수집된 데이터가 없습니다",
+                "suggestion": "먼저 '기본통계현황분석' 또는 '종합 분석'을 실행하여 데이터를 수집해주세요.",
+                "cache_status": "empty",
+                "stat_url": stat_url
+            }
+        
+        stat_data = cached_stat_data
+        metadata = cached_metadata
         
         # 2. 데이터 구조 분석
         data_types = _analyze_data_types(stat_data)
@@ -383,9 +720,21 @@ async def inspect_collected_data(request: GenerateStoryRequest):
 
 @router.post("/data/raw-view")
 async def view_raw_collected_data(request: GenerateStoryRequest):
-    """원시 수집 데이터를 있는 그대로 조회"""
+    """이미 수집된 원시 데이터를 있는 그대로 조회"""
     try:
-        stat_data, metadata = await _collect_stat_data(request)
+        stat_url = request.stat_url or "https://stat.molit.go.kr/portal/cate/statView.do"
+        
+        # 캐시된 데이터만 확인
+        cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
+        
+        if not cached_metadata or not cached_stat_data:
+            return {
+                "message": "수집된 데이터가 없습니다",
+                "suggestion": "먼저 분석을 실행하여 데이터를 수집해주세요."
+            }
+        
+        stat_data = cached_stat_data
+        metadata = cached_metadata
         
         return {
             "metadata": {
@@ -409,7 +758,14 @@ async def view_raw_collected_data(request: GenerateStoryRequest):
 async def get_data_collection_summary(request: GenerateStoryRequest):
     """데이터 수집 요약 정보"""
     try:
-        stat_data, metadata = await _collect_stat_data(request)
+        stat_url = request.stat_url or f"https://stat.molit.go.kr/portal/cate/statView.do?hRsId={request.stat_name}"
+        cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
+        
+        if not cached_metadata or not cached_stat_data:
+            return {"message": "수집된 데이터가 없습니다", "suggestion": "먼저 분석을 실행하여 데이터를 수집해주세요.", "available_data": False}
+        
+        stat_data = cached_stat_data
+        metadata = cached_metadata
         
         # 기본 통계
         numeric_values = []
@@ -455,7 +811,14 @@ async def get_data_collection_summary(request: GenerateStoryRequest):
 async def explore_data_by_year(year: int, request: GenerateStoryRequest):
     """특정 연도 데이터 상세 탐색"""
     try:
-        stat_data, metadata = await _collect_stat_data(request)
+        stat_url = request.stat_url or f"https://stat.molit.go.kr/portal/cate/statView.do?hRsId={request.stat_name}"
+        cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
+        
+        if not cached_metadata or not cached_stat_data:
+            return {"message": "수집된 데이터가 없습니다", "suggestion": "먼저 분석을 실행하여 데이터를 수집해주세요.", "available_data": False}
+        
+        stat_data = cached_stat_data
+        metadata = cached_metadata
         
         # 해당 연도 데이터 찾기
         year_data = [item for item in stat_data if item.year == year]
@@ -483,38 +846,35 @@ async def explore_data_by_year(year: int, request: GenerateStoryRequest):
 async def view_data_collection_log(request: GenerateStoryRequest):
     """데이터 수집 과정의 로그 및 디버그 정보"""
     try:
-        # 수집 과정을 로깅하면서 데이터 수집
-        collection_log = []
+        stat_url = request.stat_url or f"https://stat.molit.go.kr/portal/cate/statView.do?hRsId={request.stat_name}"
+        cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
         
-        collection_log.append({
-            "step": "시작",
-            "message": f"'{request.stat_name}' 통계 데이터 수집 시작",
-            "timestamp": datetime.now().isoformat()
-        })
+        if not cached_metadata or not cached_stat_data:
+            return {"message": "수집된 데이터가 없습니다", "suggestion": "먼저 분석을 실행하여 데이터를 수집해주세요.", "available_data": False, "collection_log": []}
         
-        try:
-            stat_data, metadata = await _collect_stat_data(request)
+        stat_data = cached_stat_data
+        metadata = cached_metadata
+        
+        # 캐시된 데이터에서 컬렉션 로그 재구성
+        collection_log = [
+            {
+                "step": "캐시조회",
+                "message": f"'{request.stat_name}' 캐시된 데이터 조회",
+                "timestamp": datetime.now().isoformat()
+            },
+            {
+                "step": "데이터확인", 
+                "message": f"{len(stat_data)}개 캐시된 레코드 발견",
+                "timestamp": datetime.now().isoformat()
+            }
+        ]
+        
+        if stat_data:
             collection_log.append({
-                "step": "수집완료", 
-                "message": f"{len(stat_data)}개 레코드 수집 완료",
+                "step": "데이터검증",
+                "message": f"연도 범위: {min([item.year for item in stat_data])} - {max([item.year for item in stat_data])}",
                 "timestamp": datetime.now().isoformat()
             })
-            
-            if stat_data:
-                collection_log.append({
-                    "step": "데이터검증",
-                    "message": f"연도 범위: {min([item.year for item in stat_data])} - {max([item.year for item in stat_data])}",
-                    "timestamp": datetime.now().isoformat()
-                })
-            
-        except Exception as collection_error:
-            collection_log.append({
-                "step": "오류",
-                "message": f"데이터 수집 실패: {str(collection_error)}",
-                "timestamp": datetime.now().isoformat()
-            })
-            stat_data = []
-            metadata = None
         
         return {
             "collection_process": collection_log,

@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8001/api';
+const API_BASE_URL = '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 120000, // 2분으로 증가
+  timeout: 300000, // 5분으로 증가 (최적화된 크롤링용)
 });
 
 export interface StatItem {
@@ -209,10 +209,56 @@ export const statsAPI = {
     return response.data;
   },
 
-  // 고급 카드뉴스 생성
+  // 고급 카드뉴스 생성 (기존 버전)
   async generateAdvancedCardNews(request: GenerateStoryRequest): Promise<AdvancedCardNewsResponse> {
     const response = await api.post<AdvancedCardNewsResponse>('/generate-advanced-cardnews', request);
     return response.data;
+  },
+
+  // 최적화된 분석 시작
+  async startOptimizedAnalysis(request: GenerateStoryRequest): Promise<{task_id: string, message: string, stat_name: string, estimated_time: string}> {
+    const response = await api.post('/start-analysis', request);
+    return response.data;
+  },
+
+  // 분석 상태 조회
+  async getAnalysisStatus(taskId: string): Promise<{task_id: string, completed: boolean, progress: number, stage: string, message: string}> {
+    const response = await api.get(`/analysis/status/${taskId}`);
+    return response.data;
+  },
+
+  // 분석 결과 조회
+  async getAnalysisResult(taskId: string): Promise<any> {
+    const response = await api.get(`/analysis/result/${taskId}`);
+    return response.data;
+  },
+
+  // SSE 진행률 스트림 구독
+  subscribeToProgress(taskId: string, onProgress: (data: any) => void): EventSource {
+    console.log('SSE 연결 시작:', `/api/analysis/progress/${taskId}`);
+    const eventSource = new EventSource(`/api/analysis/progress/${taskId}`);
+    
+    eventSource.onopen = (event) => {
+      console.log('SSE 연결 성공:', event);
+    };
+    
+    eventSource.onmessage = (event) => {
+      console.log('SSE 메시지 수신:', event.data);
+      try {
+        const data = JSON.parse(event.data);
+        onProgress(data);
+      } catch (error) {
+        console.error('SSE 데이터 파싱 오류:', error, 'Raw data:', event.data);
+      }
+    };
+
+    eventSource.onerror = (error) => {
+      console.error('SSE 연결 오류:', error);
+      console.log('EventSource readyState:', eventSource.readyState);
+      console.log('EventSource url:', eventSource.url);
+    };
+
+    return eventSource;
   },
 
   // 데이터 검사 및 탐색

@@ -1,31 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { StatCard } from './components/StatCard';
-import { BasicAnalysisViewer } from './components/BasicAnalysisViewer';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { BasicStatisticsViewer } from './components/BasicStatisticsViewer';
 import { ComprehensiveAnalysisViewer } from './components/ComprehensiveAnalysisViewer';
+import { RealTimeProgressViewer } from './components/RealTimeProgressViewer';
 import { 
   statsAPI, 
   StatItem, 
-  BasicAnalysisResponse,
   ComprehensiveAnalysisResponse,
-  AdvancedCardNewsResponse,
-  StatisticsAnalysisResponse,
-  TrendAnalysisResponse,
-  PolicyInsightsResponse
+  AdvancedCardNewsResponse
 } from './services/api';
 
-type AppState = 'loading' | 'stats-list' | 'generating' | 'viewing-story' | 'viewing-comprehensive' | 'viewing-advanced-cardnews';
+type AppState = 'loading' | 'stats-list' | 'viewing-comprehensive' | 'viewing-advanced-cardnews' | 'optimized-progress';
 
 function App() {
   const [state, setState] = useState<AppState>('loading');
   const [stats, setStats] = useState<StatItem[]>([]);
   const [selectedStat, setSelectedStat] = useState<StatItem | null>(null);
-  const [story, setStory] = useState<BasicAnalysisResponse | null>(null);
   const [comprehensiveAnalysis, setComprehensiveAnalysis] = useState<ComprehensiveAnalysisResponse | null>(null);
   const [advancedCardNews, setAdvancedCardNews] = useState<AdvancedCardNewsResponse | null>(null);
+  const [optimizedResult, setOptimizedResult] = useState<any | null>(null);
+  const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [analysisType, setAnalysisType] = useState<'basic' | 'comprehensive' | 'advanced-cardnews'>('basic');
+  const [analysisType, setAnalysisType] = useState<'comprehensive' | 'advanced-cardnews'>('advanced-cardnews');
 
   useEffect(() => {
     loadRecentStats();
@@ -47,9 +44,8 @@ function App() {
     }
   };
 
-  const handleStatSelect = async (stat: StatItem, type: 'basic' | 'comprehensive' | 'advanced-cardnews' = 'basic') => {
+  const handleStatSelect = async (stat: StatItem, type: 'comprehensive' | 'advanced-cardnews' = 'advanced-cardnews') => {
     try {
-      setState('generating');
       setSelectedStat(stat);
       setAnalysisType(type);
       setError(null);
@@ -60,19 +56,11 @@ function App() {
         period: '5years'
       };
 
-      if (type === 'comprehensive') {
-        const analysisResponse = await statsAPI.generateComprehensiveAnalysis(request);
-        setComprehensiveAnalysis(analysisResponse);
-        setState('viewing-comprehensive');
-      } else if (type === 'advanced-cardnews') {
-        const cardNewsResponse = await statsAPI.generateAdvancedCardNews(request);
-        setAdvancedCardNews(cardNewsResponse);
-        setState('viewing-advanced-cardnews');
-      } else {
-        const storyResponse = await statsAPI.generateStory(request);
-        setStory(storyResponse);
-        setState('viewing-story');
-      }
+      // 모든 분석을 최적화된 버전으로 실행 (실시간 진행률 표시)
+      setState('optimized-progress');
+      const startResponse = await statsAPI.startOptimizedAnalysis(request);
+      setCurrentTaskId(startResponse.task_id);
+      
     } catch (err) {
       console.error('분석 생성 오류:', err);
       setError(`분석 생성에 실패했습니다: ${err instanceof Error ? err.message : '알 수 없는 오류'}`);
@@ -83,10 +71,21 @@ function App() {
   const handleBackToList = () => {
     setState('stats-list');
     setSelectedStat(null);
-    setStory(null);
     setComprehensiveAnalysis(null);
     setAdvancedCardNews(null);
+    setOptimizedResult(null);
+    setCurrentTaskId(null);
     setError(null);
+  };
+
+  const handleOptimizedComplete = (result: any) => {
+    setOptimizedResult(result);
+    setState('viewing-advanced-cardnews'); // 결과를 기존 뷰어로 표시
+  };
+
+  const handleOptimizedError = (errorMsg: string) => {
+    setError(`최적화된 분석 실패: ${errorMsg}`);
+    setState('stats-list');
   };
 
   return (
@@ -163,68 +162,25 @@ function App() {
           </div>
         )}
 
-        {state === 'generating' && (
-          <div className="text-center py-12">
-            <LoadingSpinner message={
-              analysisType === 'comprehensive' 
-                ? "AI가 종합 분석을 수행하고 있습니다..." 
-                : analysisType === 'advanced-cardnews'
-                ? "AI가 기본통계현황분석을 수행하고 있습니다..."
-                : "AI가 기본 분석을 수행하고 있습니다..."
-            } />
-            <div className="mt-6 max-w-md mx-auto">
-              <div className={`rounded-lg p-4 ${
-                analysisType === 'comprehensive' ? 'bg-indigo-50' :
-                analysisType === 'advanced-cardnews' ? 'bg-pink-50' : 'bg-blue-50'
-              }`}>
-                <p className={`text-sm font-medium ${
-                  analysisType === 'comprehensive' ? 'text-indigo-800' :
-                  analysisType === 'advanced-cardnews' ? 'text-pink-800' : 'text-blue-800'
-                }`}>
-                  선택된 통계: {selectedStat?.title}
-                </p>
-                <div className={`mt-2 text-xs ${
-                  analysisType === 'comprehensive' ? 'text-indigo-600' :
-                  analysisType === 'advanced-cardnews' ? 'text-pink-600' : 'text-blue-600'
-                }`}>
-                  {analysisType === 'comprehensive' ? (
-                    <>
-                      • 5년치 데이터 수집 중...<br />
-                      • 통계 분석 수행 중...<br />
-                      • 트렌드 분석 수행 중...<br />
-                      • 정책 시사점 도출 중...<br />
-                      • 카드뉴스 생성 중...
-                    </>
-                  ) : analysisType === 'advanced-cardnews' ? (
-                    <>
-                      • 기초통계 지표 계산 중...<br />
-                      • 현황 파악 분석 중...<br />
-                      • 데이터 분포 분석 중...<br />
-                      • 객관적 인사이트 도출 중...
-                    </>
-                  ) : (
-                    <>
-                      • 메타데이터 추출 중...<br />
-                      • 데이터 구조 분석 중...<br />
-                      • 데이터 정리 중...
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
+        {state === 'optimized-progress' && currentTaskId && selectedStat && (
+          <RealTimeProgressViewer 
+            taskId={currentTaskId}
+            statName={selectedStat.title}
+            onComplete={handleOptimizedComplete}
+            onError={handleOptimizedError}
+          />
         )}
 
-        {state === 'viewing-story' && story && (
-          <BasicAnalysisViewer analysisData={story} onBack={handleBackToList} />
-        )}
 
         {state === 'viewing-comprehensive' && comprehensiveAnalysis && (
           <ComprehensiveAnalysisViewer analysisData={comprehensiveAnalysis} onBack={handleBackToList} />
         )}
 
-        {state === 'viewing-advanced-cardnews' && advancedCardNews && (
-          <BasicStatisticsViewer analysisData={advancedCardNews} onBack={handleBackToList} />
+        {state === 'viewing-advanced-cardnews' && (advancedCardNews || optimizedResult) && (
+          <BasicStatisticsViewer 
+            analysisData={optimizedResult || advancedCardNews} 
+            onBack={handleBackToList} 
+          />
         )}
       </main>
 

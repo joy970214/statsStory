@@ -1,6 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { AdvancedCardNewsResponse } from '../services/api';
 import { AnalysisActionButtons } from './AnalysisActionButtons';
+import { DataInspectionViewer } from './DataInspectionViewer';
 import { 
   downloadMarkdown, 
   downloadPDF, 
@@ -16,6 +17,7 @@ interface BasicStatisticsViewerProps {
 export const BasicStatisticsViewer: React.FC<BasicStatisticsViewerProps> = ({ analysisData, onBack }) => {
   const { basic_statistics } = analysisData;
   const contentRef = useRef<HTMLDivElement>(null);
+  const [showDataInspection, setShowDataInspection] = useState(false);
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 2 }).format(num);
@@ -53,6 +55,24 @@ export const BasicStatisticsViewer: React.FC<BasicStatisticsViewerProps> = ({ an
     }
   };
 
+  const handleInspectData = () => {
+    setShowDataInspection(true);
+  };
+
+  const handleBackFromInspection = () => {
+    setShowDataInspection(false);
+  };
+
+  // 데이터 검사 모드일 때는 DataInspectionViewer 렌더링
+  if (showDataInspection) {
+    return (
+      <DataInspectionViewer 
+        statName={analysisData.stat_name} 
+        onBack={handleBackFromInspection}
+      />
+    );
+  }
+
   return (
     <div className="max-w-6xl mx-auto">
       {/* 헤더 */}
@@ -64,6 +84,7 @@ export const BasicStatisticsViewer: React.FC<BasicStatisticsViewerProps> = ({ an
             onDownloadMD={handleDownloadMD}
             onDownloadPDF={handleDownloadPDF}
             onViewOriginal={handleViewOriginal}
+            onInspectData={handleInspectData}
             originalUrl={analysisData.metadata?.url}
             analysisTitle={analysisData.stat_name}
           />
@@ -80,6 +101,68 @@ export const BasicStatisticsViewer: React.FC<BasicStatisticsViewerProps> = ({ an
 
       {/* 분석 내용 - PDF 다운로드 대상 */}
       <div ref={contentRef}>
+        {/* 메타데이터 정보 */}
+        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">📋 메타데이터 정보</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-3">
+              <div>
+                <span className="text-sm font-medium text-gray-600">제목:</span>
+                <p className="text-gray-900">{analysisData.metadata?.title || '정보 없음'}</p>
+              </div>
+              <div>
+                <span className="text-sm font-medium text-gray-600">목적:</span>
+                <p className="text-gray-700">{analysisData.metadata?.purpose || '정보 없음'}</p>
+              </div>
+              <div>
+                <span className="text-sm font-medium text-gray-600">주기:</span>
+                <p className="text-gray-700">{analysisData.metadata?.frequency || '정보 없음'}</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <span className="text-sm font-medium text-gray-600">담당부서:</span>
+                <p className="text-gray-700">{analysisData.metadata?.department || '정보 없음'}</p>
+              </div>
+              <div>
+                <span className="text-sm font-medium text-gray-600">키워드:</span>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {(analysisData.metadata?.keywords || []).map((keyword, index) => (
+                    <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 데이터 구조 분석 */}
+        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">🔍 데이터 구조 분석</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div className="bg-green-50 rounded-lg p-4 text-center">
+              <div className="text-2xl font-bold text-green-700">
+                {analysisData.analysis_summary.total_data_points}
+              </div>
+              <div className="text-sm text-green-600">수집된 데이터</div>
+            </div>
+            <div className="bg-blue-50 rounded-lg p-4 text-center">
+              <div className="text-2xl font-bold text-blue-700">
+                {Object.keys(basic_statistics).length}
+              </div>
+              <div className="text-sm text-blue-600">분석 필드</div>
+            </div>
+            <div className="bg-purple-50 rounded-lg p-4 text-center">
+              <div className="text-lg font-bold text-purple-700">
+                {analysisData.analysis_summary.analysis_period}
+              </div>
+              <div className="text-sm text-purple-600">분석 기간</div>
+            </div>
+          </div>
+        </div>
+
         {/* 분석 요약 */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
         <h3 className="text-xl font-semibold text-gray-900 mb-4">📊 분석 개요</h3>

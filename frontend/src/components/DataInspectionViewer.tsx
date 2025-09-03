@@ -41,6 +41,12 @@ interface DataInspectionResult {
   };
 }
 
+interface ErrorResponse {
+  message: string;
+  suggestion?: string;
+  available_data?: boolean;
+}
+
 interface DataSummary {
   summary: {
     total_records: number;
@@ -59,9 +65,9 @@ interface DataSummary {
 
 export const DataInspectionViewer: React.FC<DataInspectionProps> = ({ statName, onBack }) => {
   const [activeTab, setActiveTab] = useState<'inspect' | 'summary' | 'raw'>('inspect');
-  const [inspectionData, setInspectionData] = useState<DataInspectionResult | null>(null);
-  const [summaryData, setSummaryData] = useState<DataSummary | null>(null);
-  const [rawData, setRawData] = useState<any>(null);
+  const [inspectionData, setInspectionData] = useState<DataInspectionResult | ErrorResponse | null>(null);
+  const [summaryData, setSummaryData] = useState<DataSummary | ErrorResponse | null>(null);
+  const [rawData, setRawData] = useState<any | ErrorResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -146,6 +152,28 @@ export const DataInspectionViewer: React.FC<DataInspectionProps> = ({ statName, 
 
   const renderInspectionTab = () => {
     if (!inspectionData) return null;
+
+    // Handle case where API returns error message instead of inspection data
+    if ('message' in inspectionData) {
+      return (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+          <div className="flex">
+            <svg className="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-yellow-800">데이터를 찾을 수 없습니다</h3>
+              <div className="mt-2 text-sm text-yellow-700">
+                {(inspectionData as ErrorResponse).message}
+                {(inspectionData as ErrorResponse).suggestion && (
+                  <p className="mt-1">{(inspectionData as ErrorResponse).suggestion}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     const { collection_info, data_structure, data_quality } = inspectionData;
 
@@ -269,6 +297,28 @@ export const DataInspectionViewer: React.FC<DataInspectionProps> = ({ statName, 
   const renderSummaryTab = () => {
     if (!summaryData) return null;
 
+    // Handle case where API returns error message instead of summary data
+    if ('message' in summaryData) {
+      return (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+          <div className="flex">
+            <svg className="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-yellow-800">데이터를 찾을 수 없습니다</h3>
+              <div className="mt-2 text-sm text-yellow-700">
+                {(summaryData as ErrorResponse).message}
+                {(summaryData as ErrorResponse).suggestion && (
+                  <p className="mt-1">{(summaryData as ErrorResponse).suggestion}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     const { summary, field_preview } = summaryData;
 
     return (
@@ -327,6 +377,28 @@ export const DataInspectionViewer: React.FC<DataInspectionProps> = ({ statName, 
 
   const renderRawTab = () => {
     if (!rawData) return null;
+
+    // Handle case where API returns error message instead of raw data
+    if ('message' in rawData) {
+      return (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+          <div className="flex">
+            <svg className="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-yellow-800">데이터를 찾을 수 없습니다</h3>
+              <div className="mt-2 text-sm text-yellow-700">
+                {(rawData as ErrorResponse).message}
+                {(rawData as ErrorResponse).suggestion && (
+                  <p className="mt-1">{(rawData as ErrorResponse).suggestion}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className="space-y-6">

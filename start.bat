@@ -19,4 +19,4 @@ start http://localhost:3006
 echo Service Started Successfully!
 echo Backend: http://localhost:8001
 echo Frontend: http://localhost:3006
-pause
+pause~

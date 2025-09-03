@@ -31,6 +31,22 @@ class StatData(BaseModel):
     data: Dict[str, Any]
     table_name: Optional[str] = None
     period_text: Optional[str] = None
+    period_type: Optional[str] = None  # 년간, 월간, 분기 등
+    raw_data_count: Optional[int] = None  # 수집된 데이터 항목 수
+    collection_status: Optional[str] = "success"  # success, partial, failed
+    data_quality_score: Optional[float] = None  # 데이터 품질 점수 (0-1)
+
+class ComprehensiveStatAnalysis(BaseModel):
+    """종합 통계 분석 결과"""
+    stat_url: str
+    stat_title: str
+    metadata: StatMetadata
+    collected_tables: List[str] = []  # 수집된 통계표명 목록
+    data_by_table: Dict[str, List[StatData]] = {}  # 통계표별 데이터
+    total_data_points: int = 0
+    collection_summary: Dict[str, Any] = {}  # 수집 요약 정보
+    analysis_insights: List[str] = []  # 분석 인사이트
+    created_at: datetime
 
 class GenerateStoryRequest(BaseModel):
     stat_name: str
