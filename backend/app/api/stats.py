@@ -4,6 +4,7 @@ from typing import List, Optional, Dict, Any
 from app.models.stat_models import (
     RecentStatsResponse, 
     StatMetadata, 
+    StatData,
     GenerateStoryRequest, 
     StoryResponse
 )
@@ -385,6 +386,41 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
         # 분석 결과를 기존 API 형태로 변환
         basic_statistics = _calculate_basic_statistics_from_comprehensive(analysis_result)
         
+        # 데이터 저장 (메타데이터와 통계 데이터를 캐시에 저장)
+        if analysis_result.metadata and analysis_result.data_by_table:
+            try:
+                print(f"[DEBUG] 크롤링 결과 분석:")
+                print(f"  - 메타데이터: {analysis_result.metadata.title if analysis_result.metadata else 'None'}")
+                print(f"  - 테이블 수: {len(analysis_result.data_by_table)}")
+                
+                for table_name, table_data_list in analysis_result.data_by_table.items():
+                    print(f"  - 테이블 '{table_name}': {len(table_data_list)}개 데이터")
+                    if table_data_list:
+                        sample_item = table_data_list[0]
+                        print(f"    샘플 데이터: year={getattr(sample_item, 'year', 'N/A')}, data_keys={list(sample_item.data.keys()) if hasattr(sample_item, 'data') and sample_item.data else 'Empty'}")
+                
+                # 데이터를 StatData 형식으로 변환
+                stat_data = []
+                for table_name, table_data_list in analysis_result.data_by_table.items():
+                    for data_item in table_data_list:
+                        stat_data.append(StatData(
+                            year=data_item.year,
+                            data=data_item.data,
+                            table_name=table_name
+                        ))
+                
+                print(f"[DEBUG] 변환된 StatData: {len(stat_data)}개")
+                for i, item in enumerate(stat_data[:3]):  # 처음 3개만 출력
+                    print(f"  [{i}] year={item.year}, data_keys={list(item.data.keys()) if item.data else 'Empty'}")
+                
+                # 저장 실행
+                storage_service.save_complete_data(stat_url, analysis_result.metadata, stat_data)
+                print(f"최적화된 분석 결과 저장 완료: {len(stat_data)}개 데이터")
+            except Exception as save_error:
+                print(f"데이터 저장 오류: {save_error}")
+                import traceback
+                traceback.print_exc()
+        
         # 결과를 기존 형태로 변환하여 저장
         task_results[task_id] = {
             "stat_name": request.stat_name,
@@ -660,15 +696,23 @@ async def inspect_collected_data(request: GenerateStoryRequest):
     try:
         stat_url = request.stat_url or "https://stat.molit.go.kr/portal/cate/statView.do"
         
-        # 1. 캐시된 데이터만 확인 (새로 수집하지 않음)
+        # 1. URL로 캐시된 데이터 확인
         cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
+        
+        # 2. URL로 찾지 못한 경우 stat_name으로 검색
+        if not cached_metadata or not cached_stat_data:
+            print(f"URL로 데이터 없음, stat_name으로 검색: {request.stat_name}")
+            cached_metadata, cached_stat_data, found_url = storage_service.find_data_by_name(request.stat_name)
+            if found_url:
+                stat_url = found_url  # 찾은 URL로 업데이트
         
         if not cached_metadata or not cached_stat_data:
             return {
                 "message": "수집된 데이터가 없습니다",
                 "suggestion": "먼저 '기본통계현황분석' 또는 '종합 분석'을 실행하여 데이터를 수집해주세요.",
                 "cache_status": "empty",
-                "stat_url": stat_url
+                "stat_url": stat_url,
+                "searched_name": request.stat_name
             }
         
         stat_data = cached_stat_data
@@ -724,8 +768,14 @@ async def view_raw_collected_data(request: GenerateStoryRequest):
     try:
         stat_url = request.stat_url or "https://stat.molit.go.kr/portal/cate/statView.do"
         
-        # 캐시된 데이터만 확인
+        # 캐시된 데이터 확인
         cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
+        
+        # stat_name으로 검색
+        if not cached_metadata or not cached_stat_data:
+            cached_metadata, cached_stat_data, found_url = storage_service.find_data_by_name(request.stat_name)
+            if found_url:
+                stat_url = found_url
         
         if not cached_metadata or not cached_stat_data:
             return {
@@ -760,6 +810,12 @@ async def get_data_collection_summary(request: GenerateStoryRequest):
     try:
         stat_url = request.stat_url or f"https://stat.molit.go.kr/portal/cate/statView.do?hRsId={request.stat_name}"
         cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
+        
+        # stat_name으로 검색
+        if not cached_metadata or not cached_stat_data:
+            cached_metadata, cached_stat_data, found_url = storage_service.find_data_by_name(request.stat_name)
+            if found_url:
+                stat_url = found_url
         
         if not cached_metadata or not cached_stat_data:
             return {"message": "수집된 데이터가 없습니다", "suggestion": "먼저 분석을 실행하여 데이터를 수집해주세요.", "available_data": False}

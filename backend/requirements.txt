@@ -14,3 +14,6 @@ webdriver-manager
 mcp
 anthropic
 subprocess-run
+# Excel 처리를 위한 패키지
+pandas
+openpyxl

@@ -151,22 +151,22 @@ class OptimizedMolitCrawler:
             progress_callback.update("메타데이터", 5, "통계 메타데이터 수집 중")
             metadata = await self._get_metadata_fast(stat_url)
             
-            # 2단계: 사용 가능한 통계표 목록 수집 (15%)
-            progress_callback.update("통계표목록", 15, "사용 가능한 통계표 목록 수집 중")
-            available_tables = await self._get_available_tables_fast(stat_url)
+            # 2단계: 통계표 목록과 조건 분석 (15%)
+            progress_callback.update("통계표목록", 15, "통계표 목록 및 조건 분석 중")
+            stat_tables_with_conditions = await self._get_stat_tables_with_conditions(stat_url)
             
-            total_tables = len(available_tables)
-            progress_callback.update("통계표목록", 20, f"{total_tables}개 통계표 발견")
+            total_tables = len(stat_tables_with_conditions)
+            progress_callback.update("통계표목록", 20, f"{total_tables}개 통계표 발견 (조건 분석 완료)")
             
             if total_tables == 0:
                 progress_callback.update("완료", 100, "수집할 통계표가 없습니다")
                 return self._create_empty_analysis(stat_url, metadata)
             
-            # 3단계: 병렬 데이터 수집 (20% -> 90%)
+            # 3단계: 조건별 데이터 수집 (20% -> 90%)
             progress_callback.update("데이터수집", 20, f"병렬 데이터 수집 시작 ({total_tables}개 통계표)")
             
-            data_by_table, collection_summary = await self._collect_tables_parallel(
-                stat_url, available_tables, progress_callback
+            data_by_table, collection_summary = await self._collect_tables_with_conditions_parallel(
+                stat_url, stat_tables_with_conditions, progress_callback
             )
             
             # 4단계: 분석 인사이트 생성 (95%)
@@ -218,39 +218,12 @@ class OptimizedMolitCrawler:
                 'url': stat_url
             }
             
-            # 빠른 통계정보 수집 (타임아웃 단축)
+            # 메타데이터 수집: 통계정보 + 관련용어 탭
             try:
-                stat_info_tab = WebDriverWait(driver, 5).until(
-                    EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), '통계정보')]"))
-                )
-                stat_info_tab.click()
-                await asyncio.sleep(1)
-                
-                # 핵심 정보만 추출
-                info_tables = driver.find_elements(By.TAG_NAME, "table")[:2]  # 처음 2개 테이블만
-                for table in info_tables:
-                    rows = table.find_elements(By.TAG_NAME, "tr")[:5]  # 처음 5개 행만
-                    for row in rows:
-                        try:
-                            th = row.find_element(By.TAG_NAME, "th")
-                            td = row.find_element(By.TAG_NAME, "td")
-                            key = th.text.strip()
-                            value = td.text.strip()
-                            
-                            if '통계명' in key:
-                                metadata_info['title'] = value
-                            elif '작성목적' in key:
-                                metadata_info['purpose'] = value
-                            elif '작성주기' in key:
-                                metadata_info['frequency'] = value
-                            elif '작성기관' in key:
-                                metadata_info['department'] = value
-                                
-                        except NoSuchElementException:
-                            continue
-                            
+                metadata_info = await self._collect_metadata_comprehensive(driver)
             except Exception as e:
-                print(f"통계정보 빠른 수집 실패: {e}")
+                print(f"메타데이터 수집 실패: {e}")
+                # 기본값 유지
             
             return StatMetadata(
                 id=stat_url.split('=')[-1] if '=' in stat_url else 'unknown',
@@ -534,45 +507,52 @@ class OptimizedMolitCrawler:
         return None
 
     async def _extract_table_data_fast(self, driver, period_text: str) -> Optional[StatData]:
-        """빠른 테이블 데이터 추출"""
+        """빠른 테이블 데이터 추출 - IBSheet 데이터 포함"""
         try:
-            await asyncio.sleep(1)  # 데이터 로딩 대기
-            
-            # 가장 가능성 높은 테이블만 찾기
-            potential_tables = driver.find_elements(By.CSS_SELECTOR, "table[border], .table, table[cellpadding]")
-            
-            if not potential_tables:
-                potential_tables = driver.find_elements(By.TAG_NAME, "table")[:3]  # 처음 3개만
+            await asyncio.sleep(2)  # 데이터 로딩 대기 (IBSheet 로딩 시간 고려)
             
             extracted_data = {}
             
-            for table in potential_tables[:2]:  # 최대 2개 테이블만 처리
-                try:
-                    rows = table.find_elements(By.TAG_NAME, "tr")[:10]  # 최대 10개 행만
-                    
-                    for i, row in enumerate(rows):
-                        cells = row.find_elements(By.TAG_NAME, "td") + row.find_elements(By.TAG_NAME, "th")
+            # 1. IBSheet 데이터 추출 시도
+            ibsheet_data = await self._extract_ibsheet_data(driver)
+            if ibsheet_data:
+                extracted_data.update(ibsheet_data)
+                print(f"IBSheet에서 {len(ibsheet_data)}개 데이터 추출 성공")
+            
+            # 2. 기존 정적 테이블 추출 (fallback)
+            if len(extracted_data) < 5:
+                potential_tables = driver.find_elements(By.CSS_SELECTOR, "table[border], .table, table[cellpadding]")
+                
+                if not potential_tables:
+                    potential_tables = driver.find_elements(By.TAG_NAME, "table")[:3]  # 처음 3개만
+                
+                for table in potential_tables[:2]:  # 최대 2개 테이블만 처리
+                    try:
+                        rows = table.find_elements(By.TAG_NAME, "tr")[:10]  # 최대 10개 행만
                         
-                        if len(cells) == 2:  # 키-값 형태
-                            key = cells[0].text.strip()
-                            value_text = cells[1].text.strip()
-                            if key and value_text and key != value_text:
-                                extracted_data[key] = await self._convert_cell_value_fast(value_text)
+                        for i, row in enumerate(rows):
+                            cells = row.find_elements(By.TAG_NAME, "td") + row.find_elements(By.TAG_NAME, "th")
+                            
+                            if len(cells) == 2:  # 키-값 형태
+                                key = cells[0].text.strip()
+                                value_text = cells[1].text.strip()
+                                if key and value_text and key != value_text:
+                                    extracted_data[key] = await self._convert_cell_value_fast(value_text)
+                            
+                            elif len(cells) > 2 and i > 0:  # 다중 열 (헤더 제외)
+                                first_cell = cells[0].text.strip()
+                                if first_cell:
+                                    for j, cell in enumerate(cells[1:3]):  # 최대 2개 값만
+                                        value_text = cell.text.strip()
+                                        if value_text:
+                                            key = f"{first_cell}_{j+1}"
+                                            extracted_data[key] = await self._convert_cell_value_fast(value_text)
                         
-                        elif len(cells) > 2 and i > 0:  # 다중 열 (헤더 제외)
-                            first_cell = cells[0].text.strip()
-                            if first_cell:
-                                for j, cell in enumerate(cells[1:3]):  # 최대 2개 값만
-                                    value_text = cell.text.strip()
-                                    if value_text:
-                                        key = f"{first_cell}_{j+1}"
-                                        extracted_data[key] = await self._convert_cell_value_fast(value_text)
-                    
-                    if len(extracted_data) >= 5:  # 충분한 데이터가 있으면 중단
-                        break
-                        
-                except Exception:
-                    continue
+                        if len(extracted_data) >= 5:  # 충분한 데이터가 있으면 중단
+                            break
+                            
+                    except Exception:
+                        continue
             
             # 연도 추출
             year = await self._extract_year_from_period_fast(period_text)
@@ -681,3 +661,507 @@ class OptimizedMolitCrawler:
             analysis_insights=[f"분석 중 오류 발생: {error_msg}"],
             created_at=datetime.now()
         )
+
+    async def _extract_ibsheet_data(self, driver) -> Dict[str, Any]:
+        """IBSheet에서 동적 데이터 추출"""
+        try:
+            # 1. doSearch() 함수 실행하여 데이터 로드
+            try:
+                driver.execute_script("if (typeof doSearch === 'function') doSearch();")
+                await asyncio.sleep(3)  # 데이터 로딩 대기
+            except Exception as e:
+                print(f"doSearch() 실행 실패: {e}")
+            
+            # 2. IBSheet 객체에서 데이터 직접 추출
+            ibsheet_data = {}
+            
+            # sheet01 객체에서 데이터 가져오기
+            try:
+                # IBSheet의 데이터 행 수 확인
+                row_count_script = """
+                if (typeof sheet01 !== 'undefined' && sheet01.GetDataRowCount) {
+                    return sheet01.GetDataRowCount();
+                }
+                return 0;
+                """
+                row_count = driver.execute_script(row_count_script)
+                print(f"IBSheet 데이터 행 수: {row_count}")
+                
+                if row_count > 0:
+                    # 컬럼 헤더 가져오기
+                    col_script = """
+                    if (typeof sheet01 !== 'undefined' && sheet01.GetColName) {
+                        var cols = [];
+                        try {
+                            for (var i = 0; i < 10; i++) {  // 최대 10개 컬럼
+                                var colName = sheet01.GetColName(i);
+                                if (colName) cols.push(colName);
+                            }
+                        } catch(e) {}
+                        return cols;
+                    }
+                    return [];
+                    """
+                    columns = driver.execute_script(col_script)
+                    print(f"IBSheet 컬럼: {columns}")
+                    
+                    # 데이터 추출 (최대 10개 행)
+                    for row in range(min(row_count, 10)):
+                        for col_idx, col_name in enumerate(columns[:5]):  # 최대 5개 컬럼
+                            try:
+                                value_script = f"""
+                                if (typeof sheet01 !== 'undefined' && sheet01.GetCellValue) {{
+                                    return sheet01.GetCellValue({row}, {col_idx});
+                                }}
+                                return null;
+                                """
+                                value = driver.execute_script(value_script)
+                                
+                                if value is not None and str(value).strip():
+                                    key = f"{col_name}_{row+1}" if row > 0 else col_name
+                                    ibsheet_data[key] = await self._convert_cell_value_fast(str(value))
+                                    
+                            except Exception as e:
+                                continue
+                    
+            except Exception as e:
+                print(f"IBSheet 데이터 추출 오류: {e}")
+            
+            # 3. 생성된 HTML 테이블에서도 데이터 추출 (IBSheet가 HTML로 렌더링한 경우)
+            try:
+                # IBSheet가 생성한 테이블 찾기
+                ibsheet_tables = driver.find_elements(By.CSS_SELECTOR, "[id*='sheet'], [class*='sheet'], .ibsheet")
+                for table in ibsheet_tables:
+                    try:
+                        # 테이블 내의 셀 데이터 추출
+                        cells = table.find_elements(By.CSS_SELECTOR, "td, .cell")[:20]  # 최대 20개 셀
+                        for i, cell in enumerate(cells):
+                            cell_text = cell.text.strip()
+                            if cell_text and len(cell_text) > 0:
+                                # 숫자나 의미있는 데이터인 경우만 추출
+                                if any(char.isdigit() for char in cell_text) or len(cell_text.split()) <= 3:
+                                    key = f"ibsheet_cell_{i}"
+                                    ibsheet_data[key] = await self._convert_cell_value_fast(cell_text)
+                    except:
+                        continue
+                        
+            except Exception as e:
+                print(f"IBSheet HTML 테이블 추출 오류: {e}")
+            
+            return ibsheet_data
+            
+        except Exception as e:
+            print(f"IBSheet 데이터 추출 전체 오류: {e}")
+            return {}
+
+    async def _collect_metadata_comprehensive(self, driver) -> dict:
+        """통계정보 + 관련용어 탭에서 메타데이터 종합 수집"""
+        metadata_info = {
+            'title': '국토교통 통계누리',
+            'purpose': '통계 작성 목적',
+            'frequency': '정기',
+            'department': '국토교통부',
+            'contact': '담당자 연락처',
+            'keywords': [],
+            'related_terms': {}
+        }
+        
+        try:
+            # 1. 통계정보 탭 수집
+            stat_info_tab = WebDriverWait(driver, 5).until(
+                EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), '통계정보')]"))
+            )
+            stat_info_tab.click()
+            await asyncio.sleep(1)
+            
+            # 통계정보 테이블에서 정보 추출
+            info_tables = driver.find_elements(By.TAG_NAME, "table")
+            for table in info_tables:
+                rows = table.find_elements(By.TAG_NAME, "tr")
+                for row in rows:
+                    try:
+                        th = row.find_element(By.TAG_NAME, "th")
+                        td = row.find_element(By.TAG_NAME, "td")
+                        key = th.text.strip()
+                        value = td.text.strip()
+                        
+                        if '통계명' in key:
+                            metadata_info['title'] = value
+                        elif '작성목적' in key:
+                            metadata_info['purpose'] = value
+                        elif '작성주기' in key or '작성빈도' in key:
+                            metadata_info['frequency'] = value
+                        elif '작성기관' in key or '담당부서' in key:
+                            metadata_info['department'] = value
+                        elif '연락처' in key or '담당자' in key:
+                            metadata_info['contact'] = value
+                            
+                    except:
+                        continue
+            
+            # 2. 관련용어 탭 수집
+            try:
+                related_terms_tab = WebDriverWait(driver, 5).until(
+                    EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), '관련용어')]"))
+                )
+                related_terms_tab.click()
+                await asyncio.sleep(1)
+                
+                # 관련용어 테이블에서 용어 추출
+                terms_tables = driver.find_elements(By.TAG_NAME, "table")
+                for table in terms_tables:
+                    rows = table.find_elements(By.TAG_NAME, "tr")
+                    for row in rows:
+                        try:
+                            cells = row.find_elements(By.TAG_NAME, "td")
+                            if len(cells) >= 2:
+                                term = cells[0].text.strip()
+                                definition = cells[1].text.strip()
+                                if term and definition:
+                                    metadata_info['related_terms'][term] = definition
+                                    metadata_info['keywords'].append(term)
+                        except:
+                            continue
+                            
+            except Exception as e:
+                print(f"관련용어 탭 수집 실패: {e}")
+                
+        except Exception as e:
+            print(f"통계정보 탭 수집 실패: {e}")
+            
+        return metadata_info
+
+    async def _get_stat_tables_with_conditions(self, stat_url: str) -> List[Dict[str, Any]]:
+        """통계표 목록과 각 표의 조건 분석"""
+        driver = self.browser_pool.get_browser()
+        try:
+            driver.get(stat_url)
+            await asyncio.sleep(1)
+            
+            # 통계표보기 탭으로 이동
+            try:
+                table_view_tab = WebDriverWait(driver, 5).until(
+                    EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), '통계표') and contains(text(), '보기')]"))
+                )
+                table_view_tab.click()
+                await asyncio.sleep(1)
+            except:
+                pass
+            
+            stat_tables = []
+            
+            # #sFormId 셀렉트에서 옵션들 수집
+            try:
+                select_element = WebDriverWait(driver, 5).until(
+                    EC.presence_of_element_located((By.ID, "sFormId"))
+                )
+                
+                select = Select(select_element)
+                options = select.options
+                
+                for option in options:
+                    option_text = option.text.strip()
+                    option_value = option.get_attribute('value')
+                    
+                    if option_text and '(종료)' not in option_text and option_value:
+                        # 통계표명 분석
+                        table_info = {
+                            'name': option_text,
+                            'value': option_value,
+                            'form_id': option_value,
+                            'is_regional': '_시도별' in option_text,
+                            'is_yearly': '_연도별' in option_text,
+                            'requires_date_range': False  # 기본값
+                        }
+                        
+                        stat_tables.append(table_info)
+                        
+            except Exception as e:
+                print(f"통계표 목록 수집 실패: {e}")
+            
+            return stat_tables
+            
+        finally:
+            self.browser_pool.return_browser(driver)
+
+    async def _collect_table_data_with_conditions(self, stat_url: str, table_info: Dict[str, Any]) -> List[StatData]:
+        """통계표 조건에 따른 데이터 수집"""
+        driver = self.browser_pool.get_browser()
+        try:
+            driver.get(stat_url)
+            await asyncio.sleep(1)
+            
+            # 통계표보기 탭으로 이동
+            try:
+                table_view_tab = WebDriverWait(driver, 5).until(
+                    EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), '통계표') and contains(text(), '보기')]"))
+                )
+                table_view_tab.click()
+                await asyncio.sleep(1)
+            except:
+                pass
+            
+            # 통계표 선택
+            try:
+                select_element = WebDriverWait(driver, 5).until(
+                    EC.presence_of_element_located((By.ID, "sFormId"))
+                )
+                select = Select(select_element)
+                select.select_by_value(table_info['form_id'])
+                await asyncio.sleep(1)
+            except Exception as e:
+                print(f"통계표 선택 실패: {e}")
+                return []
+            
+            # 날짜 형식 자동 감지
+            date_format = await self._detect_date_format(driver)
+            print(f"감지된 날짜 형식: {date_format}")
+            
+            # 조건부 데이터 처리
+            if table_info['is_regional'] or '시·군·구별' in table_info['name']:
+                # _시도별, 시·군·구별: 현재 조회된 데이터 그대로 수집
+                print(f"지역별 데이터 수집: {table_info['name']}")
+                await self._click_search_button(driver)  # 조회 버튼 클릭
+                return await self._extract_current_data(driver, table_info['name'])
+                
+            elif table_info['is_yearly'] or await self._should_use_date_range(driver):
+                # _연도별이거나 조건에 맞으면 5년치 데이터 수집
+                print(f"연도별/날짜범위 데이터 수집: {table_info['name']}")
+                return await self._collect_data_with_date_range(driver, table_info['name'], date_format)
+                
+            else:
+                # 기본 데이터 수집
+                print(f"기본 데이터 수집: {table_info['name']}")
+                await self._click_search_button(driver)  # 조회 버튼 클릭
+                return await self._extract_current_data(driver, table_info['name'])
+                
+        finally:
+            self.browser_pool.return_browser(driver)
+
+    async def _should_use_date_range(self, driver) -> bool:
+        """날짜 범위 설정이 필요한지 판단"""
+        try:
+            # 현재 IBSheet 데이터 확인
+            data_dict = await self._extract_ibsheet_data(driver)
+            
+            # 행열 데이터가 17개 이하인지 확인
+            if len(data_dict) > 17:
+                return False
+            
+            # 년도 형식이 있는지 확인 (YYYY 형식)
+            for value in data_dict.values():
+                if isinstance(value, str):
+                    # 4자리 숫자가 년도인지 확인 (1900-2100 범위)
+                    import re
+                    year_pattern = r'\b(19\d\d|20\d\d|21\d\d)\b'
+                    if re.search(year_pattern, value):
+                        print(f"년도 형식 발견: {value}")
+                        return True
+                        
+            return False
+            
+        except Exception as e:
+            print(f"날짜 범위 판단 오류: {e}")
+            return False
+
+    async def _collect_data_with_date_range(self, driver, table_name: str, date_format: str = "YYYYMM") -> List[StatData]:
+        """5년치 데이터 수집 (#sStart, #sEnd 설정)"""
+        try:
+            from datetime import datetime, timedelta
+            
+            # 5년치 날짜 계산
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=365*5)
+            
+            # 날짜 형식에 따른 포맷 설정
+            if date_format == "YYYY":
+                start_value = start_date.strftime('%Y')
+                end_value = end_date.strftime('%Y')
+            elif date_format == "YYYY-MM":
+                start_value = start_date.strftime('%Y-%m').replace('-0', '-')  # 01 -> 1
+                end_value = end_date.strftime('%Y-%m').replace('-0', '-')
+            elif date_format == "YYYYMM":
+                start_value = start_date.strftime('%Y%m')
+                end_value = end_date.strftime('%Y%m')
+            else:
+                start_value = start_date.strftime('%Y%m')  # 기본값
+                end_value = end_date.strftime('%Y%m')
+            
+            print(f"날짜 범위 설정 ({date_format}): {start_value} ~ {end_value}")
+            
+            # #sStart와 #sEnd 설정
+            try:
+                start_element = driver.find_element(By.ID, "sStart")
+                start_element.clear()
+                start_element.send_keys(start_value)
+                
+                end_element = driver.find_element(By.ID, "sEnd")
+                end_element.clear()
+                end_element.send_keys(end_value)
+                
+                # 조회 버튼 클릭
+                await self._click_search_button(driver)
+                
+            except Exception as e:
+                print(f"날짜 범위 설정 실패: {e}")
+            
+            # 데이터 추출
+            return await self._extract_current_data(driver, table_name)
+            
+        except Exception as e:
+            print(f"날짜 범위 데이터 수집 실패: {e}")
+            return []
+
+    async def _extract_current_data(self, driver, table_name: str) -> List[StatData]:
+        """현재 화면의 데이터 추출"""
+        try:
+            # doSearch() 실행하여 데이터 로딩
+            driver.execute_script("if (typeof doSearch === 'function') doSearch();")
+            await asyncio.sleep(1)
+            
+            # IBSheet 데이터 추출
+            data_dict = await self._extract_ibsheet_data(driver)
+            
+            if not data_dict:
+                print(f"데이터 추출 실패: {table_name}")
+                return []
+            
+            print(f"데이터 추출 성공: {table_name} ({len(data_dict)}개 데이터)")
+            
+            # StatData 객체로 변환
+            stat_data_list = []
+            for key, value in data_dict.items():
+                stat_data = StatData(
+                    category=table_name,
+                    subcategory=key,
+                    value=str(value),
+                    unit="",
+                    period=""
+                )
+                stat_data_list.append(stat_data)
+            
+            return stat_data_list
+            
+        except Exception as e:
+            print(f"현재 데이터 추출 오류: {e}")
+            return []
+
+    async def _collect_tables_with_conditions_parallel(
+        self, 
+        stat_url: str, 
+        stat_tables_with_conditions: List[Dict[str, Any]], 
+        progress_callback: ProgressCallback
+    ) -> Tuple[Dict[str, List[StatData]], Dict[str, Any]]:
+        """조건부 병렬 통계표 데이터 수집"""
+        
+        data_by_table = {}
+        collection_summary = {
+            "total_tables": len(stat_tables_with_conditions),
+            "collected_tables": 0,
+            "regional_tables": 0,
+            "yearly_tables": 0,
+            "date_range_tables": 0,
+            "default_tables": 0,
+            "total_data_points": 0,
+            "errors": []
+        }
+        
+        # 각 통계표를 순차적으로 처리 (조건별 처리가 복잡해서 병렬보다는 순차 처리)
+        for i, table_info in enumerate(stat_tables_with_conditions):
+            try:
+                table_name = table_info['name']
+                progress_callback.update(
+                    "데이터수집", 
+                    20 + (i * 70 // len(stat_tables_with_conditions)), 
+                    f"수집 중: {table_name}"
+                )
+                
+                print(f"통계표 수집 시작: {table_name} (조건: 시도별={table_info['is_regional']}, 연도별={table_info['is_yearly']})")
+                
+                # 조건에 따른 데이터 수집
+                table_data = await self._collect_table_data_with_conditions(stat_url, table_info)
+                
+                if table_data:
+                    data_by_table[table_name] = table_data
+                    collection_summary["collected_tables"] += 1
+                    collection_summary["total_data_points"] += len(table_data)
+                    
+                    # 조건별 통계
+                    if table_info['is_regional']:
+                        collection_summary["regional_tables"] += 1
+                    elif table_info['is_yearly']:
+                        collection_summary["yearly_tables"] += 1
+                        collection_summary["date_range_tables"] += 1
+                    else:
+                        collection_summary["default_tables"] += 1
+                    
+                    print(f"통계표 수집 완료: {table_name} ({len(table_data)}개 데이터)")
+                else:
+                    print(f"통계표 수집 실패: {table_name}")
+                    collection_summary["errors"].append(f"데이터 수집 실패: {table_name}")
+                
+            except Exception as e:
+                error_msg = f"통계표 '{table_info.get('name', 'Unknown')}' 처리 오류: {e}"
+                print(error_msg)
+                collection_summary["errors"].append(error_msg)
+        
+        progress_callback.update("데이터수집", 90, f"데이터 수집 완료 ({collection_summary['collected_tables']}개 통계표)")
+        
+        return data_by_table, collection_summary
+
+    async def _detect_date_format(self, driver) -> str:
+        """날짜 입력 필드 형식 자동 감지"""
+        try:
+            # #sStart 필드 확인
+            start_element = driver.find_element(By.ID, "sStart")
+            
+            # placeholder나 기본값 확인
+            placeholder = start_element.get_attribute("placeholder") or ""
+            value = start_element.get_attribute("value") or ""
+            
+            # 형식 판단
+            if "-" in placeholder or "-" in value:
+                return "YYYY-MM"
+            elif len(placeholder) == 6 or len(value) == 6:
+                return "YYYYMM"
+            elif len(placeholder) == 4 or len(value) == 4:
+                return "YYYY"
+            else:
+                # 기본값은 YYYYMM
+                return "YYYYMM"
+                
+        except Exception as e:
+            print(f"날짜 형식 감지 실패: {e}")
+            return "YYYYMM"  # 기본값
+
+    async def _click_search_button(self, driver):
+        """조회/검색 버튼 클릭"""
+        try:
+            # 다양한 조회 버튼 패턴 시도
+            button_selectors = [
+                "//input[@value='조회']",
+                "//input[@value='검색']",
+                "//button[contains(text(), '조회')]",
+                "//button[contains(text(), '검색')]",
+                "//a[contains(@onclick, 'doSearch')]"
+            ]
+            
+            for selector in button_selectors:
+                try:
+                    search_button = WebDriverWait(driver, 2).until(
+                        EC.element_to_be_clickable((By.XPATH, selector))
+                    )
+                    search_button.click()
+                    print(f"조회 버튼 클릭 성공: {selector}")
+                    await asyncio.sleep(2)  # 데이터 로딩 대기
+                    return
+                except:
+                    continue
+            
+            # 버튼을 찾지 못한 경우 JavaScript doSearch() 직접 호출
+            driver.execute_script("if (typeof doSearch === 'function') doSearch();")
+            print("JavaScript doSearch() 호출")
+            await asyncio.sleep(2)
+            
+        except Exception as e:
+            print(f"조회 버튼 클릭 실패: {e}")
