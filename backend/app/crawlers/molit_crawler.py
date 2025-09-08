@@ -566,8 +566,7 @@ class MolitCrawler:
                         
                     rows = table.find_all('tr')
                     for row_idx, row in enumerate(rows):
-                        if row_idx > 50:  # 행 수 제한
-                            break
+                        # 행 수 제한 제거 - 전체 데이터 수집
                             
                         cells = row.find_all(['td', 'th'])
                         for cell in cells:
@@ -592,9 +591,9 @@ class MolitCrawler:
                 
                 # 연도별 데이터가 없으면 테이블의 일반적인 큰 숫자 사용
                 if not year_data["extracted_values"]:
-                    for table in tables[:5]:  # 상위 5개 테이블만
+                    for table in tables:  # 전체 테이블
                         rows = table.find_all('tr')
-                        for row in rows[:20]:  # 상위 20개 행만
+                        for row in rows:  # 전체 행
                             cells = row.find_all(['td', 'th'])
                             for cell in cells:
                                 cell_text = cell.get_text(strip=True)

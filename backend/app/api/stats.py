@@ -6,7 +6,11 @@ from app.models.stat_models import (
     StatMetadata, 
     StatData,
     GenerateStoryRequest, 
-    StoryResponse
+    StoryResponse,
+    InspectionResult, 
+    StatTable, 
+    TableColumn, 
+    TableRow
 )
 from app.services.crawler_service import CrawlerService
 from app.services.ai_service import AIService
@@ -943,3 +947,109 @@ async def view_data_collection_log(request: GenerateStoryRequest):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"수집 로그 생성 중 오류: {str(e)}")
+
+@router.get("/inspect-enhanced/{stat_name}", response_model=InspectionResult, summary="향상된 데이터 검사")
+async def inspect_enhanced_data(stat_name: str):
+    """IBSheet 스타일 데이터 검사 - API 기반"""
+    try:
+        from datetime import datetime
+        
+        # 기존 저장된 데이터 찾기
+        storage_service = DataStorageService()
+        metadata, stat_data, stat_url = storage_service.find_data_by_name(stat_name)
+        
+        if not metadata or not stat_url:
+            raise HTTPException(status_code=404, detail="해당 통계 데이터를 찾을 수 없습니다")
+        
+        # API 기반 재수집 및 구조화
+        try:
+            crawler = OptimizedMolitCrawler(pool_size=1)
+            
+            # URL에서 FormId 추출
+            from urllib.parse import urlparse, parse_qs
+            parsed = urlparse(stat_url)
+            params = parse_qs(parsed.query)
+            base_form_id = params.get('hFormId', [''])[0]
+            
+            if not base_form_id:
+                raise HTTPException(status_code=400, detail="FormId를 추출할 수 없습니다")
+            
+            print(f"API 기반 데이터 검사 시작: {stat_name} (FormId: {base_form_id})")
+            
+            # 통계표별 데이터 수집
+            stat_tables_with_conditions = await crawler._get_stat_tables_with_conditions(stat_url)
+            
+            tables = []
+            total_data_points = 0
+            errors = []
+            
+            for table_info in stat_tables_with_conditions:  # 모든 테이블
+                try:
+                    # 현재 월 데이터 수집
+                    current_month = datetime.now().strftime('%Y%m')
+                    
+                    # API 데이터 수집
+                    form_id = table_info.get('form_id', base_form_id)
+                    api_data = await crawler._extract_data_via_api_direct(form_id, current_month, current_month)
+                    
+                    if api_data and api_data.get('rows'):
+                        # StatTable 객체 생성
+                        columns = []
+                        for col_id, col_name in api_data['headers'].items():
+                            columns.append(TableColumn(
+                                id=col_id,
+                                name=col_name,
+                                data_type="number" if col_id != "0" else "text"
+                            ))
+                        
+                        rows = []
+                        for i, row_data in enumerate(api_data['rows']):  # 전체 행
+                            cells = {}
+                            for col_id, col_name in api_data['headers'].items():
+                                cells[col_id] = row_data.get(col_name, "")
+                            
+                            rows.append(TableRow(
+                                row_id=f"row_{i}",
+                                cells=cells
+                            ))
+                        
+                        stat_table = StatTable(
+                            table_name=table_info['name'],
+                            form_id=form_id,
+                            period=current_month,
+                            columns=columns,
+                            rows=rows,
+                            total_rows=len(api_data['rows']),
+                            summary=api_data.get('summary', {}),
+                            collection_method="api"
+                        )
+                        
+                        tables.append(stat_table)
+                        total_data_points += len(rows)
+                        print(f"테이블 수집 완료: {table_info['name']} ({len(rows)}행)")
+                        
+                except Exception as table_error:
+                    error_msg = f"테이블 '{table_info.get('name')}' 수집 실패: {str(table_error)}"
+                    errors.append(error_msg)
+                    print(error_msg)
+            
+            # 결과 반환
+            return InspectionResult(
+                stat_name=stat_name,
+                stat_url=stat_url,
+                tables=tables,
+                metadata=metadata,
+                total_tables=len(tables),
+                total_data_points=total_data_points,
+                collection_success=len(tables) > 0,
+                errors=errors,
+                inspected_at=datetime.now()
+            )
+            
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"API 데이터 수집 실패: {str(e)}")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"데이터 검사 중 오류: {str(e)}")

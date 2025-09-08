@@ -734,7 +734,7 @@ class OptimizedMolitCrawler:
                 for table in ibsheet_tables:
                     try:
                         # 테이블 내의 셀 데이터 추출
-                        cells = table.find_elements(By.CSS_SELECTOR, "td, .cell")[:20]  # 최대 20개 셀
+                        cells = table.find_elements(By.CSS_SELECTOR, "td, .cell")  # 전체 셀
                         for i, cell in enumerate(cells):
                             cell_text = cell.text.strip()
                             if cell_text and len(cell_text) > 0:
@@ -917,22 +917,60 @@ class OptimizedMolitCrawler:
             date_format = await self._detect_date_format(driver)
             print(f"감지된 날짜 형식: {date_format}")
             
-            # 조건부 데이터 처리
+            # API 기반 데이터 수집 우선 시도
+            try:
+                # 현재 날짜 기본값 설정 (최신 1개월)
+                from datetime import datetime
+                current_date = datetime.now()
+                current_month = current_date.strftime('%Y%m')
+                
+                # 조건부 날짜 설정
+                if table_info['is_regional'] or '시·군·구별' in table_info['name']:
+                    # 지역별: 현재 월
+                    start_date = end_date = current_month
+                    print(f"지역별 API 데이터 수집: {table_info['name']} ({current_month})")
+                    
+                elif table_info['is_yearly'] or await self._should_use_date_range(driver):
+                    # 연도별: 5년치 범위 계산
+                    if date_format == "YYYY":
+                        start_date = str(current_date.year - 4)
+                        end_date = str(current_date.year)
+                    else:
+                        # YYYYMM 형식으로 5년 전부터
+                        start_year = current_date.year - 4
+                        start_date = f"{start_year}01"
+                        end_date = current_month
+                    print(f"연도별 API 데이터 수집: {table_info['name']} ({start_date}~{end_date})")
+                else:
+                    # 기본: 현재 월
+                    start_date = end_date = current_month
+                    print(f"기본 API 데이터 수집: {table_info['name']} ({current_month})")
+                
+                # API를 통한 데이터 수집 시도
+                api_result = await self._collect_table_data_via_api(stat_url, table_info, start_date, end_date)
+                
+                if api_result:
+                    print(f"API 데이터 수집 성공: {len(api_result)}개")
+                    return api_result
+                else:
+                    print("API 수집 실패, 기존 방식으로 fallback")
+                    
+            except Exception as e:
+                print(f"API 수집 중 오류: {e}, 기존 방식으로 fallback")
+            
+            # API 실패 시 기존 방식으로 fallback
             if table_info['is_regional'] or '시·군·구별' in table_info['name']:
-                # _시도별, 시·군·구별: 현재 조회된 데이터 그대로 수집
-                print(f"지역별 데이터 수집: {table_info['name']}")
-                await self._click_search_button(driver)  # 조회 버튼 클릭
+                print(f"[Fallback] 지역별 데이터 수집: {table_info['name']}")
+                await self._click_search_button(driver)
                 return await self._extract_current_data(driver, table_info['name'])
                 
             elif table_info['is_yearly'] or await self._should_use_date_range(driver):
-                # _연도별이거나 조건에 맞으면 5년치 데이터 수집
-                print(f"연도별/날짜범위 데이터 수집: {table_info['name']}")
+                print(f"[Fallback] 연도별/날짜범위 데이터 수집: {table_info['name']}")
                 return await self._collect_data_with_date_range(driver, table_info['name'], date_format)
                 
             else:
-                # 기본 데이터 수집
-                print(f"기본 데이터 수집: {table_info['name']}")
-                await self._click_search_button(driver)  # 조회 버튼 클릭
+                print(f"[Fallback] 기본 데이터 수집: {table_info['name']}")
+                await self._click_search_button(driver)
                 return await self._extract_current_data(driver, table_info['name'])
                 
         finally:
@@ -1165,3 +1203,187 @@ class OptimizedMolitCrawler:
             
         except Exception as e:
             print(f"조회 버튼 클릭 실패: {e}")
+
+    async def _extract_data_via_api(self, driver, form_id: str, start_date: str, end_date: str) -> Dict[str, Any]:
+        """AJAX API를 통한 직접 데이터 추출"""
+        try:
+            import aiohttp
+            import json
+            
+            # 현재 페이지의 쿠키와 세션 가져오기
+            cookies = {cookie['name']: cookie['value'] for cookie in driver.get_cookies()}
+            
+            # API 요청을 위한 세션 생성
+            async with aiohttp.ClientSession(cookies=cookies) as session:
+                
+                # 1. 컬럼 구조 정보 가져오기
+                columns_url = f"https://stat.molit.go.kr/portal/stat/columns.do?formId={form_id}&styleNum=1"
+                print(f"컬럼 정보 요청: {columns_url}")
+                
+                async with session.get(columns_url) as response:
+                    columns_data = await response.json()
+                    print(f"컬럼 응답: {columns_data.get('result', False)}")
+                
+                # 2. 실제 데이터 가져오기  
+                data_url = f"https://stat.molit.go.kr/portal/stat/data.do?formId={form_id}&styleNum=1&apprYn=Y&startDate={start_date}&endDate={end_date}"
+                print(f"데이터 요청: {data_url}")
+                
+                async with session.get(data_url) as response:
+                    data_response = await response.json()
+                    print(f"데이터 응답: {data_response.get('result', False)}")
+                
+                # 3. 데이터 구조화
+                if columns_data.get('result') and data_response.get('result'):
+                    return self._structure_api_data(columns_data.get('data', []), data_response.get('data', []))
+                else:
+                    print("API 응답 실패")
+                    return {}
+                    
+        except Exception as e:
+            print(f"API 데이터 추출 오류: {e}")
+            return {}
+
+    def _structure_api_data(self, columns: List[Dict], data_rows: List[Dict]) -> Dict[str, Any]:
+        """API 응답 데이터를 구조화된 형태로 변환"""
+        try:
+            # 컬럼 헤더 매핑
+            column_headers = {}
+            for col in columns:
+                col_id = str(col.get('DATA_DIV_ID', ''))
+                col_name = col.get('DATA_DIV_NM', f'컬럼_{col_id}')
+                column_headers[col_id] = col_name
+            
+            print(f"컬럼 헤더: {column_headers}")
+            
+            # 데이터 행 처리
+            structured_data = {
+                'headers': column_headers,
+                'rows': [],
+                'total_rows': len(data_rows),
+                'summary': {}
+            }
+            
+            for row in data_rows:
+                structured_row = {}
+                for key, value in row.items():
+                    header_name = column_headers.get(key, f'컬럼_{key}')
+                    structured_row[header_name] = value
+                structured_data['rows'].append(structured_row)
+            
+            # 간단한 통계 요약
+            if structured_data['rows']:
+                first_row = structured_data['rows'][0]
+                structured_data['summary'] = {
+                    'period': first_row.get(column_headers.get('0', '기간'), ''),
+                    'total_records': len(structured_data['rows']),
+                    'columns': list(column_headers.values())
+                }
+            
+            print(f"구조화된 데이터: {len(structured_data['rows'])}개 행")
+            return structured_data
+            
+        except Exception as e:
+            print(f"데이터 구조화 오류: {e}")
+            return {}
+
+    async def _get_form_id_from_url(self, stat_url: str) -> str:
+        """URL에서 hFormId 추출"""
+        try:
+            from urllib.parse import urlparse, parse_qs
+            parsed = urlparse(stat_url)
+            params = parse_qs(parsed.query)
+            form_id = params.get('hFormId', [''])[0]
+            print(f"추출된 FormId: {form_id}")
+            return form_id
+        except Exception as e:
+            print(f"FormId 추출 실패: {e}")
+            return ""
+
+    async def _collect_table_data_via_api(self, stat_url: str, table_info: Dict[str, Any], start_date: str, end_date: str) -> List[StatData]:
+        """API를 통한 통계표 데이터 수집"""
+        try:
+            # URL에서 기본 FormId 추출
+            base_form_id = await self._get_form_id_from_url(stat_url)
+            
+            # 통계표별 FormId 사용 (있으면)
+            form_id = table_info.get('form_id', base_form_id)
+            
+            if not form_id:
+                print(f"FormId를 찾을 수 없습니다: {table_info.get('name')}")
+                return []
+            
+            print(f"API 데이터 수집 시작: {table_info.get('name')} (FormId: {form_id})")
+            
+            # 브라우저를 통해 쿠키/세션 확보 후 API 호출
+            driver = self.browser_pool.get_browser()
+            try:
+                driver.get(stat_url)
+                await asyncio.sleep(1)
+                
+                # API를 통한 데이터 추출
+                api_data = await self._extract_data_via_api(driver, form_id, start_date, end_date)
+                
+                if not api_data or not api_data.get('rows'):
+                    print(f"API 데이터 수집 실패: {table_info.get('name')}")
+                    return []
+                
+                # StatData 객체로 변환
+                stat_data_list = []
+                table_name = table_info.get('name', f'FormId_{form_id}')
+                
+                for i, row in enumerate(api_data['rows']):
+                    for header, value in row.items():
+                        if value and str(value).strip():  # 빈 값 제외
+                            stat_data = StatData(
+                                category=table_name,
+                                subcategory=f"{header}",
+                                value=str(value),
+                                unit="",
+                                period=api_data['summary'].get('period', '')
+                            )
+                            stat_data_list.append(stat_data)
+                
+                print(f"API 데이터 수집 완료: {table_name} ({len(stat_data_list)}개 데이터)")
+                return stat_data_list
+                
+            finally:
+                self.browser_pool.return_browser(driver)
+                
+        except Exception as e:
+            print(f"API 통계표 데이터 수집 오류: {e}")
+            return []
+
+    async def _extract_data_via_api_direct(self, form_id: str, start_date: str, end_date: str) -> Dict[str, Any]:
+        """직접 API 호출 (브라우저 세션 없이)"""
+        try:
+            import aiohttp
+            
+            async with aiohttp.ClientSession() as session:
+                # 1. 컬럼 정보 요청
+                columns_url = f"https://stat.molit.go.kr/portal/stat/columns.do?formId={form_id}&styleNum=1"
+                
+                async with session.get(columns_url) as response:
+                    if response.status != 200:
+                        print(f"컬럼 API 호출 실패: {response.status}")
+                        return {}
+                    columns_data = await response.json()
+                
+                # 2. 데이터 요청
+                data_url = f"https://stat.molit.go.kr/portal/stat/data.do?formId={form_id}&styleNum=1&apprYn=Y&startDate={start_date}&endDate={end_date}"
+                
+                async with session.get(data_url) as response:
+                    if response.status != 200:
+                        print(f"데이터 API 호출 실패: {response.status}")
+                        return {}
+                    data_response = await response.json()
+                
+                # 3. 데이터 구조화
+                if columns_data.get('result') and data_response.get('result'):
+                    return self._structure_api_data(columns_data.get('data', []), data_response.get('data', []))
+                else:
+                    print(f"API 응답 실패: columns={columns_data.get('result')}, data={data_response.get('result')}")
+                    return {}
+                    
+        except Exception as e:
+            print(f"직접 API 호출 오류: {e}")
+            return {}

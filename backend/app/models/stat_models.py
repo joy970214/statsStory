@@ -64,3 +64,39 @@ class StoryResponse(BaseModel):
     sections: List[CardNewsSection]
     metadata: StatMetadata
     generated_at: datetime
+
+class TableColumn(BaseModel):
+    """테이블 컬럼 정보"""
+    id: str
+    name: str
+    data_type: Optional[str] = "text"  # text, number, date
+    level: Optional[int] = 1  # 헤더 레벨
+    parent_id: Optional[str] = None  # 상위 컬럼 ID
+
+class TableRow(BaseModel):
+    """테이블 행 데이터"""
+    row_id: str
+    cells: Dict[str, Any]  # column_id -> value
+    
+class StatTable(BaseModel):
+    """IBSheet 스타일 통계 테이블"""
+    table_name: str
+    form_id: str
+    period: str  # "2025-07" or "2020~2025" 등
+    columns: List[TableColumn]
+    rows: List[TableRow]
+    total_rows: int
+    summary: Dict[str, Any] = {}
+    collection_method: str = "api"  # api, selenium, hybrid
+
+class InspectionResult(BaseModel):
+    """데이터 검사 결과"""
+    stat_name: str
+    stat_url: str
+    tables: List[StatTable] = []
+    metadata: Optional[StatMetadata] = None
+    total_tables: int = 0
+    total_data_points: int = 0
+    collection_success: bool = True
+    errors: List[str] = []
+    inspected_at: datetime
