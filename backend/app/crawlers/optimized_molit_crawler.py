@@ -1066,19 +1066,25 @@ class OptimizedMolitCrawler:
             
             print(f"데이터 추출 성공: {table_name} ({len(data_dict)}개 데이터)")
             
-            # StatData 객체로 변환
-            stat_data_list = []
-            for key, value in data_dict.items():
-                stat_data = StatData(
-                    category=table_name,
-                    subcategory=key,
-                    value=str(value),
-                    unit="",
-                    period=""
-                )
-                stat_data_list.append(stat_data)
+            # StatData 객체로 변환 (올바른 모델 구조 사용)
+            from datetime import datetime
+            current_year = datetime.now().year
             
-            return stat_data_list
+            # 데이터를 Dict 형태로 변환
+            converted_data = {}
+            for key, value in data_dict.items():
+                converted_data[key] = str(value)
+            
+            # 단일 StatData 객체 생성 (기존 모델 구조에 맞게)
+            stat_data = StatData(
+                year=current_year,
+                data=converted_data,
+                table_name=table_name,
+                period_text=f"{datetime.now().strftime('%Y-%m')}",
+                raw_data_count=len(data_dict)
+            )
+            
+            return [stat_data]
             
         except Exception as e:
             print(f"현재 데이터 추출 오류: {e}")
@@ -1221,7 +1227,14 @@ class OptimizedMolitCrawler:
                 print(f"컬럼 정보 요청: {columns_url}")
                 
                 async with session.get(columns_url) as response:
-                    columns_data = await response.json()
+                    # content-type을 무시하고 강제로 JSON 파싱
+                    try:
+                        columns_data = await response.json()
+                    except Exception:
+                        # JSON 파싱 실패 시 텍스트로 받아서 JSON 변환 시도
+                        text_content = await response.text()
+                        import json
+                        columns_data = json.loads(text_content)
                     print(f"컬럼 응답: {columns_data.get('result', False)}")
                 
                 # 2. 실제 데이터 가져오기  
@@ -1229,7 +1242,14 @@ class OptimizedMolitCrawler:
                 print(f"데이터 요청: {data_url}")
                 
                 async with session.get(data_url) as response:
-                    data_response = await response.json()
+                    # content-type을 무시하고 강제로 JSON 파싱
+                    try:
+                        data_response = await response.json()
+                    except Exception:
+                        # JSON 파싱 실패 시 텍스트로 받아서 JSON 변환 시도
+                        text_content = await response.text()
+                        import json
+                        data_response = json.loads(text_content)
                     print(f"데이터 응답: {data_response.get('result', False)}")
                 
                 # 3. 데이터 구조화
@@ -1327,24 +1347,33 @@ class OptimizedMolitCrawler:
                     print(f"API 데이터 수집 실패: {table_info.get('name')}")
                     return []
                 
-                # StatData 객체로 변환
-                stat_data_list = []
+                # StatData 객체로 변환 (올바른 모델 구조 사용)
+                from datetime import datetime
                 table_name = table_info.get('name', f'FormId_{form_id}')
+                
+                # API 데이터를 Dict 형태로 변환
+                converted_data = {}
+                data_count = 0
                 
                 for i, row in enumerate(api_data['rows']):
                     for header, value in row.items():
                         if value and str(value).strip():  # 빈 값 제외
-                            stat_data = StatData(
-                                category=table_name,
-                                subcategory=f"{header}",
-                                value=str(value),
-                                unit="",
-                                period=api_data['summary'].get('period', '')
-                            )
-                            stat_data_list.append(stat_data)
+                            key = f"{header}_{i}" if i > 0 else header
+                            converted_data[key] = str(value)
+                            data_count += 1
                 
-                print(f"API 데이터 수집 완료: {table_name} ({len(stat_data_list)}개 데이터)")
-                return stat_data_list
+                # 단일 StatData 객체 생성 (기존 모델 구조에 맞게)
+                current_year = datetime.now().year
+                stat_data = StatData(
+                    year=current_year,
+                    data=converted_data,
+                    table_name=table_name,
+                    period_text=api_data['summary'].get('period', ''),
+                    raw_data_count=data_count
+                )
+                
+                print(f"API 데이터 수집 완료: {table_name} ({data_count}개 데이터)")
+                return [stat_data]
                 
             finally:
                 self.browser_pool.return_browser(driver)
@@ -1366,7 +1395,14 @@ class OptimizedMolitCrawler:
                     if response.status != 200:
                         print(f"컬럼 API 호출 실패: {response.status}")
                         return {}
-                    columns_data = await response.json()
+                    # content-type을 무시하고 강제로 JSON 파싱
+                    try:
+                        columns_data = await response.json()
+                    except Exception:
+                        # JSON 파싱 실패 시 텍스트로 받아서 JSON 변환 시도
+                        text_content = await response.text()
+                        import json
+                        columns_data = json.loads(text_content)
                 
                 # 2. 데이터 요청
                 data_url = f"https://stat.molit.go.kr/portal/stat/data.do?formId={form_id}&styleNum=1&apprYn=Y&startDate={start_date}&endDate={end_date}"
@@ -1375,7 +1411,14 @@ class OptimizedMolitCrawler:
                     if response.status != 200:
                         print(f"데이터 API 호출 실패: {response.status}")
                         return {}
-                    data_response = await response.json()
+                    # content-type을 무시하고 강제로 JSON 파싱
+                    try:
+                        data_response = await response.json()
+                    except Exception:
+                        # JSON 파싱 실패 시 텍스트로 받아서 JSON 변환 시도
+                        text_content = await response.text()
+                        import json
+                        data_response = json.loads(text_content)
                 
                 # 3. 데이터 구조화
                 if columns_data.get('result') and data_response.get('result'):
