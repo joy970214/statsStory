@@ -55,15 +55,22 @@ class BrowserPool:
         chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument('--window-size=1920,1080')
         chrome_options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
-        # 성능 최적화
-        chrome_options.add_argument('--disable-images')
+        
+        # 안정성 개선 옵션
         chrome_options.add_argument('--disable-plugins')
         chrome_options.add_argument('--disable-extensions')
         chrome_options.add_argument('--disable-logging')
+        chrome_options.add_argument('--disable-web-security')
+        chrome_options.add_argument('--disable-features=VizDisplayCompositor')
+        chrome_options.add_argument('--disable-crash-reporter')
+        chrome_options.add_argument('--disable-ipc-flooding-protection')
+        chrome_options.add_argument('--memory-pressure-off')
+        chrome_options.add_argument('--max_old_space_size=4096')
         
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=chrome_options)
-        driver.set_page_load_timeout(15)  # 페이지 로딩 시간 단축
+        driver.set_page_load_timeout(30)  # 타임아웃 증가
+        driver.implicitly_wait(10)  # 암시적 대기 추가
         
         return driver
     
@@ -675,54 +682,101 @@ class OptimizedMolitCrawler:
             # 2. IBSheet 객체에서 데이터 직접 추출
             ibsheet_data = {}
             
+            # IBSheet 로딩 대기 (더 긴 시간)
+            await asyncio.sleep(3)
+            
             # sheet01 객체에서 데이터 가져오기
             try:
-                # IBSheet의 데이터 행 수 확인
+                # 여러 IBSheet 객체 이름 시도
                 row_count_script = """
-                if (typeof sheet01 !== 'undefined' && sheet01.GetDataRowCount) {
-                    return sheet01.GetDataRowCount();
-                }
-                return 0;
-                """
-                row_count = driver.execute_script(row_count_script)
-                print(f"IBSheet 데이터 행 수: {row_count}")
+                var sheetNames = ['sheet01', 'Sheet1', 'ibsheet', 'IBSheet', 'mainSheet'];
+                var rowCount = 0;
+                var foundSheet = null;
                 
-                if row_count > 0:
-                    # 컬럼 헤더 가져오기
-                    col_script = """
-                    if (typeof sheet01 !== 'undefined' && sheet01.GetColName) {
-                        var cols = [];
-                        try {
-                            for (var i = 0; i < 10; i++) {  // 최대 10개 컬럼
-                                var colName = sheet01.GetColName(i);
-                                if (colName) cols.push(colName);
-                            }
-                        } catch(e) {}
-                        return cols;
+                for (var name of sheetNames) {
+                    try {
+                        if (typeof window[name] !== 'undefined' && window[name].GetDataRowCount) {
+                            rowCount = window[name].GetDataRowCount();
+                            foundSheet = name;
+                            console.log('Found IBSheet:', name, 'with', rowCount, 'rows');
+                            break;
+                        }
+                    } catch(e) {
+                        console.log('Error checking', name, ':', e);
                     }
+                }
+                
+                return {rowCount: rowCount, sheetName: foundSheet};
+                """
+                result = driver.execute_script(row_count_script)
+                row_count = result.get('rowCount', 0) if isinstance(result, dict) else 0
+                sheet_name = result.get('sheetName') if isinstance(result, dict) else None
+                
+                print(f"IBSheet 데이터 행 수: {row_count} (사용된 시트: {sheet_name})")
+                
+                if row_count > 0 and sheet_name:
+                    # 컬럼 헤더 가져오기 (발견된 시트 이름 사용)
+                    col_script = f"""
+                    var sheetObj = window['{sheet_name}'];
+                    if (sheetObj && sheetObj.GetColName) {{
+                        var cols = [];
+                        try {{
+                            for (var i = 0; i < 20; i++) {{  // 최대 20개 컬럼
+                                var colName = sheetObj.GetColName(i);
+                                if (colName && colName.trim() !== '') {{
+                                    cols.push(colName);
+                                }} else if (i > 5) {{  // 5개 연속 빈 컬럼이면 중단
+                                    break;
+                                }}
+                            }}
+                        }} catch(e) {{
+                            console.log('Column error:', e);
+                        }}
+                        return cols;
+                    }}
                     return [];
                     """
                     columns = driver.execute_script(col_script)
                     print(f"IBSheet 컬럼: {columns}")
                     
-                    # 데이터 추출 (최대 10개 행)
-                    for row in range(min(row_count, 10)):
-                        for col_idx, col_name in enumerate(columns[:5]):  # 최대 5개 컬럼
-                            try:
-                                value_script = f"""
-                                if (typeof sheet01 !== 'undefined' && sheet01.GetCellValue) {{
-                                    return sheet01.GetCellValue({row}, {col_idx});
+                    # 데이터 추출 (최대 20개 행, 효율적으로)
+                    max_rows = min(row_count, 20)
+                    max_cols = min(len(columns), 10)
+                    
+                    # 한번에 여러 셀 데이터 가져오기
+                    batch_script = f"""
+                    var sheetObj = window['{sheet_name}'];
+                    var batchData = [];
+                    
+                    if (sheetObj && sheetObj.GetCellValue) {{
+                        for (var row = 0; row < {max_rows}; row++) {{
+                            var rowData = [];
+                            for (var col = 0; col < {max_cols}; col++) {{
+                                try {{
+                                    var value = sheetObj.GetCellValue(row, col);
+                                    rowData.push(value || '');
+                                }} catch(e) {{
+                                    rowData.push('');
                                 }}
-                                return null;
-                                """
-                                value = driver.execute_script(value_script)
-                                
-                                if value is not None and str(value).strip():
-                                    key = f"{col_name}_{row+1}" if row > 0 else col_name
+                            }}
+                            batchData.push(rowData);
+                        }}
+                    }}
+                    
+                    return batchData;
+                    """
+                    
+                    batch_data = driver.execute_script(batch_script)
+                    print(f"IBSheet 배치 데이터 수집: {len(batch_data) if batch_data else 0}개 행")
+                    
+                    # 배치 데이터를 딕셔너리로 변환
+                    if batch_data:
+                        for row_idx, row_data in enumerate(batch_data):
+                            for col_idx, value in enumerate(row_data):
+                                if col_idx < len(columns) and value and str(value).strip():
+                                    col_name = columns[col_idx]
+                                    key = f"{col_name}_{row_idx+1}" if row_idx > 0 else col_name
                                     ibsheet_data[key] = await self._convert_cell_value_fast(str(value))
-                                    
-                            except Exception as e:
-                                continue
                     
             except Exception as e:
                 print(f"IBSheet 데이터 추출 오류: {e}")
@@ -917,55 +971,62 @@ class OptimizedMolitCrawler:
             date_format = await self._detect_date_format(driver)
             print(f"감지된 날짜 형식: {date_format}")
             
-            # API 기반 데이터 수집 우선 시도
-            try:
-                # 현재 날짜 기본값 설정 (최신 1개월)
-                from datetime import datetime
-                current_date = datetime.now()
-                current_month = current_date.strftime('%Y%m')
-                
-                # 조건부 날짜 설정
-                if table_info['is_regional'] or '시·군·구별' in table_info['name']:
-                    # 지역별: 현재 월
-                    start_date = end_date = current_month
-                    print(f"지역별 API 데이터 수집: {table_info['name']} ({current_month})")
-                    
-                elif table_info['is_yearly'] or await self._should_use_date_range(driver):
-                    # 연도별: 5년치 범위 계산
-                    if date_format == "YYYY":
-                        start_date = str(current_date.year - 4)
-                        end_date = str(current_date.year)
-                    else:
-                        # YYYYMM 형식으로 5년 전부터
-                        start_year = current_date.year - 4
-                        start_date = f"{start_year}01"
-                        end_date = current_month
-                    print(f"연도별 API 데이터 수집: {table_info['name']} ({start_date}~{end_date})")
-                else:
-                    # 기본: 현재 월
-                    start_date = end_date = current_month
-                    print(f"기본 API 데이터 수집: {table_info['name']} ({current_month})")
-                
-                # API를 통한 데이터 수집 시도
-                api_result = await self._collect_table_data_via_api(stat_url, table_info, start_date, end_date)
-                
-                if api_result:
-                    print(f"API 데이터 수집 성공: {len(api_result)}개")
-                    return api_result
-                else:
-                    print("API 수집 실패, 기존 방식으로 fallback")
-                    
-            except Exception as e:
-                print(f"API 수집 중 오류: {e}, 기존 방식으로 fallback")
+            # API 수집을 임시 비활성화 (안정성을 위해 IBSheet 방식만 사용)
+            # TODO: API 엔드포인트가 안정화되면 다시 활성화
+            api_disabled = True
             
-            # API 실패 시 기존 방식으로 fallback
+            if not api_disabled:
+                # API 기반 데이터 수집 우선 시도
+                try:
+                    # 현재 날짜 기본값 설정 (최신 1개월)
+                    from datetime import datetime
+                    current_date = datetime.now()
+                    current_month = current_date.strftime('%Y%m')
+                    
+                    # 조건부 날짜 설정
+                    if table_info['is_regional'] or '시·군·구별' in table_info['name']:
+                        # 지역별: 현재 월
+                        start_date = end_date = current_month
+                        print(f"지역별 API 데이터 수집: {table_info['name']} ({current_month})")
+                    
+                    elif table_info['is_yearly'] or await self._should_use_date_range(driver):
+                        # 연도별: 5년치 범위 계산
+                        if date_format == "YYYY":
+                            start_date = str(current_date.year - 4)
+                            end_date = str(current_date.year)
+                        else:
+                            # YYYYMM 형식으로 5년 전부터
+                            start_year = current_date.year - 4
+                            start_date = f"{start_year}01"
+                            end_date = current_month
+                        print(f"연도별 API 데이터 수집: {table_info['name']} ({start_date}~{end_date})")
+                    else:
+                        # 기본: 현재 월
+                        start_date = end_date = current_month
+                        print(f"기본 API 데이터 수집: {table_info['name']} ({current_month})")
+                    
+                    # API를 통한 데이터 수집 시도
+                    api_result = await self._collect_table_data_via_api(stat_url, table_info, start_date, end_date)
+                    
+                    if api_result:
+                        print(f"API 데이터 수집 성공: {len(api_result)}개")
+                        return api_result
+                    else:
+                        print("API 수집 실패, 기존 방식으로 fallback")
+                    
+                except Exception as e:
+                    print(f"API 수집 중 오류: {e}, 기존 방식으로 fallback")
+            
+            # IBSheet 기반 데이터 수집 (메인 방식)
+            print(f"IBSheet 데이터 수집 시작: {table_info['name']}")
+            
             if table_info['is_regional'] or '시·군·구별' in table_info['name']:
-                print(f"[Fallback] 지역별 데이터 수집: {table_info['name']}")
+                print(f"지역별 데이터 수집: {table_info['name']}")
                 await self._click_search_button(driver)
                 return await self._extract_current_data(driver, table_info['name'])
                 
             elif table_info['is_yearly'] or await self._should_use_date_range(driver):
-                print(f"[Fallback] 연도별/날짜범위 데이터 수집: {table_info['name']}")
+                print(f"연도별/날짜범위 데이터 수집: {table_info['name']}")
                 return await self._collect_data_with_date_range(driver, table_info['name'], date_format)
                 
             else:
@@ -1222,35 +1283,54 @@ class OptimizedMolitCrawler:
             # API 요청을 위한 세션 생성
             async with aiohttp.ClientSession(cookies=cookies) as session:
                 
-                # 1. 컬럼 구조 정보 가져오기
-                columns_url = f"https://stat.molit.go.kr/portal/stat/columns.do?formId={form_id}&styleNum=1"
+                # 1. 실제 국토교통부 통계누리 API 구조에 맞게 수정
+                # FormId를 hFormId로 변경하고 실제 API 경로 사용
+                columns_url = f"https://stat.molit.go.kr/portal/cate/getData.do?hFormId={form_id}&searchCondition=basic"
                 print(f"컬럼 정보 요청: {columns_url}")
                 
-                async with session.get(columns_url) as response:
-                    # content-type을 무시하고 강제로 JSON 파싱
+                # User-Agent와 Referer 헤더 추가
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                    'Referer': f'https://stat.molit.go.kr/portal/cate/statView.do?hFormId={form_id}',
+                    'Accept': 'application/json, text/javascript, */*; q=0.01',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+                
+                async with session.get(columns_url, headers=headers) as response:
+                    print(f"컬럼 응답 상태: {response.status}")
+                    text_content = await response.text()
+                    print(f"컬럼 응답 내용 (처음 200자): {text_content[:200]}")
+                    
                     try:
                         columns_data = await response.json()
-                    except Exception:
-                        # JSON 파싱 실패 시 텍스트로 받아서 JSON 변환 시도
-                        text_content = await response.text()
-                        import json
-                        columns_data = json.loads(text_content)
-                    print(f"컬럼 응답: {columns_data.get('result', False)}")
+                    except Exception as e:
+                        print(f"컬럼 JSON 파싱 실패: {e}")
+                        try:
+                            import json
+                            columns_data = json.loads(text_content)
+                        except Exception as e2:
+                            print(f"텍스트 JSON 파싱도 실패: {e2}")
+                            columns_data = {'result': False}
                 
-                # 2. 실제 데이터 가져오기  
-                data_url = f"https://stat.molit.go.kr/portal/stat/data.do?formId={form_id}&styleNum=1&apprYn=Y&startDate={start_date}&endDate={end_date}"
+                # 2. 실제 데이터 요청 (국토교통부 실제 API 형식)
+                data_url = f"https://stat.molit.go.kr/portal/cate/getData.do?hFormId={form_id}&searchCondition=data&startPeriod={start_date}&endPeriod={end_date}"
                 print(f"데이터 요청: {data_url}")
                 
-                async with session.get(data_url) as response:
-                    # content-type을 무시하고 강제로 JSON 파싱
+                async with session.get(data_url, headers=headers) as response:
+                    print(f"데이터 응답 상태: {response.status}")
+                    text_content = await response.text()
+                    print(f"데이터 응답 내용 (처음 200자): {text_content[:200]}")
+                    
                     try:
                         data_response = await response.json()
-                    except Exception:
-                        # JSON 파싱 실패 시 텍스트로 받아서 JSON 변환 시도
-                        text_content = await response.text()
-                        import json
-                        data_response = json.loads(text_content)
-                    print(f"데이터 응답: {data_response.get('result', False)}")
+                    except Exception as e:
+                        print(f"데이터 JSON 파싱 실패: {e}")
+                        try:
+                            import json
+                            data_response = json.loads(text_content)
+                        except Exception as e2:
+                            print(f"텍스트 JSON 파싱도 실패: {e2}")
+                            data_response = {'result': False}
                 
                 # 3. 데이터 구조화
                 if columns_data.get('result') and data_response.get('result'):

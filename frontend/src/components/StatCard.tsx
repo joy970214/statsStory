@@ -59,7 +59,7 @@ export const StatCard: React.FC<StatCardProps> = ({ stat, onSelect }) => {
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-medium">📊 기본통계현황분석</div>
-                  <div className="text-sm opacity-90">메타데이터, 데이터정리, 기초통계 지표 계산 (실시간 진행률)</div>
+                  <div className="text-sm opacity-90">메타데이터, 데이터정리, 기초통계 지표 계산</div>
                 </div>
                 <div className="text-xs bg-blue-500 px-2 py-1 rounded">추천</div>
               </div>
@@ -73,7 +73,7 @@ export const StatCard: React.FC<StatCardProps> = ({ stat, onSelect }) => {
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-medium">🔍 종합 분석</div>
-                  <div className="text-sm opacity-90">로컬 LLM 기반 고급 통계 분석 (실시간 진행률)</div>
+                  <div className="text-sm opacity-90">로컬 LLM 기반 고급 통계 분석</div>
                 </div>
                 <div className="text-xs bg-indigo-500 px-2 py-1 rounded">전문</div>
               </div>

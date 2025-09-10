@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { StatCard } from './components/StatCard';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { BasicStatisticsViewer } from './components/BasicStatisticsViewer';
+import { EnhancedBasicStatisticsViewer } from './components/EnhancedBasicStatisticsViewer';
+import { ImprovedDataInspectionViewer } from './components/ImprovedDataInspectionViewer';
 import { ComprehensiveAnalysisViewer } from './components/ComprehensiveAnalysisViewer';
 import { RealTimeProgressViewer } from './components/RealTimeProgressViewer';
 import { 
@@ -177,7 +179,7 @@ function App() {
         )}
 
         {state === 'viewing-advanced-cardnews' && (advancedCardNews || optimizedResult) && (
-          <BasicStatisticsViewer 
+          <EnhancedBasicStatisticsViewer 
             analysisData={optimizedResult || advancedCardNews} 
             onBack={handleBackToList} 
           />
