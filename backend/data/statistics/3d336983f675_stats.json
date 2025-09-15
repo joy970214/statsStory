@@ -1,547 +1,224 @@
 {
   "cache_key": "3d336983f675",
   "stat_url": "https://stat.molit.go.kr/portal/cate/statView.do?hRsId=471&hFormId=5386&hDivEng=&month_yn=",
-  "saved_at": "2025-09-08T15:00:01.496884",
-  "data_count": 9,
+  "saved_at": "2025-09-11T11:37:27.964431",
+  "data_count": 3,
   "statistics": [
     {
-      "year": 2011,
+      "year": 2025,
       "data": {
-        "ibsheet_cell_3": {
-          "value": "월(Monthly)",
-          "unit": "text",
-          "raw": "월(Monthly)"
-        },
-        "ibsheet_cell_4": {
-          "value": "구  분",
-          "unit": "text",
-          "raw": "구  분"
-        },
-        "ibsheet_cell_5": {
-          "value": "부문명",
-          "unit": "text",
-          "raw": "부문명"
-        },
-        "ibsheet_cell_6": {
-          "value": "시도별",
-          "unit": "text",
-          "raw": "시도별"
-        },
-        "ibsheet_cell_7": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_10": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_13": {
-          "value": "2025-07 총계 총계 전국\n서울\n인천\n경기\n부산\n대구\n광주\n대전\n울산\n세종\n강원\n충북\n충남\n전북\n전남\n경북\n경남\n제주\n공공부문 소계 전국\n서울\n인천\n경기\n부산\n대구\n광주\n대전\n울산\n세종",
-          "unit": "text",
-          "raw": "2025-07 총계 총계 전국\n서울\n인천\n경기\n부산\n대구\n광주\n대전\n울산\n세종\n강원\n충북\n충남\n전북\n전남\n경북\n경남\n제주\n공공부문 소계 전국\n서울\n인천\n경기\n부산\n대구\n광주\n대전\n울산\n세종"
-        },
-        "ibsheet_cell_16": {
-          "value": "2025-07",
-          "unit": "text",
-          "raw": "2025-07"
-        },
-        "ibsheet_cell_17": {
-          "value": "총계",
-          "unit": "text",
-          "raw": "총계"
-        },
-        "ibsheet_cell_18": {
-          "value": "총계",
-          "unit": "text",
-          "raw": "총계"
-        },
-        "ibsheet_cell_19": {
-          "value": "전국",
-          "unit": "text",
-          "raw": "전국"
-        }
+        "ibsheet_cell_3": "{'value': '월(Monthly)', 'unit': 'text', 'raw': '월(Monthly)'}",
+        "ibsheet_cell_4": "{'value': '구  분', 'unit': 'text', 'raw': '구  분'}",
+        "ibsheet_cell_5": "{'value': '부문명', 'unit': 'text', 'raw': '부문명'}",
+        "ibsheet_cell_6": "{'value': '시도별', 'unit': 'text', 'raw': '시도별'}",
+        "ibsheet_cell_7": "{'value': '착공실적', 'unit': 'text', 'raw': '착공실적'}",
+        "ibsheet_cell_10": "{'value': '착공실적', 'unit': 'text', 'raw': '착공실적'}",
+        "ibsheet_cell_13": "{'value': '2025-07 총계 총계 전국\\n서울\\n인천\\n경기\\n부산\\n대구\\n광주\\n대전\\n울산\\n세종\\n강원\\n충북\\n충남\\n전북\\n전남\\n경북\\n경남\\n제주\\n공공부문 소계 전국\\n서울\\n인천\\n경기\\n부산\\n대구\\n광주\\n대전\\n울산\\n세종', 'unit': 'text', 'raw': '2025-07 총계 총계 전국\\n서울\\n인천\\n경기\\n부산\\n대구\\n광주\\n대전\\n울산\\n세종\\n강원\\n충북\\n충남\\n전북\\n전남\\n경북\\n경남\\n제주\\n공공부문 소계 전국\\n서울\\n인천\\n경기\\n부산\\n대구\\n광주\\n대전\\n울산\\n세종'}",
+        "ibsheet_cell_16": "{'value': '2025-07', 'unit': 'text', 'raw': '2025-07'}",
+        "ibsheet_cell_17": "{'value': '총계', 'unit': 'text', 'raw': '총계'}",
+        "ibsheet_cell_18": "{'value': '총계', 'unit': 'text', 'raw': '총계'}",
+        "ibsheet_cell_19": "{'value': '전국', 'unit': 'text', 'raw': '전국'}",
+        "ibsheet_cell_21": "{'value': '서울', 'unit': 'text', 'raw': '서울'}",
+        "ibsheet_cell_23": "{'value': '인천', 'unit': 'text', 'raw': '인천'}",
+        "ibsheet_cell_25": "{'value': '경기', 'unit': 'text', 'raw': '경기'}",
+        "ibsheet_cell_27": "{'value': '부산', 'unit': 'text', 'raw': '부산'}",
+        "ibsheet_cell_29": "{'value': '대구', 'unit': 'text', 'raw': '대구'}",
+        "ibsheet_cell_31": "{'value': '광주', 'unit': 'text', 'raw': '광주'}",
+        "ibsheet_cell_33": "{'value': '대전', 'unit': 'text', 'raw': '대전'}",
+        "ibsheet_cell_35": "{'value': '울산', 'unit': 'text', 'raw': '울산'}",
+        "ibsheet_cell_37": "{'value': '세종', 'unit': 'text', 'raw': '세종'}",
+        "ibsheet_cell_39": "{'value': '강원', 'unit': 'text', 'raw': '강원'}",
+        "ibsheet_cell_41": "{'value': '충북', 'unit': 'text', 'raw': '충북'}",
+        "ibsheet_cell_43": "{'value': '충남', 'unit': 'text', 'raw': '충남'}",
+        "ibsheet_cell_45": "{'value': '전북', 'unit': 'text', 'raw': '전북'}",
+        "ibsheet_cell_47": "{'value': '전남', 'unit': 'text', 'raw': '전남'}",
+        "ibsheet_cell_49": "{'value': '경북', 'unit': 'text', 'raw': '경북'}",
+        "ibsheet_cell_51": "{'value': '경남', 'unit': 'text', 'raw': '경남'}",
+        "ibsheet_cell_53": "{'value': '제주', 'unit': 'text', 'raw': '제주'}",
+        "ibsheet_cell_55": "{'value': '공공부문', 'unit': 'text', 'raw': '공공부문'}",
+        "ibsheet_cell_56": "{'value': '소계', 'unit': 'text', 'raw': '소계'}",
+        "ibsheet_cell_57": "{'value': '전국', 'unit': 'text', 'raw': '전국'}",
+        "ibsheet_cell_59": "{'value': '서울', 'unit': 'text', 'raw': '서울'}",
+        "ibsheet_cell_61": "{'value': '인천', 'unit': 'text', 'raw': '인천'}",
+        "ibsheet_cell_63": "{'value': '경기', 'unit': 'text', 'raw': '경기'}",
+        "ibsheet_cell_65": "{'value': '부산', 'unit': 'text', 'raw': '부산'}",
+        "ibsheet_cell_67": "{'value': '대구', 'unit': 'text', 'raw': '대구'}",
+        "ibsheet_cell_69": "{'value': '광주', 'unit': 'text', 'raw': '광주'}",
+        "ibsheet_cell_71": "{'value': '대전', 'unit': 'text', 'raw': '대전'}",
+        "ibsheet_cell_73": "{'value': '울산', 'unit': 'text', 'raw': '울산'}",
+        "ibsheet_cell_75": "{'value': '세종', 'unit': 'text', 'raw': '세종'}",
+        "ibsheet_cell_764": "{'value': '21,400\\n642\\n94\\n9,972\\n3,130\\n396\\n11\\n-645\\n14\\n15\\n807\\n2,647\\n182\\n1,559\\n258\\n684\\n1,556\\n78\\n1,055\\n0\\n0\\n81\\n1,370\\n74\\n0\\n-652\\n0\\n0', 'unit': 'text', 'raw': '21,400\\n642\\n94\\n9,972\\n3,130\\n396\\n11\\n-645\\n14\\n15\\n807\\n2,647\\n182\\n1,559\\n258\\n684\\n1,556\\n78\\n1,055\\n0\\n0\\n81\\n1,370\\n74\\n0\\n-652\\n0\\n0'}",
+        "ibsheet_cell_767": "{'value': 21400, 'unit': 'number', 'raw': '21,400'}",
+        "ibsheet_cell_769": "{'value': 642, 'unit': 'number', 'raw': '642'}",
+        "ibsheet_cell_771": "{'value': 94, 'unit': 'number', 'raw': '94'}",
+        "ibsheet_cell_773": "{'value': 9972, 'unit': 'number', 'raw': '9,972'}",
+        "ibsheet_cell_775": "{'value': 3130, 'unit': 'number', 'raw': '3,130'}",
+        "ibsheet_cell_777": "{'value': 396, 'unit': 'number', 'raw': '396'}",
+        "ibsheet_cell_779": "{'value': 11, 'unit': 'number', 'raw': '11'}",
+        "ibsheet_cell_781": "{'value': -645, 'unit': 'number', 'raw': '-645'}",
+        "ibsheet_cell_783": "{'value': 14, 'unit': 'number', 'raw': '14'}",
+        "ibsheet_cell_785": "{'value': 15, 'unit': 'number', 'raw': '15'}",
+        "ibsheet_cell_787": "{'value': 807, 'unit': 'number', 'raw': '807'}",
+        "ibsheet_cell_789": "{'value': 2647, 'unit': 'number', 'raw': '2,647'}",
+        "ibsheet_cell_791": "{'value': 182, 'unit': 'number', 'raw': '182'}",
+        "ibsheet_cell_793": "{'value': 1559, 'unit': 'number', 'raw': '1,559'}",
+        "ibsheet_cell_795": "{'value': 258, 'unit': 'number', 'raw': '258'}",
+        "ibsheet_cell_797": "{'value': 684, 'unit': 'number', 'raw': '684'}",
+        "ibsheet_cell_799": "{'value': 1556, 'unit': 'number', 'raw': '1,556'}",
+        "ibsheet_cell_801": "{'value': 78, 'unit': 'number', 'raw': '78'}",
+        "ibsheet_cell_803": "{'value': 1055, 'unit': 'number', 'raw': '1,055'}",
+        "ibsheet_cell_805": "{'value': 0, 'unit': 'number', 'raw': '0'}",
+        "ibsheet_cell_807": "{'value': 0, 'unit': 'number', 'raw': '0'}",
+        "ibsheet_cell_809": "{'value': 81, 'unit': 'number', 'raw': '81'}",
+        "ibsheet_cell_811": "{'value': 1370, 'unit': 'number', 'raw': '1,370'}",
+        "ibsheet_cell_813": "{'value': 74, 'unit': 'number', 'raw': '74'}",
+        "ibsheet_cell_815": "{'value': 0, 'unit': 'number', 'raw': '0'}",
+        "ibsheet_cell_817": "{'value': -652, 'unit': 'number', 'raw': '-652'}",
+        "ibsheet_cell_819": "{'value': 0, 'unit': 'number', 'raw': '0'}",
+        "ibsheet_cell_821": "{'value': 0, 'unit': 'number', 'raw': '0'}",
+        "ibsheet_cell_1491": "{'value': '[28 / 360]', 'unit': 'text', 'raw': '[28 / 360]'}",
+        "ibsheet_cell_1492": "{'value': '[28 / 360]', 'unit': 'text', 'raw': '[28 / 360]'}"
       }
     },
     {
-      "year": 2011,
+      "year": 2025,
       "data": {
-        "ibsheet_cell_3": {
-          "value": "월(Monthly)",
-          "unit": "text",
-          "raw": "월(Monthly)"
-        },
-        "ibsheet_cell_4": {
-          "value": "구  분",
-          "unit": "text",
-          "raw": "구  분"
-        },
-        "ibsheet_cell_5": {
-          "value": "부문명",
-          "unit": "text",
-          "raw": "부문명"
-        },
-        "ibsheet_cell_6": {
-          "value": "시도별",
-          "unit": "text",
-          "raw": "시도별"
-        },
-        "ibsheet_cell_7": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_10": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_13": {
-          "value": "2025-07 총계 계 21400\n40㎡이하 189\n40~60㎡이하 3433\n60~85㎡이하 13505\n85~135㎡이하 3034\n135㎡초과 1239\n수도권소계 계 10708\n40㎡이하 445\n40~60㎡이하 1878\n60~85㎡이하 6799\n85~135㎡이하 1329\n135㎡초과 257\n서울 계 642\n40㎡이하 287\n40~60㎡이하 193\n60~85㎡이하 61\n85~135㎡이하 89\n135㎡초과 12\n인천 계 94\n40㎡이하 5\n40~60㎡이하 9\n60~85㎡이하 31\n85~135㎡이하 12\n135㎡초과 37\n경기 계 9972\n40㎡이하 153\n40~60㎡이하 1676\n60~85㎡이하 6707",
-          "unit": "text",
-          "raw": "2025-07 총계 계 21400\n40㎡이하 189\n40~60㎡이하 3433\n60~85㎡이하 13505\n85~135㎡이하 3034\n135㎡초과 1239\n수도권소계 계 10708\n40㎡이하 445\n40~60㎡이하 1878\n60~85㎡이하 6799\n85~135㎡이하 1329\n135㎡초과 257\n서울 계 642\n40㎡이하 287\n40~60㎡이하 193\n60~85㎡이하 61\n85~135㎡이하 89\n135㎡초과 12\n인천 계 94\n40㎡이하 5\n40~60㎡이하 9\n60~85㎡이하 31\n85~135㎡이하 12\n135㎡초과 37\n경기 계 9972\n40㎡이하 153\n40~60㎡이하 1676\n60~85㎡이하 6707"
-        },
-        "ibsheet_cell_16": {
-          "value": "2025-07",
-          "unit": "text",
-          "raw": "2025-07"
-        },
-        "ibsheet_cell_17": {
-          "value": "총계",
-          "unit": "text",
-          "raw": "총계"
-        },
-        "ibsheet_cell_18": {
-          "value": "계",
-          "unit": "text",
-          "raw": "계"
-        },
-        "ibsheet_cell_19": {
-          "value": 21400,
-          "unit": "number",
-          "raw": "21400"
-        }
+        "ibsheet_cell_3": "{'value': '월(Monthly)', 'unit': 'text', 'raw': '월(Monthly)'}",
+        "ibsheet_cell_4": "{'value': '구  분', 'unit': 'text', 'raw': '구  분'}",
+        "ibsheet_cell_5": "{'value': '부문명', 'unit': 'text', 'raw': '부문명'}",
+        "ibsheet_cell_6": "{'value': '시도별', 'unit': 'text', 'raw': '시도별'}",
+        "ibsheet_cell_7": "{'value': '착공실적', 'unit': 'text', 'raw': '착공실적'}",
+        "ibsheet_cell_10": "{'value': '착공실적', 'unit': 'text', 'raw': '착공실적'}",
+        "ibsheet_cell_13": "{'value': '2025-07 총계 계 21400\\n40㎡이하 189\\n40~60㎡이하 3433\\n60~85㎡이하 13505\\n85~135㎡이하 3034\\n135㎡초과 1239\\n수도권소계 계 10708\\n40㎡이하 445\\n40~60㎡이하 1878\\n60~85㎡이하 6799\\n85~135㎡이하 1329\\n135㎡초과 257\\n서울 계 642\\n40㎡이하 287\\n40~60㎡이하 193\\n60~85㎡이하 61\\n85~135㎡이하 89\\n135㎡초과 12\\n인천 계 94\\n40㎡이하 5\\n40~60㎡이하 9\\n60~85㎡이하 31\\n85~135㎡이하 12\\n135㎡초과 37\\n경기 계 9972\\n40㎡이하 153\\n40~60㎡이하 1676\\n60~85㎡이하 6707', 'unit': 'text', 'raw': '2025-07 총계 계 21400\\n40㎡이하 189\\n40~60㎡이하 3433\\n60~85㎡이하 13505\\n85~135㎡이하 3034\\n135㎡초과 1239\\n수도권소계 계 10708\\n40㎡이하 445\\n40~60㎡이하 1878\\n60~85㎡이하 6799\\n85~135㎡이하 1329\\n135㎡초과 257\\n서울 계 642\\n40㎡이하 287\\n40~60㎡이하 193\\n60~85㎡이하 61\\n85~135㎡이하 89\\n135㎡초과 12\\n인천 계 94\\n40㎡이하 5\\n40~60㎡이하 9\\n60~85㎡이하 31\\n85~135㎡이하 12\\n135㎡초과 37\\n경기 계 9972\\n40㎡이하 153\\n40~60㎡이하 1676\\n60~85㎡이하 6707'}",
+        "ibsheet_cell_16": "{'value': '2025-07', 'unit': 'text', 'raw': '2025-07'}",
+        "ibsheet_cell_17": "{'value': '총계', 'unit': 'text', 'raw': '총계'}",
+        "ibsheet_cell_18": "{'value': '계', 'unit': 'text', 'raw': '계'}",
+        "ibsheet_cell_19": "{'value': 21400, 'unit': 'number', 'raw': '21400'}",
+        "ibsheet_cell_21": "{'value': '40㎡이하', 'unit': 'text', 'raw': '40㎡이하'}",
+        "ibsheet_cell_22": "{'value': 189, 'unit': 'number', 'raw': '189'}",
+        "ibsheet_cell_24": "{'value': '40~60㎡이하', 'unit': 'text', 'raw': '40~60㎡이하'}",
+        "ibsheet_cell_25": "{'value': 3433, 'unit': 'number', 'raw': '3433'}",
+        "ibsheet_cell_27": "{'value': '60~85㎡이하', 'unit': 'text', 'raw': '60~85㎡이하'}",
+        "ibsheet_cell_28": "{'value': 13505, 'unit': 'number', 'raw': '13505'}",
+        "ibsheet_cell_30": "{'value': '85~135㎡이하', 'unit': 'text', 'raw': '85~135㎡이하'}",
+        "ibsheet_cell_31": "{'value': 3034, 'unit': 'number', 'raw': '3034'}",
+        "ibsheet_cell_33": "{'value': '135㎡초과', 'unit': 'text', 'raw': '135㎡초과'}",
+        "ibsheet_cell_34": "{'value': 1239, 'unit': 'number', 'raw': '1239'}",
+        "ibsheet_cell_36": "{'value': '수도권소계', 'unit': 'text', 'raw': '수도권소계'}",
+        "ibsheet_cell_37": "{'value': '계', 'unit': 'text', 'raw': '계'}",
+        "ibsheet_cell_38": "{'value': 10708, 'unit': 'number', 'raw': '10708'}",
+        "ibsheet_cell_40": "{'value': '40㎡이하', 'unit': 'text', 'raw': '40㎡이하'}",
+        "ibsheet_cell_41": "{'value': 445, 'unit': 'number', 'raw': '445'}",
+        "ibsheet_cell_43": "{'value': '40~60㎡이하', 'unit': 'text', 'raw': '40~60㎡이하'}",
+        "ibsheet_cell_44": "{'value': 1878, 'unit': 'number', 'raw': '1878'}",
+        "ibsheet_cell_46": "{'value': '60~85㎡이하', 'unit': 'text', 'raw': '60~85㎡이하'}",
+        "ibsheet_cell_47": "{'value': 6799, 'unit': 'number', 'raw': '6799'}",
+        "ibsheet_cell_49": "{'value': '85~135㎡이하', 'unit': 'text', 'raw': '85~135㎡이하'}",
+        "ibsheet_cell_50": "{'value': 1329, 'unit': 'number', 'raw': '1329'}",
+        "ibsheet_cell_52": "{'value': '135㎡초과', 'unit': 'text', 'raw': '135㎡초과'}",
+        "ibsheet_cell_53": "{'value': 257, 'unit': 'number', 'raw': '257'}",
+        "ibsheet_cell_55": "{'value': '서울', 'unit': 'text', 'raw': '서울'}",
+        "ibsheet_cell_56": "{'value': '계', 'unit': 'text', 'raw': '계'}",
+        "ibsheet_cell_57": "{'value': 642, 'unit': 'number', 'raw': '642'}",
+        "ibsheet_cell_59": "{'value': '40㎡이하', 'unit': 'text', 'raw': '40㎡이하'}",
+        "ibsheet_cell_60": "{'value': 287, 'unit': 'number', 'raw': '287'}",
+        "ibsheet_cell_62": "{'value': '40~60㎡이하', 'unit': 'text', 'raw': '40~60㎡이하'}",
+        "ibsheet_cell_63": "{'value': 193, 'unit': 'number', 'raw': '193'}",
+        "ibsheet_cell_65": "{'value': '60~85㎡이하', 'unit': 'text', 'raw': '60~85㎡이하'}",
+        "ibsheet_cell_66": "{'value': 61, 'unit': 'number', 'raw': '61'}",
+        "ibsheet_cell_68": "{'value': '85~135㎡이하', 'unit': 'text', 'raw': '85~135㎡이하'}",
+        "ibsheet_cell_69": "{'value': 89, 'unit': 'number', 'raw': '89'}",
+        "ibsheet_cell_71": "{'value': '135㎡초과', 'unit': 'text', 'raw': '135㎡초과'}",
+        "ibsheet_cell_72": "{'value': 12, 'unit': 'number', 'raw': '12'}",
+        "ibsheet_cell_74": "{'value': '인천', 'unit': 'text', 'raw': '인천'}",
+        "ibsheet_cell_75": "{'value': '계', 'unit': 'text', 'raw': '계'}",
+        "ibsheet_cell_76": "{'value': 94, 'unit': 'number', 'raw': '94'}",
+        "ibsheet_cell_78": "{'value': '40㎡이하', 'unit': 'text', 'raw': '40㎡이하'}",
+        "ibsheet_cell_79": "{'value': 5, 'unit': 'number', 'raw': '5'}",
+        "ibsheet_cell_81": "{'value': '40~60㎡이하', 'unit': 'text', 'raw': '40~60㎡이하'}",
+        "ibsheet_cell_82": "{'value': 9, 'unit': 'number', 'raw': '9'}",
+        "ibsheet_cell_84": "{'value': '60~85㎡이하', 'unit': 'text', 'raw': '60~85㎡이하'}",
+        "ibsheet_cell_85": "{'value': 31, 'unit': 'number', 'raw': '31'}",
+        "ibsheet_cell_87": "{'value': '85~135㎡이하', 'unit': 'text', 'raw': '85~135㎡이하'}",
+        "ibsheet_cell_88": "{'value': 12, 'unit': 'number', 'raw': '12'}",
+        "ibsheet_cell_90": "{'value': '135㎡초과', 'unit': 'text', 'raw': '135㎡초과'}",
+        "ibsheet_cell_91": "{'value': 37, 'unit': 'number', 'raw': '37'}",
+        "ibsheet_cell_93": "{'value': '경기', 'unit': 'text', 'raw': '경기'}",
+        "ibsheet_cell_94": "{'value': '계', 'unit': 'text', 'raw': '계'}",
+        "ibsheet_cell_95": "{'value': 9972, 'unit': 'number', 'raw': '9972'}",
+        "ibsheet_cell_97": "{'value': '40㎡이하', 'unit': 'text', 'raw': '40㎡이하'}",
+        "ibsheet_cell_98": "{'value': 153, 'unit': 'number', 'raw': '153'}",
+        "ibsheet_cell_100": "{'value': '40~60㎡이하', 'unit': 'text', 'raw': '40~60㎡이하'}",
+        "ibsheet_cell_101": "{'value': 1676, 'unit': 'number', 'raw': '1676'}",
+        "ibsheet_cell_103": "{'value': '60~85㎡이하', 'unit': 'text', 'raw': '60~85㎡이하'}",
+        "ibsheet_cell_104": "{'value': 6707, 'unit': 'number', 'raw': '6707'}",
+        "ibsheet_cell_705": "{'value': '[28 / 132]', 'unit': 'text', 'raw': '[28 / 132]'}",
+        "ibsheet_cell_706": "{'value': '[28 / 132]', 'unit': 'text', 'raw': '[28 / 132]'}"
       }
     },
     {
-      "year": 2011,
+      "year": 2025,
       "data": {
-        "ibsheet_cell_3": {
-          "value": "월(Monthly)",
-          "unit": "text",
-          "raw": "월(Monthly)"
-        },
-        "ibsheet_cell_4": {
-          "value": "구  분",
-          "unit": "text",
-          "raw": "구  분"
-        },
-        "ibsheet_cell_5": {
-          "value": "부문명",
-          "unit": "text",
-          "raw": "부문명"
-        },
-        "ibsheet_cell_6": {
-          "value": "시도별",
-          "unit": "text",
-          "raw": "시도별"
-        },
-        "ibsheet_cell_7": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_10": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_13": {
-          "value": "2025-07 총계 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n수도권소계 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n서울 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n인천 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구",
-          "unit": "text",
-          "raw": "2025-07 총계 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n수도권소계 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n서울 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n인천 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구"
-        },
-        "ibsheet_cell_16": {
-          "value": "2025-07",
-          "unit": "text",
-          "raw": "2025-07"
-        },
-        "ibsheet_cell_17": {
-          "value": "총계",
-          "unit": "text",
-          "raw": "총계"
-        },
-        "ibsheet_cell_18": {
-          "value": "계(다가구동수기준)",
-          "unit": "text",
-          "raw": "계(다가구동수기준)"
-        },
-        "ibsheet_cell_19": {
-          "value": "계(다가구동수기준)",
-          "unit": "text",
-          "raw": "계(다가구동수기준)"
-        }
-      }
-    },
-    {
-      "year": 2011,
-      "data": {
-        "ibsheet_cell_3": {
-          "value": "월(Monthly)",
-          "unit": "text",
-          "raw": "월(Monthly)"
-        },
-        "ibsheet_cell_4": {
-          "value": "구  분",
-          "unit": "text",
-          "raw": "구  분"
-        },
-        "ibsheet_cell_5": {
-          "value": "부문명",
-          "unit": "text",
-          "raw": "부문명"
-        },
-        "ibsheet_cell_6": {
-          "value": "시도별",
-          "unit": "text",
-          "raw": "시도별"
-        },
-        "ibsheet_cell_7": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_10": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_13": {
-          "value": "2025-07 총계 총계 전국\n서울\n인천\n경기\n부산\n대구\n광주\n대전\n울산\n세종\n강원\n충북\n충남\n전북\n전남\n경북\n경남\n제주\n공공부문 소계 전국\n서울\n인천\n경기\n부산\n대구\n광주\n대전\n울산\n세종",
-          "unit": "text",
-          "raw": "2025-07 총계 총계 전국\n서울\n인천\n경기\n부산\n대구\n광주\n대전\n울산\n세종\n강원\n충북\n충남\n전북\n전남\n경북\n경남\n제주\n공공부문 소계 전국\n서울\n인천\n경기\n부산\n대구\n광주\n대전\n울산\n세종"
-        },
-        "ibsheet_cell_16": {
-          "value": "2025-07",
-          "unit": "text",
-          "raw": "2025-07"
-        },
-        "ibsheet_cell_17": {
-          "value": "총계",
-          "unit": "text",
-          "raw": "총계"
-        },
-        "ibsheet_cell_18": {
-          "value": "총계",
-          "unit": "text",
-          "raw": "총계"
-        },
-        "ibsheet_cell_19": {
-          "value": "전국",
-          "unit": "text",
-          "raw": "전국"
-        }
-      }
-    },
-    {
-      "year": 2011,
-      "data": {
-        "ibsheet_cell_3": {
-          "value": "월(Monthly)",
-          "unit": "text",
-          "raw": "월(Monthly)"
-        },
-        "ibsheet_cell_4": {
-          "value": "구  분",
-          "unit": "text",
-          "raw": "구  분"
-        },
-        "ibsheet_cell_5": {
-          "value": "부문명",
-          "unit": "text",
-          "raw": "부문명"
-        },
-        "ibsheet_cell_6": {
-          "value": "시도별",
-          "unit": "text",
-          "raw": "시도별"
-        },
-        "ibsheet_cell_7": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_10": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_13": {
-          "value": "2025-07 총계 계 21400\n40㎡이하 189\n40~60㎡이하 3433\n60~85㎡이하 13505\n85~135㎡이하 3034\n135㎡초과 1239\n수도권소계 계 10708\n40㎡이하 445\n40~60㎡이하 1878\n60~85㎡이하 6799\n85~135㎡이하 1329\n135㎡초과 257\n서울 계 642\n40㎡이하 287\n40~60㎡이하 193\n60~85㎡이하 61\n85~135㎡이하 89\n135㎡초과 12\n인천 계 94\n40㎡이하 5\n40~60㎡이하 9\n60~85㎡이하 31\n85~135㎡이하 12\n135㎡초과 37\n경기 계 9972\n40㎡이하 153\n40~60㎡이하 1676\n60~85㎡이하 6707",
-          "unit": "text",
-          "raw": "2025-07 총계 계 21400\n40㎡이하 189\n40~60㎡이하 3433\n60~85㎡이하 13505\n85~135㎡이하 3034\n135㎡초과 1239\n수도권소계 계 10708\n40㎡이하 445\n40~60㎡이하 1878\n60~85㎡이하 6799\n85~135㎡이하 1329\n135㎡초과 257\n서울 계 642\n40㎡이하 287\n40~60㎡이하 193\n60~85㎡이하 61\n85~135㎡이하 89\n135㎡초과 12\n인천 계 94\n40㎡이하 5\n40~60㎡이하 9\n60~85㎡이하 31\n85~135㎡이하 12\n135㎡초과 37\n경기 계 9972\n40㎡이하 153\n40~60㎡이하 1676\n60~85㎡이하 6707"
-        },
-        "ibsheet_cell_16": {
-          "value": "2025-07",
-          "unit": "text",
-          "raw": "2025-07"
-        },
-        "ibsheet_cell_17": {
-          "value": "총계",
-          "unit": "text",
-          "raw": "총계"
-        },
-        "ibsheet_cell_18": {
-          "value": "계",
-          "unit": "text",
-          "raw": "계"
-        },
-        "ibsheet_cell_19": {
-          "value": 21400,
-          "unit": "number",
-          "raw": "21400"
-        }
-      }
-    },
-    {
-      "year": 2011,
-      "data": {
-        "ibsheet_cell_3": {
-          "value": "월(Monthly)",
-          "unit": "text",
-          "raw": "월(Monthly)"
-        },
-        "ibsheet_cell_4": {
-          "value": "구  분",
-          "unit": "text",
-          "raw": "구  분"
-        },
-        "ibsheet_cell_5": {
-          "value": "부문명",
-          "unit": "text",
-          "raw": "부문명"
-        },
-        "ibsheet_cell_6": {
-          "value": "시도별",
-          "unit": "text",
-          "raw": "시도별"
-        },
-        "ibsheet_cell_7": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_10": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_13": {
-          "value": "2025-07 총계 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n수도권소계 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n서울 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n인천 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구",
-          "unit": "text",
-          "raw": "2025-07 총계 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n수도권소계 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n서울 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n인천 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구"
-        },
-        "ibsheet_cell_16": {
-          "value": "2025-07",
-          "unit": "text",
-          "raw": "2025-07"
-        },
-        "ibsheet_cell_17": {
-          "value": "총계",
-          "unit": "text",
-          "raw": "총계"
-        },
-        "ibsheet_cell_18": {
-          "value": "계(다가구동수기준)",
-          "unit": "text",
-          "raw": "계(다가구동수기준)"
-        },
-        "ibsheet_cell_19": {
-          "value": "계(다가구동수기준)",
-          "unit": "text",
-          "raw": "계(다가구동수기준)"
-        }
-      }
-    },
-    {
-      "year": 2011,
-      "data": {
-        "ibsheet_cell_3": {
-          "value": "월(Monthly)",
-          "unit": "text",
-          "raw": "월(Monthly)"
-        },
-        "ibsheet_cell_4": {
-          "value": "구  분",
-          "unit": "text",
-          "raw": "구  분"
-        },
-        "ibsheet_cell_5": {
-          "value": "부문명",
-          "unit": "text",
-          "raw": "부문명"
-        },
-        "ibsheet_cell_6": {
-          "value": "시도별",
-          "unit": "text",
-          "raw": "시도별"
-        },
-        "ibsheet_cell_7": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_10": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_13": {
-          "value": "2025-07 총계 총계 전국\n서울\n인천\n경기\n부산\n대구\n광주\n대전\n울산\n세종\n강원\n충북\n충남\n전북\n전남\n경북\n경남\n제주\n공공부문 소계 전국\n서울\n인천\n경기\n부산\n대구\n광주\n대전\n울산\n세종",
-          "unit": "text",
-          "raw": "2025-07 총계 총계 전국\n서울\n인천\n경기\n부산\n대구\n광주\n대전\n울산\n세종\n강원\n충북\n충남\n전북\n전남\n경북\n경남\n제주\n공공부문 소계 전국\n서울\n인천\n경기\n부산\n대구\n광주\n대전\n울산\n세종"
-        },
-        "ibsheet_cell_16": {
-          "value": "2025-07",
-          "unit": "text",
-          "raw": "2025-07"
-        },
-        "ibsheet_cell_17": {
-          "value": "총계",
-          "unit": "text",
-          "raw": "총계"
-        },
-        "ibsheet_cell_18": {
-          "value": "총계",
-          "unit": "text",
-          "raw": "총계"
-        },
-        "ibsheet_cell_19": {
-          "value": "전국",
-          "unit": "text",
-          "raw": "전국"
-        }
-      }
-    },
-    {
-      "year": 2011,
-      "data": {
-        "ibsheet_cell_3": {
-          "value": "월(Monthly)",
-          "unit": "text",
-          "raw": "월(Monthly)"
-        },
-        "ibsheet_cell_4": {
-          "value": "구  분",
-          "unit": "text",
-          "raw": "구  분"
-        },
-        "ibsheet_cell_5": {
-          "value": "부문명",
-          "unit": "text",
-          "raw": "부문명"
-        },
-        "ibsheet_cell_6": {
-          "value": "시도별",
-          "unit": "text",
-          "raw": "시도별"
-        },
-        "ibsheet_cell_7": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_10": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_13": {
-          "value": "2025-07 총계 계 21400\n40㎡이하 189\n40~60㎡이하 3433\n60~85㎡이하 13505\n85~135㎡이하 3034\n135㎡초과 1239\n수도권소계 계 10708\n40㎡이하 445\n40~60㎡이하 1878\n60~85㎡이하 6799\n85~135㎡이하 1329\n135㎡초과 257\n서울 계 642\n40㎡이하 287\n40~60㎡이하 193\n60~85㎡이하 61\n85~135㎡이하 89\n135㎡초과 12\n인천 계 94\n40㎡이하 5\n40~60㎡이하 9\n60~85㎡이하 31\n85~135㎡이하 12\n135㎡초과 37\n경기 계 9972\n40㎡이하 153\n40~60㎡이하 1676\n60~85㎡이하 6707",
-          "unit": "text",
-          "raw": "2025-07 총계 계 21400\n40㎡이하 189\n40~60㎡이하 3433\n60~85㎡이하 13505\n85~135㎡이하 3034\n135㎡초과 1239\n수도권소계 계 10708\n40㎡이하 445\n40~60㎡이하 1878\n60~85㎡이하 6799\n85~135㎡이하 1329\n135㎡초과 257\n서울 계 642\n40㎡이하 287\n40~60㎡이하 193\n60~85㎡이하 61\n85~135㎡이하 89\n135㎡초과 12\n인천 계 94\n40㎡이하 5\n40~60㎡이하 9\n60~85㎡이하 31\n85~135㎡이하 12\n135㎡초과 37\n경기 계 9972\n40㎡이하 153\n40~60㎡이하 1676\n60~85㎡이하 6707"
-        },
-        "ibsheet_cell_16": {
-          "value": "2025-07",
-          "unit": "text",
-          "raw": "2025-07"
-        },
-        "ibsheet_cell_17": {
-          "value": "총계",
-          "unit": "text",
-          "raw": "총계"
-        },
-        "ibsheet_cell_18": {
-          "value": "계",
-          "unit": "text",
-          "raw": "계"
-        },
-        "ibsheet_cell_19": {
-          "value": 21400,
-          "unit": "number",
-          "raw": "21400"
-        }
-      }
-    },
-    {
-      "year": 2011,
-      "data": {
-        "ibsheet_cell_3": {
-          "value": "월(Monthly)",
-          "unit": "text",
-          "raw": "월(Monthly)"
-        },
-        "ibsheet_cell_4": {
-          "value": "구  분",
-          "unit": "text",
-          "raw": "구  분"
-        },
-        "ibsheet_cell_5": {
-          "value": "부문명",
-          "unit": "text",
-          "raw": "부문명"
-        },
-        "ibsheet_cell_6": {
-          "value": "시도별",
-          "unit": "text",
-          "raw": "시도별"
-        },
-        "ibsheet_cell_7": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_10": {
-          "value": "착공실적",
-          "unit": "text",
-          "raw": "착공실적"
-        },
-        "ibsheet_cell_13": {
-          "value": "2025-07 총계 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n수도권소계 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n서울 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n인천 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구",
-          "unit": "text",
-          "raw": "2025-07 총계 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n수도권소계 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n서울 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구\n다세대 다세대\n연립 연립\n아파트 아파트\n인천 계(다가구동수기준) 계(다가구동수기준)\n계(다가구가구수기준) 계(다가구가구수기준)\n단독 단독\n다가구"
-        },
-        "ibsheet_cell_16": {
-          "value": "2025-07",
-          "unit": "text",
-          "raw": "2025-07"
-        },
-        "ibsheet_cell_17": {
-          "value": "총계",
-          "unit": "text",
-          "raw": "총계"
-        },
-        "ibsheet_cell_18": {
-          "value": "계(다가구동수기준)",
-          "unit": "text",
-          "raw": "계(다가구동수기준)"
-        },
-        "ibsheet_cell_19": {
-          "value": "계(다가구동수기준)",
-          "unit": "text",
-          "raw": "계(다가구동수기준)"
-        }
+        "ibsheet_cell_3": "{'value': '월(Monthly)', 'unit': 'text', 'raw': '월(Monthly)'}",
+        "ibsheet_cell_4": "{'value': '구  분', 'unit': 'text', 'raw': '구  분'}",
+        "ibsheet_cell_5": "{'value': '부문명', 'unit': 'text', 'raw': '부문명'}",
+        "ibsheet_cell_6": "{'value': '시도별', 'unit': 'text', 'raw': '시도별'}",
+        "ibsheet_cell_7": "{'value': '착공실적', 'unit': 'text', 'raw': '착공실적'}",
+        "ibsheet_cell_10": "{'value': '착공실적', 'unit': 'text', 'raw': '착공실적'}",
+        "ibsheet_cell_13": "{'value': '2025-07 총계 계(다가구동수기준) 계(다가구동수기준)\\n계(다가구가구수기준) 계(다가구가구수기준)\\n단독 단독\\n다가구\\n다세대 다세대\\n연립 연립\\n아파트 아파트\\n수도권소계 계(다가구동수기준) 계(다가구동수기준)\\n계(다가구가구수기준) 계(다가구가구수기준)\\n단독 단독\\n다가구\\n다세대 다세대\\n연립 연립\\n아파트 아파트\\n서울 계(다가구동수기준) 계(다가구동수기준)\\n계(다가구가구수기준) 계(다가구가구수기준)\\n단독 단독\\n다가구\\n다세대 다세대\\n연립 연립\\n아파트 아파트\\n인천 계(다가구동수기준) 계(다가구동수기준)\\n계(다가구가구수기준) 계(다가구가구수기준)\\n단독 단독\\n다가구', 'unit': 'text', 'raw': '2025-07 총계 계(다가구동수기준) 계(다가구동수기준)\\n계(다가구가구수기준) 계(다가구가구수기준)\\n단독 단독\\n다가구\\n다세대 다세대\\n연립 연립\\n아파트 아파트\\n수도권소계 계(다가구동수기준) 계(다가구동수기준)\\n계(다가구가구수기준) 계(다가구가구수기준)\\n단독 단독\\n다가구\\n다세대 다세대\\n연립 연립\\n아파트 아파트\\n서울 계(다가구동수기준) 계(다가구동수기준)\\n계(다가구가구수기준) 계(다가구가구수기준)\\n단독 단독\\n다가구\\n다세대 다세대\\n연립 연립\\n아파트 아파트\\n인천 계(다가구동수기준) 계(다가구동수기준)\\n계(다가구가구수기준) 계(다가구가구수기준)\\n단독 단독\\n다가구'}",
+        "ibsheet_cell_16": "{'value': '2025-07', 'unit': 'text', 'raw': '2025-07'}",
+        "ibsheet_cell_17": "{'value': '총계', 'unit': 'text', 'raw': '총계'}",
+        "ibsheet_cell_18": "{'value': '계(다가구동수기준)', 'unit': 'text', 'raw': '계(다가구동수기준)'}",
+        "ibsheet_cell_19": "{'value': '계(다가구동수기준)', 'unit': 'text', 'raw': '계(다가구동수기준)'}",
+        "ibsheet_cell_21": "{'value': '계(다가구가구수기준)', 'unit': 'text', 'raw': '계(다가구가구수기준)'}",
+        "ibsheet_cell_22": "{'value': '계(다가구가구수기준)', 'unit': 'text', 'raw': '계(다가구가구수기준)'}",
+        "ibsheet_cell_24": "{'value': '단독', 'unit': 'text', 'raw': '단독'}",
+        "ibsheet_cell_25": "{'value': '단독', 'unit': 'text', 'raw': '단독'}",
+        "ibsheet_cell_27": "{'value': '다가구', 'unit': 'text', 'raw': '다가구'}",
+        "ibsheet_cell_30": "{'value': '다세대', 'unit': 'text', 'raw': '다세대'}",
+        "ibsheet_cell_31": "{'value': '다세대', 'unit': 'text', 'raw': '다세대'}",
+        "ibsheet_cell_33": "{'value': '연립', 'unit': 'text', 'raw': '연립'}",
+        "ibsheet_cell_34": "{'value': '연립', 'unit': 'text', 'raw': '연립'}",
+        "ibsheet_cell_36": "{'value': '아파트', 'unit': 'text', 'raw': '아파트'}",
+        "ibsheet_cell_37": "{'value': '아파트', 'unit': 'text', 'raw': '아파트'}",
+        "ibsheet_cell_39": "{'value': '수도권소계', 'unit': 'text', 'raw': '수도권소계'}",
+        "ibsheet_cell_40": "{'value': '계(다가구동수기준)', 'unit': 'text', 'raw': '계(다가구동수기준)'}",
+        "ibsheet_cell_41": "{'value': '계(다가구동수기준)', 'unit': 'text', 'raw': '계(다가구동수기준)'}",
+        "ibsheet_cell_43": "{'value': '계(다가구가구수기준)', 'unit': 'text', 'raw': '계(다가구가구수기준)'}",
+        "ibsheet_cell_44": "{'value': '계(다가구가구수기준)', 'unit': 'text', 'raw': '계(다가구가구수기준)'}",
+        "ibsheet_cell_46": "{'value': '단독', 'unit': 'text', 'raw': '단독'}",
+        "ibsheet_cell_47": "{'value': '단독', 'unit': 'text', 'raw': '단독'}",
+        "ibsheet_cell_49": "{'value': '다가구', 'unit': 'text', 'raw': '다가구'}",
+        "ibsheet_cell_52": "{'value': '다세대', 'unit': 'text', 'raw': '다세대'}",
+        "ibsheet_cell_53": "{'value': '다세대', 'unit': 'text', 'raw': '다세대'}",
+        "ibsheet_cell_55": "{'value': '연립', 'unit': 'text', 'raw': '연립'}",
+        "ibsheet_cell_56": "{'value': '연립', 'unit': 'text', 'raw': '연립'}",
+        "ibsheet_cell_58": "{'value': '아파트', 'unit': 'text', 'raw': '아파트'}",
+        "ibsheet_cell_59": "{'value': '아파트', 'unit': 'text', 'raw': '아파트'}",
+        "ibsheet_cell_61": "{'value': '서울', 'unit': 'text', 'raw': '서울'}",
+        "ibsheet_cell_62": "{'value': '계(다가구동수기준)', 'unit': 'text', 'raw': '계(다가구동수기준)'}",
+        "ibsheet_cell_63": "{'value': '계(다가구동수기준)', 'unit': 'text', 'raw': '계(다가구동수기준)'}",
+        "ibsheet_cell_65": "{'value': '계(다가구가구수기준)', 'unit': 'text', 'raw': '계(다가구가구수기준)'}",
+        "ibsheet_cell_66": "{'value': '계(다가구가구수기준)', 'unit': 'text', 'raw': '계(다가구가구수기준)'}",
+        "ibsheet_cell_68": "{'value': '단독', 'unit': 'text', 'raw': '단독'}",
+        "ibsheet_cell_69": "{'value': '단독', 'unit': 'text', 'raw': '단독'}",
+        "ibsheet_cell_71": "{'value': '다가구', 'unit': 'text', 'raw': '다가구'}",
+        "ibsheet_cell_74": "{'value': '다세대', 'unit': 'text', 'raw': '다세대'}",
+        "ibsheet_cell_75": "{'value': '다세대', 'unit': 'text', 'raw': '다세대'}",
+        "ibsheet_cell_77": "{'value': '연립', 'unit': 'text', 'raw': '연립'}",
+        "ibsheet_cell_78": "{'value': '연립', 'unit': 'text', 'raw': '연립'}",
+        "ibsheet_cell_80": "{'value': '아파트', 'unit': 'text', 'raw': '아파트'}",
+        "ibsheet_cell_81": "{'value': '아파트', 'unit': 'text', 'raw': '아파트'}",
+        "ibsheet_cell_83": "{'value': '인천', 'unit': 'text', 'raw': '인천'}",
+        "ibsheet_cell_84": "{'value': '계(다가구동수기준)', 'unit': 'text', 'raw': '계(다가구동수기준)'}",
+        "ibsheet_cell_85": "{'value': '계(다가구동수기준)', 'unit': 'text', 'raw': '계(다가구동수기준)'}",
+        "ibsheet_cell_87": "{'value': '계(다가구가구수기준)', 'unit': 'text', 'raw': '계(다가구가구수기준)'}",
+        "ibsheet_cell_88": "{'value': '계(다가구가구수기준)', 'unit': 'text', 'raw': '계(다가구가구수기준)'}",
+        "ibsheet_cell_90": "{'value': '단독', 'unit': 'text', 'raw': '단독'}",
+        "ibsheet_cell_91": "{'value': '단독', 'unit': 'text', 'raw': '단독'}",
+        "ibsheet_cell_93": "{'value': '다가구', 'unit': 'text', 'raw': '다가구'}",
+        "ibsheet_cell_837": "{'value': '[28 / 176]', 'unit': 'text', 'raw': '[28 / 176]'}",
+        "ibsheet_cell_838": "{'value': '[28 / 176]', 'unit': 'text', 'raw': '[28 / 176]'}"
       }
     }
   ]

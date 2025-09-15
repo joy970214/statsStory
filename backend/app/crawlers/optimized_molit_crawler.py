@@ -12,6 +12,7 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 from app.models.stat_models import StatMetadata, StatData
+from app.services.progress_service import progress_tracker
 try:
     from app.models.stat_models import ComprehensiveStatAnalysis
 except ImportError:
@@ -115,12 +116,35 @@ class BrowserPool:
 
 
 class ProgressCallback:
-    """진행률 콜백 인터페이스"""
+    """진행률 콜백 인터페이스 - 전역 progress_tracker와 연동"""
     
-    def __init__(self, callback_fn: Optional[Callable[[str, float, str], None]] = None):
+    def __init__(self, task_id: Optional[str] = None, callback_fn: Optional[Callable[[str, float, str], None]] = None):
+        self.task_id = task_id
         self.callback_fn = callback_fn
+        self.start_time = datetime.now()
     
     def update(self, stage: str, progress: float, message: str):
+        # 전역 progress_tracker에 업데이트
+        if self.task_id:
+            print(f"[PROGRESS] task_id={self.task_id}, stage={stage}, progress={progress}, message={message}")
+            # 예상 남은 시간 계산
+            estimated_remaining_time = None
+            if progress > 0:
+                elapsed_time = (datetime.now() - self.start_time).total_seconds()
+                if elapsed_time > 0:
+                    total_estimated_time = elapsed_time * (100 / progress)
+                    estimated_remaining_time = int(total_estimated_time - elapsed_time)
+            
+            progress_tracker.update_progress(
+                self.task_id, 
+                stage, 
+                progress, 
+                message,
+                estimated_remaining_time
+            )
+            print(f"[PROGRESS] progress_tracker.update_progress 호출 완료")
+        
+        # 추가 콜백 함수 실행
         if self.callback_fn:
             self.callback_fn(stage, progress, message)
         else:

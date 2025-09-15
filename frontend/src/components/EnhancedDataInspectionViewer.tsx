@@ -32,23 +32,13 @@ interface IBSheetTableData {
 }
 
 interface CollectedDataStructure {
-  cache_key: string;
-  stat_url: string;
-  saved_at: string;
-  data_count: number;
-  statistics: Array<{
-    year: number;
-    data: Record<string, string>;
-    table_name?: string;
-    period_text?: string;
-    raw_data_count?: number;
-  }>;
+  [key: string]: any;
 }
 
 export const EnhancedDataInspectionViewer: React.FC<DataInspectionProps> = ({ statName, onBack }) => {
   const [activeTab, setActiveTab] = useState<'enhanced' | 'stored' | 'summary'>('enhanced');
   const [enhancedData, setEnhancedData] = useState<IBSheetTableData | null>(null);
-  const [storedData, setStoredData] = useState<CollectedDataStructure | null>(null);
+  const [storedData, setStoredData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -240,24 +230,24 @@ export const EnhancedDataInspectionViewer: React.FC<DataInspectionProps> = ({ st
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm font-medium text-gray-600">캐시 키</p>
-              <p className="text-sm">{storedData.cache_key}</p>
+              <p className="text-sm">{(storedData as any).cache_key || 'N/A'}</p>
             </div>
             <div>
               <p className="text-sm font-medium text-gray-600">저장 시간</p>
-              <p className="text-sm">{new Date(storedData.saved_at).toLocaleString()}</p>
+              <p className="text-sm">{(storedData as any).saved_at ? new Date((storedData as any).saved_at).toLocaleString() : 'N/A'}</p>
             </div>
             <div>
               <p className="text-sm font-medium text-gray-600">통계 개수</p>
-              <p className="text-sm">{storedData.data_count}개</p>
+              <p className="text-sm">{(storedData as any).data_count || 0}개</p>
             </div>
             <div>
               <p className="text-sm font-medium text-gray-600">원본 URL</p>
-              <p className="text-sm text-blue-600 break-all">{storedData.stat_url}</p>
+              <p className="text-sm text-blue-600 break-all">{(storedData as any).stat_url || 'N/A'}</p>
             </div>
           </div>
         </div>
 
-        {storedData.statistics.map((stat: any, index: number) => (
+        {((storedData as any).statistics || []).map((stat: any, index: number) => (
           <div key={index} className="bg-white p-6 rounded-lg shadow">
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-lg font-semibold">
@@ -314,11 +304,11 @@ export const EnhancedDataInspectionViewer: React.FC<DataInspectionProps> = ({ st
   const renderSummary = () => {
     if (!storedData) return null;
 
-    const totalDataPoints = storedData.statistics.reduce((sum: number, stat: any) => 
+    const totalDataPoints = ((storedData as any).statistics || []).reduce((sum: number, stat: any) => 
       sum + Object.keys(stat.data).length, 0
     );
 
-    const numericFields = storedData.statistics.flatMap((stat: any) => 
+    const numericFields = ((storedData as any).statistics || []).flatMap((stat: any) => 
       Object.values(stat.data).filter((value: any) => {
         const parsed = parseIBSheetData(value as string);
         return parsed.unit === 'number';
@@ -373,7 +363,7 @@ export const EnhancedDataInspectionViewer: React.FC<DataInspectionProps> = ({ st
         <div className="bg-white p-6 rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-4">수집된 데이터 분포</h3>
           <div className="space-y-4">
-            {storedData.statistics.map((stat: any, index: number) => (
+            {(((storedData as any).statistics || [])).map((stat: any, index: number) => (
               <div key={index} className="border rounded p-4">
                 <div className="flex justify-between items-center">
                   <h4 className="font-medium">{stat.table_name || `데이터셋 ${index + 1}`}</h4>

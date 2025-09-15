@@ -49,7 +49,12 @@ class ProgressTracker:
         estimated_remaining_time: Optional[int] = None
     ):
         """진행률 업데이트"""
+        print(f"[PROGRESS_SERVICE] update_progress 호출: task_id={task_id}, stage={stage}, progress={progress}")
+        print(f"[PROGRESS_SERVICE] active_tasks에서 찾기: {task_id in self.active_tasks}")
+        print(f"[PROGRESS_SERVICE] 현재 active_tasks: {list(self.active_tasks.keys())}")
+        
         if task_id not in self.active_tasks:
+            print(f"[PROGRESS_SERVICE] 작업 ID를 찾을 수 없음: {task_id}")
             return
         
         # 작업 정보 업데이트
@@ -74,16 +79,24 @@ class ProgressTracker:
         )
         
         # 모든 구독자에게 브로드캐스트
+        print(f"[PROGRESS_SERVICE] 브로드캐스트 시작: task_id={task_id}")
         self._broadcast_update(task_id, update)
     
     def _broadcast_update(self, task_id: str, update: ProgressUpdate):
         """구독자들에게 업데이트 브로드캐스트"""
+        print(f"[PROGRESS_SERVICE] _broadcast_update: task_id={task_id}")
+        print(f"[PROGRESS_SERVICE] subscribers: {list(self.subscribers.keys())}")
         # 특정 작업 구독자들
         if task_id in self.subscribers:
+            print(f"[PROGRESS_SERVICE] 구독자 찾음, 큐에 업데이트 전송")
             try:
                 self.subscribers[task_id].put_nowait(update)
+                print(f"[PROGRESS_SERVICE] 큐 전송 성공")
             except asyncio.QueueFull:
+                print(f"[PROGRESS_SERVICE] 큐가 가득 참")
                 pass  # 큐가 가득 찬 경우 스킵
+        else:
+            print(f"[PROGRESS_SERVICE] 구독자를 찾을 수 없음: {task_id}")
     
     def subscribe(self, task_id: str) -> asyncio.Queue:
         """작업 진행률 구독"""
@@ -130,9 +143,15 @@ async def stream_progress(task_id: str) -> StreamingResponse:
     print(f"[SSE] 진행률 스트림 시작: {task_id}")
     
     async def event_generator():
+        print(f"[SSE] event_generator 함수 시작: {task_id}")
+        
+        # 즉시 연결 확인 메시지 전송
+        yield f"data: {json.dumps({'type': 'connection', 'message': 'Connected', 'timestamp': datetime.now().isoformat()})}\n\n"
+        print(f"[SSE] 연결 확인 메시지 전송: {task_id}")
+        
         # 구독 시작
         queue = progress_tracker.subscribe(task_id)
-        print(f"[SSE] 큐 구독 완료: {task_id}")
+        print(f"[SSE] 큐 구독 완료: {task_id}, queue={queue}")
         
         try:
             # 현재 작업 상태 전송 (있는 경우)
@@ -177,7 +196,7 @@ async def stream_progress(task_id: str) -> StreamingResponse:
             # 구독 해제
             progress_tracker.unsubscribe(task_id)
     
-    return StreamingResponse(
+    response = StreamingResponse(
         event_generator(),
         media_type="text/event-stream",
         headers={
@@ -187,6 +206,8 @@ async def stream_progress(task_id: str) -> StreamingResponse:
             "Access-Control-Allow-Headers": "Cache-Control"
         }
     )
+    print(f"[SSE] StreamingResponse 생성 완료: {task_id}")
+    return response
 
 
 class ProgressCallback:

@@ -371,20 +371,20 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
     try:
         stat_url = request.stat_url or "https://stat.molit.go.kr/portal/cate/statView.do"
         
-        # 진행률 콜백 생성
-        progress_callback = ProgressCallback(task_id)
-        progress_callback.update("준비", 0, "최적화된 크롤러 초기화 중...")
-        
         # 최적화된 크롤러 사용
         if OptimizedMolitCrawler is None:
-            progress_callback.update("오류", 100, "최적화된 크롤러를 로드할 수 없습니다")
+            progress_tracker.update_progress(task_id, "오류", 100, "최적화된 크롤러를 로드할 수 없습니다")
             return
             
         optimized_crawler = OptimizedMolitCrawler(pool_size=3, max_concurrent_tables=3)
         
+        # 크롤러 내장 ProgressCallback을 사용하여 task_id 전달
+        from app.crawlers.optimized_molit_crawler import ProgressCallback as CrawlerProgressCallback
+        crawler_progress_callback = CrawlerProgressCallback(task_id=task_id)
+        
         # 종합 분석 실행
         analysis_result = await optimized_crawler.get_comprehensive_stat_analysis_optimized(
-            stat_url, progress_callback
+            stat_url, crawler_progress_callback
         )
         
         # 분석 결과를 기존 API 형태로 변환

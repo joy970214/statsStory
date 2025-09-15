@@ -28,6 +28,16 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
   const [isConnected, setIsConnected] = useState(false);
   const [eventSource, setEventSource] = useState<EventSource | null>(null);
   const [startTime] = useState(new Date());
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  // 경과 시간 업데이트 타이머
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setElapsedTime(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     // 초기 진행률 설정 (연결 시도 표시)
@@ -113,9 +123,8 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
   };
 
   const formatElapsedTime = () => {
-    const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-    const minutes = Math.floor(elapsed / 60);
-    const seconds = elapsed % 60;
+    const minutes = Math.floor(elapsedTime / 60);
+    const seconds = elapsedTime % 60;
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
@@ -237,22 +246,6 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
               </div>
             );
           })}
-        </div>
-      </div>
-
-      {/* 성능 정보 */}
-      <div className="mt-6 bg-gray-50 rounded-lg p-4">
-        <h4 className="text-sm font-medium text-gray-900 mb-2">최적화 기능</h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-gray-600">
-          <div>
-            <span className="font-medium text-green-600">✓</span> 브라우저 재사용
-          </div>
-          <div>
-            <span className="font-medium text-green-600">✓</span> 병렬 처리 (3개 동시)
-          </div>
-          <div>
-            <span className="font-medium text-green-600">✓</span> 스마트 샘플링
-          </div>
         </div>
       </div>
     </div>
