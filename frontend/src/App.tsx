@@ -6,6 +6,7 @@ import { EnhancedBasicStatisticsViewer } from './components/EnhancedBasicStatist
 import { ImprovedDataInspectionViewer } from './components/ImprovedDataInspectionViewer';
 import { ComprehensiveAnalysisViewer } from './components/ComprehensiveAnalysisViewer';
 import { RealTimeProgressViewer } from './components/RealTimeProgressViewer';
+import { TableAnalysisViewer } from './components/TableAnalysisViewer';
 import { 
   statsAPI, 
   StatItem, 
@@ -13,7 +14,7 @@ import {
   AdvancedCardNewsResponse
 } from './services/api';
 
-type AppState = 'loading' | 'stats-list' | 'viewing-comprehensive' | 'viewing-advanced-cardnews' | 'optimized-progress';
+type AppState = 'loading' | 'stats-list' | 'viewing-comprehensive' | 'viewing-advanced-cardnews' | 'optimized-progress' | 'viewing-table-analysis';
 
 function App() {
   const [state, setState] = useState<AppState>('loading');
@@ -25,6 +26,7 @@ function App() {
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [analysisType, setAnalysisType] = useState<'comprehensive' | 'advanced-cardnews'>('advanced-cardnews');
+  const [tableAnalysisStatName, setTableAnalysisStatName] = useState<string | null>(null);
 
   useEffect(() => {
     loadRecentStats();
@@ -77,6 +79,7 @@ function App() {
     setAdvancedCardNews(null);
     setOptimizedResult(null);
     setCurrentTaskId(null);
+    setTableAnalysisStatName(null);
     setError(null);
   };
 
@@ -88,6 +91,11 @@ function App() {
   const handleOptimizedError = (errorMsg: string) => {
     setError(`최적화된 분석 실패: ${errorMsg}`);
     setState('stats-list');
+  };
+
+  const handleViewTableAnalysis = (statName: string) => {
+    setTableAnalysisStatName(statName);
+    setState('viewing-table-analysis');
   };
 
   return (
@@ -181,7 +189,14 @@ function App() {
         {state === 'viewing-advanced-cardnews' && (advancedCardNews || optimizedResult) && (
           <EnhancedBasicStatisticsViewer 
             analysisData={optimizedResult || advancedCardNews} 
-            onBack={handleBackToList} 
+            onBack={handleBackToList}
+            onViewTableAnalysis={handleViewTableAnalysis}
+          />
+        )}
+        {state === 'viewing-table-analysis' && tableAnalysisStatName && (
+          <TableAnalysisViewer 
+            statName={tableAnalysisStatName}
+            onBack={handleBackToList}
           />
         )}
       </main>

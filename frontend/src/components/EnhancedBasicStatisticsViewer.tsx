@@ -12,6 +12,7 @@ import {
 interface EnhancedBasicStatisticsViewerProps {
   analysisData: AdvancedCardNewsResponse;
   onBack: () => void;
+  onViewTableAnalysis?: (statName: string) => void;
 }
 
 interface ProcessedStatistics {
@@ -41,11 +42,14 @@ interface ProcessedStatistics {
 
 export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsViewerProps> = ({ 
   analysisData, 
-  onBack 
+  onBack,
+  onViewTableAnalysis 
 }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [showDataInspection, setShowDataInspection] = useState(false);
   const [processedStats, setProcessedStats] = useState<ProcessedStatistics | null>(null);
+  const [selectedTableName, setSelectedTableName] = useState<string | null>(null);
+  const [rawDataByTable, setRawDataByTable] = useState<Record<string, any[]>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -66,6 +70,25 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
         const rawData = await response.json();
         const processed = processStatisticsData(rawData);
         setProcessedStats(processed);
+
+        // Group data by table names
+        const dataByTable: Record<string, any[]> = {};
+        if (rawData.raw_data && Array.isArray(rawData.raw_data)) {
+          rawData.raw_data.forEach((stat: any, statIndex: number) => {
+            const tableName = stat.table_name || `테이블 ${statIndex + 1}`;
+            if (!dataByTable[tableName]) {
+              dataByTable[tableName] = [];
+            }
+            dataByTable[tableName].push(stat);
+          });
+        }
+        setRawDataByTable(dataByTable);
+
+        // Set first table as default selection
+        const firstTableName = Object.keys(dataByTable)[0];
+        if (firstTableName) {
+          setSelectedTableName(firstTableName);
+        }
       } else {
         // Fallback to basic_statistics from analysisData if available
         setProcessedStats(createFallbackStats());
@@ -236,6 +259,58 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     setShowDataInspection(false);
   };
 
+  // Filter data by selected table
+  const getFilteredData = () => {
+    if (!selectedTableName || !processedStats) return processedStats?.sample_data || [];
+    
+    return processedStats.sample_data.filter(item => 
+      item.source_table === selectedTableName
+    );
+  };
+
+  // Get statistics for selected table only
+  const getSelectedTableStats = () => {
+    if (!selectedTableName || !rawDataByTable[selectedTableName]) {
+      return processedStats?.numeric_stats;
+    }
+
+    const tableData = rawDataByTable[selectedTableName];
+    const numericValues: number[] = [];
+    
+    tableData.forEach(stat => {
+      Object.entries(stat.data || {}).forEach(([key, value]) => {
+        try {
+          const parsedValue = typeof value === 'string' && value.includes("'value'") 
+            ? JSON.parse(value.replace(/'/g, '"'))
+            : { value, unit: 'text', raw: value };
+
+          if (parsedValue.unit === 'number' && typeof parsedValue.value === 'number') {
+            numericValues.push(parsedValue.value);
+          }
+        } catch (error) {
+          // Skip parsing errors
+        }
+      });
+    });
+
+    if (numericValues.length === 0) {
+      return processedStats?.numeric_stats;
+    }
+
+    return {
+      total: numericValues.reduce((sum, val) => sum + val, 0),
+      mean: numericValues.reduce((sum, val) => sum + val, 0) / numericValues.length,
+      median: numericValues.sort((a, b) => a - b)[Math.floor(numericValues.length / 2)],
+      max: Math.max(...numericValues),
+      min: Math.min(...numericValues),
+      count: numericValues.length,
+      std_dev: Math.sqrt(numericValues.reduce((sum, val) => {
+        const mean = numericValues.reduce((s, v) => s + v, 0) / numericValues.length;
+        return sum + Math.pow(val - mean, 2);
+      }, 0) / numericValues.length)
+    };
+  };
+
   // 데이터 검사 모드일 때는 EnhancedDataInspectionViewer 렌더링
   if (showDataInspection) {
     return (
@@ -276,6 +351,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
             onDownloadPDF={handleDownloadPDF}
             onViewOriginal={handleViewOriginal}
             onInspectData={handleInspectData}
+            onViewTableAnalysis={onViewTableAnalysis ? () => onViewTableAnalysis(analysisData.stat_name) : undefined}
             originalUrl={analysisData.metadata?.url}
             analysisTitle={analysisData.stat_name}
           />
@@ -323,25 +399,43 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
           </div>
 
           <div className="bg-gray-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">수집된 통계표 목록</h4>
+            <h4 className="font-medium text-gray-900 mb-2">수집된 통계표 목록 (클릭하여 선택)</h4>
             <div className="flex flex-wrap gap-2">
               {processedStats.data_structure.collected_tables.map((table, index) => (
-                <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                <button
+                  key={index}
+                  onClick={() => setSelectedTableName(table)}
+                  className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                    selectedTableName === table
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                  }`}
+                >
                   {table}
-                </span>
+                </button>
               ))}
             </div>
+            {selectedTableName && (
+              <div className="mt-3 text-sm text-gray-600">
+                선택된 통계표: <span className="font-medium text-blue-600">{selectedTableName}</span>
+              </div>
+            )}
           </div>
         </div>
 
         {/* 기초통계 지표 */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-6">🔢 기초통계 지표 (숫자 데이터 기준)</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-6">
+            🔢 기초통계 지표 (숫자 데이터 기준)
+            {selectedTableName && (
+              <span className="text-lg text-blue-600 ml-2">- {selectedTableName}</span>
+            )}
+          </h3>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
             <div className="bg-red-50 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-red-700">
-                {formatNumber(processedStats.numeric_stats.mean)}
+                {formatNumber(getSelectedTableStats()?.mean || 0)}
               </div>
               <div className="text-sm text-red-600 font-medium">평균값</div>
               <div className="text-xs text-red-500 mt-1">Mean</div>
@@ -349,7 +443,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
             <div className="bg-orange-50 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-orange-700">
-                {formatNumber(processedStats.numeric_stats.median)}
+                {formatNumber(getSelectedTableStats()?.median || 0)}
               </div>
               <div className="text-sm text-orange-600 font-medium">중위수</div>
               <div className="text-xs text-orange-500 mt-1">Median</div>
@@ -357,7 +451,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
             <div className="bg-yellow-50 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-yellow-700">
-                {formatNumber(processedStats.numeric_stats.max)}
+                {formatNumber(getSelectedTableStats()?.max || 0)}
               </div>
               <div className="text-sm text-yellow-600 font-medium">최댓값</div>
               <div className="text-xs text-yellow-500 mt-1">Maximum</div>
@@ -365,7 +459,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
             <div className="bg-green-50 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-green-700">
-                {formatNumber(processedStats.numeric_stats.min)}
+                {formatNumber(getSelectedTableStats()?.min || 0)}
               </div>
               <div className="text-sm text-green-600 font-medium">최솟값</div>
               <div className="text-xs text-green-500 mt-1">Minimum</div>
@@ -373,7 +467,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
             <div className="bg-blue-50 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-blue-700">
-                {formatNumber(processedStats.numeric_stats.total)}
+                {formatNumber(getSelectedTableStats()?.total || 0)}
               </div>
               <div className="text-sm text-blue-600 font-medium">총합계</div>
               <div className="text-xs text-blue-500 mt-1">Total</div>
@@ -381,7 +475,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
             <div className="bg-indigo-50 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-indigo-700">
-                {processedStats.numeric_stats.count}
+                {getSelectedTableStats()?.count || 0}
               </div>
               <div className="text-sm text-indigo-600 font-medium">데이터 개수</div>
               <div className="text-xs text-indigo-500 mt-1">Count</div>
@@ -392,17 +486,19 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="bg-purple-50 rounded-lg p-4 text-center">
               <div className="text-xl font-bold text-purple-700">
-                {formatNumber(processedStats.numeric_stats.std_dev)}
+                {formatNumber(getSelectedTableStats()?.std_dev || 0)}
               </div>
               <div className="text-sm text-purple-600 font-medium">표준편차</div>
               <div className="text-xs text-purple-500 mt-1">Standard Deviation</div>
             </div>
             <div className="bg-pink-50 rounded-lg p-4 text-center">
               <div className="text-xl font-bold text-pink-700">
-                {processedStats.numeric_stats.count > 0 
-                  ? formatNumber((processedStats.numeric_stats.std_dev / processedStats.numeric_stats.mean) * 100)
-                  : '0'
-                }%
+                {(() => {
+                  const stats = getSelectedTableStats();
+                  return stats && stats.count > 0 && stats.mean > 0 && stats.std_dev !== undefined
+                    ? formatNumber((stats.std_dev / stats.mean) * 100)
+                    : '0';
+                })()}%
               </div>
               <div className="text-sm text-pink-600 font-medium">변동계수</div>
               <div className="text-xs text-pink-500 mt-1">Coefficient of Variation</div>
@@ -412,7 +508,12 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
         {/* 수집된 데이터 샘플 */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">📋 수집된 데이터 샘플</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">
+            📋 수집된 데이터 샘플
+            {selectedTableName && (
+              <span className="text-lg text-blue-600 ml-2">- {selectedTableName}</span>
+            )}
+          </h3>
           <div className="overflow-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -424,7 +525,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {processedStats.sample_data.map((item, index) => (
+                {getFilteredData().map((item, index) => (
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 font-mono">
                       {item.field_name}

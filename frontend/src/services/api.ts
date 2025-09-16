@@ -329,4 +329,10 @@ export const statsAPI = {
     const response = await api.post<any>('/data/collection-log', request);
     return response.data;
   },
+
+  // 통계표별 상세 분석
+  async getTableAnalysis(statName: string): Promise<any> {
+    const response = await api.get(`/table-analysis/${encodeURIComponent(statName)}`);
+    return response.data;
+  },
 };

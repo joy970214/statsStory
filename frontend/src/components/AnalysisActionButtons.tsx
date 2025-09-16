@@ -6,6 +6,7 @@ interface AnalysisActionButtonsProps {
   onDownloadPDF: () => void;
   onViewOriginal: () => void;
   onInspectData?: () => void;
+  onViewTableAnalysis?: () => void;
   originalUrl?: string;
   analysisTitle?: string;
 }
@@ -16,6 +17,7 @@ export const AnalysisActionButtons: React.FC<AnalysisActionButtonsProps> = ({
   onDownloadPDF,
   onViewOriginal,
   onInspectData,
+  onViewTableAnalysis,
   originalUrl,
   analysisTitle = "분석 결과"
 }) => {
@@ -79,6 +81,20 @@ export const AnalysisActionButtons: React.FC<AnalysisActionButtonsProps> = ({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           데이터 검사
+        </button>
+      )}
+
+      {/* 통계표별 분석 */}
+      {onViewTableAnalysis && (
+        <button
+          onClick={onViewTableAnalysis}
+          className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition-colors flex items-center gap-2"
+          title="통계표별로 구분하여 상세 분석을 확인합니다"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          통계표별 분석
         </button>
       )}
     </div>

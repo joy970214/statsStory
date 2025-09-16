@@ -397,6 +397,44 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
     try:
         stat_url = request.stat_url or "https://stat.molit.go.kr/portal/cate/statView.do"
         
+        # 캐시 디버깅을 위한 로그 추가
+        print(f"[CACHE_DEBUG] 요청 정보:")
+        print(f"  - stat_name: {request.stat_name}")
+        print(f"  - stat_url: {stat_url}")
+        
+        # 캐시 키 생성 및 확인
+        from app.services.data_storage import DataStorageService
+        debug_storage = DataStorageService()
+        cache_key = debug_storage._get_cache_key(stat_url)
+        print(f"  - cache_key: {cache_key}")
+        
+        # 캐시 파일 존재 여부 확인
+        import os
+        metadata_path = debug_storage._get_metadata_path(cache_key)
+        stats_path = debug_storage._get_stats_path(cache_key)
+        print(f"  - metadata_exists: {os.path.exists(metadata_path)}")
+        print(f"  - stats_exists: {os.path.exists(stats_path)}")
+        
+        if os.path.exists(metadata_path):
+            print(f"  - metadata_file: {metadata_path}")
+        if os.path.exists(stats_path):
+            print(f"  - stats_file: {stats_path}")
+        
+        # 캐시 로드 시도 (URL 우선, 실패 시 이름으로 검색)
+        cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
+        print(f"  - cache_loaded_by_url: metadata={cached_metadata is not None}, data={cached_stat_data is not None}")
+        
+        # URL로 찾지 못한 경우 stat_name으로 검색
+        if not cached_metadata or not cached_stat_data:
+            print(f"  - trying_name_search: {request.stat_name}")
+            cached_metadata, cached_stat_data, found_url = storage_service.find_data_by_name(request.stat_name)
+            print(f"  - cache_loaded_by_name: metadata={cached_metadata is not None}, data={cached_stat_data is not None}")
+            if found_url:
+                print(f"  - found_cached_url: {found_url}")
+                stat_url = found_url  # 캐시된 URL로 업데이트
+        
+        print(f"[CACHE_DEBUG] 끝")
+        
         # 최적화된 크롤러 사용
         if OptimizedMolitCrawler is None:
             progress_tracker.update_progress(task_id, "오류", 100, "최적화된 크롤러를 로드할 수 없습니다")
@@ -404,13 +442,28 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
             
         optimized_crawler = OptimizedMolitCrawler(pool_size=3, max_concurrent_tables=3)
         
-        # 진행률 추적을 위한 ProgressCallback 생성 
-        progress_callback = ProgressCallback(task_id)
-        
-        # 종합 분석 실행
-        analysis_result = await optimized_crawler.get_comprehensive_stat_analysis_optimized(
-            stat_url, progress_callback
-        )
+        # 캐시된 데이터가 있으면 사용, 없으면 새로 수집
+        if cached_metadata and cached_stat_data:
+            print(f"[CACHE_DEBUG] 캐시된 데이터 사용: {cached_metadata.title}, {len(cached_stat_data)}개 데이터")
+            
+            # 캐시된 데이터를 분석 결과 형태로 변환
+            analysis_result = _create_analysis_result_from_cache(cached_metadata, cached_stat_data, stat_url)
+            
+            # 진행률을 즉시 완료로 표시
+            progress_callback = ProgressCallback(task_id)
+            progress_callback.update("캐시로드", 10, "캐시된 데이터 로드 중")
+            progress_callback.update("분석", 50, "캐시된 데이터 분석 중")
+            progress_callback.update("완료", 100, "캐시된 데이터 분석 완료")
+        else:
+            print(f"[CACHE_DEBUG] 새로운 데이터 수집 시작")
+            
+            # 진행률 추적을 위한 ProgressCallback 생성 
+            progress_callback = ProgressCallback(task_id)
+            
+            # 종합 분석 실행
+            analysis_result = await optimized_crawler.get_comprehensive_stat_analysis_optimized(
+                stat_url, progress_callback
+            )
         
         # 분석 결과를 기존 API 형태로 변환
         basic_statistics = _calculate_basic_statistics_from_comprehensive(analysis_result)
@@ -474,6 +527,223 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
         print(f"최적화된 분석 실행 오류: {e}")
         # 오류 발생 시 진행률 추적기에 직접 업데이트
         progress_tracker.update_progress(task_id, "오류", 100, f"분석 중 오류 발생: {str(e)}")
+
+def _analyze_table_data(table_name: str, table_data: List[StatData]) -> dict:
+    """통계표별 상세 데이터 분석"""
+    if not table_data:
+        return {
+            "table_name": table_name,
+            "data_overview": {"message": "데이터가 없습니다"},
+            "basic_statistics": {},
+            "data_samples": [],
+            "distribution_characteristics": {},
+            "objective_summary": "분석할 데이터가 없습니다."
+        }
+    
+    # 1. 데이터 개요
+    years = [item.year for item in table_data if item.year]
+    total_records = len(table_data)
+    
+    # 모든 데이터 필드 수집
+    all_fields = set()
+    numeric_fields = set()
+    text_fields = set()
+    all_values = []
+    
+    for item in table_data:
+        if item.data:
+            all_fields.update(item.data.keys())
+            for key, value in item.data.items():
+                # 값 파싱 (JSON 문자열 형태인 경우)
+                parsed_value = _parse_cell_value(value)
+                all_values.append(parsed_value)
+                
+                if parsed_value.get('unit') == 'number':
+                    numeric_fields.add(key)
+                else:
+                    text_fields.add(key)
+    
+    data_overview = {
+        "total_records": total_records,
+        "year_range": {"min": min(years) if years else None, "max": max(years) if years else None},
+        "total_fields": len(all_fields),
+        "numeric_fields_count": len(numeric_fields),
+        "text_fields_count": len(text_fields),
+        "sample_fields": list(all_fields)[:10]
+    }
+    
+    # 2. 기초통계 (숫자 데이터만)
+    numeric_values = []
+    for val in all_values:
+        if val.get('unit') == 'number' and isinstance(val.get('value'), (int, float)):
+            numeric_values.append(val['value'])
+    
+    basic_statistics = {}
+    if numeric_values:
+        import numpy as np
+        basic_statistics = {
+            "count": len(numeric_values),
+            "mean": float(np.mean(numeric_values)),
+            "median": float(np.median(numeric_values)),
+            "std": float(np.std(numeric_values)),
+            "min": float(np.min(numeric_values)),
+            "max": float(np.max(numeric_values)),
+            "sum": float(np.sum(numeric_values)),
+            "quartiles": {
+                "q1": float(np.percentile(numeric_values, 25)),
+                "q2": float(np.percentile(numeric_values, 50)),
+                "q3": float(np.percentile(numeric_values, 75))
+            }
+        }
+    
+    # 3. 데이터 샘플 (처음 5개)
+    data_samples = []
+    for i, item in enumerate(table_data[:5]):
+        sample = {
+            "record_index": i + 1,
+            "year": item.year,
+            "sample_data": {}
+        }
+        
+        if item.data:
+            # 중요한 필드만 선별 (숫자 데이터 우선)
+            sorted_fields = sorted(item.data.items(), 
+                                 key=lambda x: (x[0] not in numeric_fields, x[0]))
+            
+            for key, value in sorted_fields[:8]:  # 최대 8개 필드
+                parsed_value = _parse_cell_value(value)
+                sample["sample_data"][key] = {
+                    "raw": parsed_value.get('raw', str(value)),
+                    "value": parsed_value.get('value'),
+                    "unit": parsed_value.get('unit', 'text')
+                }
+        
+        data_samples.append(sample)
+    
+    # 4. 분포 특성
+    distribution_characteristics = {
+        "data_types_distribution": {
+            "numeric_ratio": len(numeric_fields) / len(all_fields) if all_fields else 0,
+            "text_ratio": len(text_fields) / len(all_fields) if all_fields else 0
+        },
+        "value_ranges": {},
+        "common_patterns": []
+    }
+    
+    # 숫자 데이터의 분포
+    if numeric_values:
+        distribution_characteristics["value_ranges"] = {
+            "range": float(np.max(numeric_values) - np.min(numeric_values)),
+            "coefficient_of_variation": float(np.std(numeric_values) / np.mean(numeric_values)) if np.mean(numeric_values) != 0 else 0
+        }
+    
+    # 5. 객관적 현황 요약
+    objective_summary = _generate_objective_summary(table_name, data_overview, basic_statistics)
+    
+    return {
+        "table_name": table_name,
+        "data_overview": data_overview,
+        "basic_statistics": basic_statistics,
+        "data_samples": data_samples,
+        "distribution_characteristics": distribution_characteristics,
+        "objective_summary": objective_summary
+    }
+
+def _parse_cell_value(value):
+    """셀 값 파싱 (JSON 문자열 또는 일반 값)"""
+    if isinstance(value, str) and value.startswith('{') and value.endswith('}'):
+        try:
+            import ast
+            return ast.literal_eval(value)
+        except:
+            return {"value": value, "unit": "text", "raw": value}
+    else:
+        # 숫자인지 확인
+        try:
+            if isinstance(value, (int, float)):
+                return {"value": value, "unit": "number", "raw": str(value)}
+            elif isinstance(value, str):
+                # 쉼표 제거 후 숫자 변환 시도
+                cleaned = value.replace(',', '').replace('%', '')
+                num_val = float(cleaned)
+                return {"value": num_val, "unit": "number", "raw": value}
+        except:
+            pass
+        
+        return {"value": value, "unit": "text", "raw": str(value)}
+
+def _generate_objective_summary(table_name: str, data_overview: dict, basic_statistics: dict) -> str:
+    """객관적 현황 요약 생성"""
+    summary_parts = []
+    
+    # 기본 정보
+    total_records = data_overview.get('total_records', 0)
+    year_range = data_overview.get('year_range', {})
+    
+    summary_parts.append(f"'{table_name}' 통계표는 총 {total_records}개의 데이터 레코드를 포함하고 있습니다.")
+    
+    if year_range.get('min') and year_range.get('max'):
+        if year_range['min'] == year_range['max']:
+            summary_parts.append(f"{year_range['min']}년 기준 데이터입니다.")
+        else:
+            summary_parts.append(f"{year_range['min']}년부터 {year_range['max']}년까지의 시계열 데이터입니다.")
+    
+    # 필드 구성
+    total_fields = data_overview.get('total_fields', 0)
+    numeric_count = data_overview.get('numeric_fields_count', 0)
+    text_count = data_overview.get('text_fields_count', 0)
+    
+    summary_parts.append(f"총 {total_fields}개 데이터 필드 중 {numeric_count}개는 수치형, {text_count}개는 텍스트형 데이터입니다.")
+    
+    # 기초통계 요약
+    if basic_statistics:
+        mean_val = basic_statistics.get('mean', 0)
+        max_val = basic_statistics.get('max', 0)
+        min_val = basic_statistics.get('min', 0)
+        
+        summary_parts.append(f"수치 데이터의 평균값은 {mean_val:,.1f}이며, 최소값 {min_val:,.1f}에서 최대값 {max_val:,.1f}까지의 범위를 보입니다.")
+        
+        # 변동성 평가
+        cv = basic_statistics.get('std', 0) / mean_val if mean_val != 0 else 0
+        if cv < 0.1:
+            variability = "낮은"
+        elif cv < 0.3:
+            variability = "보통"
+        else:
+            variability = "높은"
+        
+        summary_parts.append(f"데이터의 변동성은 {variability} 수준으로 평가됩니다.")
+    
+    return " ".join(summary_parts)
+
+def _create_analysis_result_from_cache(metadata: StatMetadata, stat_data: List[StatData], stat_url: str):
+    """캐시된 데이터를 분석 결과 형태로 변환"""
+    from dataclasses import dataclass
+    from typing import Dict, List as ListType
+    
+    @dataclass
+    class AnalysisResult:
+        metadata: StatMetadata
+        data_by_table: Dict[str, ListType[StatData]]
+        stat_title: str
+        total_data_points: int
+        stat_url: str
+    
+    # 테이블별로 데이터 그룹화
+    data_by_table = {}
+    for data_item in stat_data:
+        table_name = getattr(data_item, 'table_name', None) or "기본 통계표"
+        if table_name not in data_by_table:
+            data_by_table[table_name] = []
+        data_by_table[table_name].append(data_item)
+    
+    return AnalysisResult(
+        metadata=metadata,
+        data_by_table=data_by_table,
+        stat_title=metadata.title,
+        total_data_points=len(stat_data),
+        stat_url=stat_url
+    )
 
 def _calculate_basic_statistics_from_comprehensive(analysis_result) -> dict:
     """종합 분석 결과에서 기초 통계 추출"""
@@ -973,6 +1243,53 @@ async def view_data_collection_log(request: GenerateStoryRequest):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"수집 로그 생성 중 오류: {str(e)}")
+
+@router.get("/table-analysis/{stat_name}", summary="통계표별 상세 분석")
+async def get_table_analysis(stat_name: str):
+    """통계표별 상세 분석 - 데이터 개요, 기초통계, 샘플, 분포 특성"""
+    try:
+        # 캐시된 데이터 찾기
+        storage_service = DataStorageService()
+        metadata, stat_data, stat_url = storage_service.find_data_by_name(stat_name)
+        
+        if not metadata or not stat_data:
+            raise HTTPException(status_code=404, detail="해당 통계 데이터를 찾을 수 없습니다")
+        
+        # 통계표별로 데이터 그룹화
+        tables_analysis = {}
+        
+        # 테이블명별로 데이터 분류
+        table_groups = {}
+        for data_item in stat_data:
+            table_name = getattr(data_item, 'table_name', None) or "기본 통계표"
+            if table_name not in table_groups:
+                table_groups[table_name] = []
+            table_groups[table_name].append(data_item)
+        
+        # 각 테이블별 상세 분석
+        for table_name, table_data in table_groups.items():
+            analysis = _analyze_table_data(table_name, table_data)
+            tables_analysis[table_name] = analysis
+        
+        return {
+            "stat_name": stat_name,
+            "stat_url": stat_url,
+            "metadata": {
+                "title": metadata.title,
+                "department": metadata.department,
+                "keywords": metadata.keywords,
+                "related_terms": metadata.related_terms
+            },
+            "total_tables": len(tables_analysis),
+            "total_data_points": len(stat_data),
+            "analysis_date": datetime.now().isoformat(),
+            "tables_analysis": tables_analysis
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"통계표 분석 중 오류: {str(e)}")
 
 @router.get("/inspect-enhanced/{stat_name}", response_model=InspectionResult, summary="향상된 데이터 검사")
 async def inspect_enhanced_data(stat_name: str):
