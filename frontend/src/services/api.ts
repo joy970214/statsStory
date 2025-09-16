@@ -235,28 +235,71 @@ export const statsAPI = {
 
   // SSE 진행률 스트림 구독
   subscribeToProgress(taskId: string, onProgress: (data: any) => void): EventSource {
-    console.log('SSE 연결 시작:', `/api/analysis/progress/${taskId}`);
-    const eventSource = new EventSource(`/api/analysis/progress/${taskId}`);
+    // 프록시를 우회하고 직접 백엔드로 연결 시도
+    const sseUrl = `http://localhost:8001/api/analysis/progress/${taskId}`;
+    console.log('[API] SSE 연결 시작 (직접 연결):', sseUrl);
+    console.log('[API] 현재 위치:', window.location.href);
+    
+    // 먼저 엔드포인트가 존재하는지 확인
+    const statusUrl = sseUrl.replace('/progress/', '/status/');
+    fetch(statusUrl)
+      .then(response => {
+        console.log('[API] 상태 확인 응답:', response.status, response.statusText);
+      })
+      .catch(error => {
+        console.error('[API] 상태 확인 실패:', error);
+      });
+    
+    const eventSource = new EventSource(sseUrl);
+    
+    // 연결 시작 로그
+    console.log('[API] EventSource 생성됨, 초기 readyState:', eventSource.readyState);
     
     eventSource.onopen = (event) => {
-      console.log('SSE 연결 성공:', event);
+      console.log('[API] SSE 연결 성공!', event);
+      console.log('[API] EventSource readyState:', eventSource.readyState);
+      console.log('[API] EventSource URL:', eventSource.url);
     };
     
     eventSource.onmessage = (event) => {
-      console.log('SSE 메시지 수신:', event.data);
+      console.log('[API] SSE 메시지 수신 - Raw:', event.data);
+      console.log('[API] SSE 메시지 이벤트 전체:', event);
       try {
         const data = JSON.parse(event.data);
+        console.log('[API] SSE 메시지 파싱 완료:', data);
         onProgress(data);
       } catch (error) {
-        console.error('SSE 데이터 파싱 오류:', error, 'Raw data:', event.data);
+        console.error('[API] SSE 데이터 파싱 오류:', error, 'Raw data:', event.data);
       }
     };
 
     eventSource.onerror = (error) => {
-      console.error('SSE 연결 오류:', error);
-      console.log('EventSource readyState:', eventSource.readyState);
-      console.log('EventSource url:', eventSource.url);
+      console.error('[API] SSE 연결 오류:', error);
+      console.log('[API] EventSource readyState:', eventSource.readyState);
+      console.log('[API] EventSource url:', eventSource.url);
+      
+      // 연결 상태별 자세한 로그
+      switch(eventSource.readyState) {
+        case EventSource.CONNECTING:
+          console.log('[API] SSE 연결 중... (재연결 시도 중일 수 있음)');
+          break;
+        case EventSource.OPEN:
+          console.log('[API] SSE 연결 열림 (오류에도 불구하고)');
+          break;
+        case EventSource.CLOSED:
+          console.log('[API] SSE 연결 닫힘 (서버에서 연결 종료 또는 네트워크 오류)');
+          break;
+        default:
+          console.log('[API] SSE 알 수 없는 상태:', eventSource.readyState);
+      }
     };
+
+    // 5초 후 연결 상태 체크
+    setTimeout(() => {
+      console.log('[API] 5초 후 SSE 상태 체크:');
+      console.log('  - readyState:', eventSource.readyState);
+      console.log('  - url:', eventSource.url);
+    }, 5000);
 
     return eventSource;
   },

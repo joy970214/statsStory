@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Query, BackgroundTasks, Request
 from fastapi.responses import StreamingResponse
 from typing import List, Optional, Dict, Any
 from app.models.stat_models import (
@@ -328,20 +328,46 @@ async def start_optimized_analysis(request: GenerateStoryRequest, background_tas
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"분석 시작 실패: {str(e)}")
 
+
+@router.options("/analysis/progress/{task_id}")
+async def options_analysis_progress(task_id: str):
+    """SSE OPTIONS 요청 처리"""
+    from fastapi.responses import Response
+    response = Response()
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    return response
+
 @router.get("/analysis/progress/{task_id}")
-async def get_analysis_progress(task_id: str):
+async def get_analysis_progress(task_id: str, request: Request):
     """분석 진행률 스트림 (SSE)"""
     try:
-        print(f"[API] SSE 진행률 요청: {task_id}")
+        print(f"[API] ===== SSE 진행률 요청 수신 =====")
+        print(f"[API] Task ID: {task_id}")
+        print(f"[API] 클라이언트: {request.client}")
+        print(f"[API] 요청 헤더:")
+        for key, value in request.headers.items():
+            print(f"  {key}: {value}")
+        print(f"[API] URL: {request.url}")
+        print(f"[API] 메소드: {request.method}")
         
         # Task ID 존재 여부 확인
         if not progress_tracker.task_exists(task_id):
             print(f"[API] 존재하지 않는 작업: {task_id}")
-            raise HTTPException(status_code=404, detail=f"작업을 찾을 수 없습니다: {task_id}")
+            # 작업이 없으면 새로 생성 (디버그 목적)
+            progress_tracker.create_task(f"Debug task for {task_id}")
+            print(f"[API] 디버그 작업 생성: {task_id}")
         
-        return await stream_progress(task_id)
+        print(f"[API] stream_progress 함수 호출 중...")
+        stream_response = await stream_progress(task_id)
+        print(f"[API] stream_progress 응답 생성 완료: {type(stream_response)}")
+        
+        return stream_response
     except Exception as e:
         print(f"[API] SSE 스트림 오류: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"진행률 스트림 오류: {str(e)}")
 
 @router.get("/analysis/status/{task_id}")
@@ -378,13 +404,12 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
             
         optimized_crawler = OptimizedMolitCrawler(pool_size=3, max_concurrent_tables=3)
         
-        # 크롤러 내장 ProgressCallback을 사용하여 task_id 전달
-        from app.crawlers.optimized_molit_crawler import ProgressCallback as CrawlerProgressCallback
-        crawler_progress_callback = CrawlerProgressCallback(task_id=task_id)
+        # 진행률 추적을 위한 ProgressCallback 생성 
+        progress_callback = ProgressCallback(task_id)
         
         # 종합 분석 실행
         analysis_result = await optimized_crawler.get_comprehensive_stat_analysis_optimized(
-            stat_url, crawler_progress_callback
+            stat_url, progress_callback
         )
         
         # 분석 결과를 기존 API 형태로 변환
@@ -447,7 +472,8 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
         
     except Exception as e:
         print(f"최적화된 분석 실행 오류: {e}")
-        progress_callback.update("오류", 100, f"분석 중 오류 발생: {str(e)}")
+        # 오류 발생 시 진행률 추적기에 직접 업데이트
+        progress_tracker.update_progress(task_id, "오류", 100, f"분석 중 오류 발생: {str(e)}")
 
 def _calculate_basic_statistics_from_comprehensive(analysis_result) -> dict:
     """종합 분석 결과에서 기초 통계 추출"""

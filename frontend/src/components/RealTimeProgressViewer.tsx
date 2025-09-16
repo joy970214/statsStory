@@ -40,6 +40,8 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
   }, []);
 
   useEffect(() => {
+    console.log(`[RealTimeProgressViewer] useEffect 시작 - taskId: ${taskId}`);
+    
     // 초기 진행률 설정 (연결 시도 표시)
     setProgress({
       task_id: taskId,
@@ -49,59 +51,70 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
       timestamp: new Date().toISOString()
     });
     
-    // SSE 연결 시작
-    const sse = statsAPI.subscribeToProgress(taskId, (data: any) => {
-      console.log('진행률 업데이트:', data);
+    let sse: EventSource | null = null;
+    let connectionTimeout: NodeJS.Timeout;
+    
+    // SSE 연결 시작 (약간의 지연 후)
+    const timeoutId = setTimeout(() => {
+      console.log(`[RealTimeProgressViewer] 지연 후 SSE 연결 실행 - taskId: ${taskId}`);
+      sse = statsAPI.subscribeToProgress(taskId, (data: any) => {
+        console.log('[RealTimeProgressViewer] 진행률 업데이트 수신:', data);
+        
+        if (data.type === 'connection') {
+          console.log('[RealTimeProgressViewer] 연결 확인 메시지 수신');
+          setIsConnected(true);
+          return;
+        }
+        
+        if (data.type === 'heartbeat') {
+          console.log('[RealTimeProgressViewer] 하트비트 수신');
+          return; // 하트비트는 무시
+        }
+
+        console.log('[RealTimeProgressViewer] 진행률 상태 업데이트:', data);
+        setProgress(data);
+        setIsConnected(true);
+
+        // 완료 시 결과 가져오기
+        if (data.progress >= 100) {
+          console.log('[RealTimeProgressViewer] 분석 완료, 결과 조회 시작');
+          handleCompletion();
+        }
+      });
+
+      sse.onopen = () => {
+        console.log('[RealTimeProgressViewer] SSE 연결 성공');
+        setIsConnected(true);
+      };
+
+      sse.onerror = (error) => {
+        console.error('[RealTimeProgressViewer] SSE 연결 오류:', error);
+        setIsConnected(false);
+        // 재연결 시도는 브라우저가 자동으로 처리
+      };
+
+      setEventSource(sse);
       
-      if (data.type === 'heartbeat') {
-        console.log('하트비트 수신');
-        return; // 하트비트는 무시
-      }
-
-      setProgress(data);
-      setIsConnected(true);
-
-      // 완료 시 결과 가져오기
-      if (data.progress >= 100) {
-        handleCompletion();
-      }
-    });
-
-    sse.onopen = () => {
-      console.log('SSE 연결 성공');
-      setIsConnected(true);
-    };
-
-    sse.onerror = () => {
-      console.error('SSE 연결 오류');
-      setIsConnected(false);
-      // 재연결 시도는 브라우저가 자동으로 처리
-    };
-
-    setEventSource(sse);
-
-    // 15초 후에도 진행률이 0이면 오류 표시
-    const timeout = setTimeout(() => {
-      if (!progress || progress.progress === 0) {
-        setProgress(prev => prev ? {
+      // 15초 후에도 진행률이 0이면 오류 표시
+      connectionTimeout = setTimeout(() => {
+        setProgress(prev => prev && prev.progress === 0 ? {
           ...prev,
           stage: '연결 대기 중',
           message: 'SSE 연결을 기다리고 있습니다. 네트워크 상태를 확인해주세요.'
-        } : {
-          task_id: taskId,
-          stage: '연결 대기 중',
-          progress: 0,
-          message: 'SSE 연결을 기다리고 있습니다. 네트워크 상태를 확인해주세요.',
-          timestamp: new Date().toISOString()
-        });
-      }
-    }, 15000);
+        } : prev);
+      }, 15000);
+      
+    }, 500); // 500ms 지연
 
     return () => {
+      clearTimeout(timeoutId);
+      if (connectionTimeout) {
+        clearTimeout(connectionTimeout);
+      }
       if (sse) {
+        console.log('[RealTimeProgressViewer] SSE 연결 정리');
         sse.close();
       }
-      clearTimeout(timeout);
     };
   }, [taskId]);
 

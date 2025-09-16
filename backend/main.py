@@ -2,6 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import stats
+from app.services.progress_service import start_background_cleanup
 
 app = FastAPI(
     title="통계이야기 API",
@@ -18,6 +19,12 @@ app.add_middleware(
 )
 
 app.include_router(stats.router, prefix="/api")
+
+@app.on_event("startup")
+async def startup_event():
+    """앱 시작 시 백그라운드 정리 작업 시작"""
+    start_background_cleanup()
+    print("백그라운드 정리 작업 시작됨")
 
 @app.get("/")
 async def root():

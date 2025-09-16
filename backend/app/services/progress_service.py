@@ -145,15 +145,16 @@ async def stream_progress(task_id: str) -> StreamingResponse:
     async def event_generator():
         print(f"[SSE] event_generator 함수 시작: {task_id}")
         
-        # 즉시 연결 확인 메시지 전송
-        yield f"data: {json.dumps({'type': 'connection', 'message': 'Connected', 'timestamp': datetime.now().isoformat()})}\n\n"
-        print(f"[SSE] 연결 확인 메시지 전송: {task_id}")
-        
-        # 구독 시작
-        queue = progress_tracker.subscribe(task_id)
-        print(f"[SSE] 큐 구독 완료: {task_id}, queue={queue}")
-        
         try:
+            # 즉시 연결 확인 메시지 전송 (올바른 SSE 형식)
+            connection_data = json.dumps({'type': 'connection', 'message': 'Connected', 'timestamp': datetime.now().isoformat()})
+            yield f"data: {connection_data}\n\n"
+            print(f"[SSE] 연결 확인 메시지 전송: {task_id}")
+            
+            # 구독 시작
+            queue = progress_tracker.subscribe(task_id)
+            print(f"[SSE] 큐 구독 완료: {task_id}, queue={queue}")
+            
             # 현재 작업 상태 전송 (있는 경우)
             task_status = progress_tracker.get_task_status(task_id)
             if task_status:
@@ -165,9 +166,19 @@ async def stream_progress(task_id: str) -> StreamingResponse:
                     timestamp=datetime.now().isoformat()
                 )
                 print(f"[SSE] 초기 상태 전송: {initial_update}")
-                yield f"data: {json.dumps(asdict(initial_update))}\n\n"
+                initial_data = json.dumps(asdict(initial_update))
+                yield f"data: {initial_data}\n\n"
             else:
                 print(f"[SSE] 작업 상태 없음: {task_id}")
+                # 기본 상태 전송
+                default_data = json.dumps({
+                    "task_id": task_id,
+                    "stage": "준비중",
+                    "progress": 0,
+                    "message": "작업 준비 중...",
+                    "timestamp": datetime.now().isoformat()
+                })
+                yield f"data: {default_data}\n\n"
             
             # 새로운 업데이트 대기 및 전송
             while True:
@@ -175,7 +186,8 @@ async def stream_progress(task_id: str) -> StreamingResponse:
                     # 타임아웃으로 주기적 하트비트
                     update = await asyncio.wait_for(queue.get(), timeout=30)
                     print(f"[SSE] 업데이트 전송: {update}")
-                    yield f"data: {json.dumps(asdict(update))}\n\n"
+                    update_data = json.dumps(asdict(update))
+                    yield f"data: {update_data}\n\n"
                     
                     # 작업 완료 시 종료
                     if update.progress >= 100:
@@ -184,26 +196,38 @@ async def stream_progress(task_id: str) -> StreamingResponse:
                         
                 except asyncio.TimeoutError:
                     # 하트비트 전송
-                    heartbeat = {
+                    heartbeat_data = json.dumps({
                         "type": "heartbeat",
                         "timestamp": datetime.now().isoformat()
-                    }
-                    yield f"data: {json.dumps(heartbeat)}\n\n"
+                    })
+                    yield f"data: {heartbeat_data}\n\n"
+                    print(f"[SSE] 하트비트 전송: {task_id}")
                     
         except asyncio.CancelledError:
+            print(f"[SSE] 연결 취소됨: {task_id}")
             pass
+        except Exception as e:
+            print(f"[SSE] event_generator 오류: {e}")
+            import traceback
+            traceback.print_exc()
         finally:
             # 구독 해제
             progress_tracker.unsubscribe(task_id)
+            print(f"[SSE] 구독 해제 완료: {task_id}")
     
     response = StreamingResponse(
         event_generator(),
         media_type="text/event-stream",
         headers={
-            "Cache-Control": "no-cache",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
             "Connection": "keep-alive",
             "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Headers": "Cache-Control"
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+            "X-Accel-Buffering": "no",
+            "Content-Type": "text/event-stream; charset=utf-8"
         }
     )
     print(f"[SSE] StreamingResponse 생성 완료: {task_id}")
