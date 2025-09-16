@@ -7,14 +7,18 @@ import { ImprovedDataInspectionViewer } from './components/ImprovedDataInspectio
 import { ComprehensiveAnalysisViewer } from './components/ComprehensiveAnalysisViewer';
 import { RealTimeProgressViewer } from './components/RealTimeProgressViewer';
 import { TableAnalysisViewer } from './components/TableAnalysisViewer';
-import { 
-  statsAPI, 
-  StatItem, 
+import { CollectedStatsViewer } from './components/CollectedStatsViewer';
+import { StatDetailViewer } from './components/StatDetailViewer';
+import { StatDistributionViewer } from './components/StatDistributionViewer';
+import { StatSummaryViewer } from './components/StatSummaryViewer';
+import {
+  statsAPI,
+  StatItem,
   ComprehensiveAnalysisResponse,
   AdvancedCardNewsResponse
 } from './services/api';
 
-type AppState = 'loading' | 'stats-list' | 'viewing-comprehensive' | 'viewing-advanced-cardnews' | 'optimized-progress' | 'viewing-table-analysis';
+type AppState = 'loading' | 'stats-list' | 'viewing-comprehensive' | 'viewing-advanced-cardnews' | 'optimized-progress' | 'viewing-table-analysis' | 'collected-stats' | 'stat-detail' | 'stat-distribution' | 'stat-summary';
 
 function App() {
   const [state, setState] = useState<AppState>('loading');
@@ -27,6 +31,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [analysisType, setAnalysisType] = useState<'comprehensive' | 'advanced-cardnews'>('advanced-cardnews');
   const [tableAnalysisStatName, setTableAnalysisStatName] = useState<string | null>(null);
+  const [selectedStatForDetail, setSelectedStatForDetail] = useState<string | null>(null);
 
   useEffect(() => {
     loadRecentStats();
@@ -80,6 +85,7 @@ function App() {
     setOptimizedResult(null);
     setCurrentTaskId(null);
     setTableAnalysisStatName(null);
+    setSelectedStatForDetail(null);
     setError(null);
   };
 
@@ -96,6 +102,25 @@ function App() {
   const handleViewTableAnalysis = (statName: string) => {
     setTableAnalysisStatName(statName);
     setState('viewing-table-analysis');
+  };
+
+  const handleViewCollectedStats = () => {
+    setState('collected-stats');
+  };
+
+  const handleSelectStatForDetail = (statName: string) => {
+    setSelectedStatForDetail(statName);
+    setState('stat-detail');
+  };
+
+  const handleViewDistribution = (statName: string) => {
+    setSelectedStatForDetail(statName);
+    setState('stat-distribution');
+  };
+
+  const handleViewSummary = (statName: string) => {
+    setSelectedStatForDetail(statName);
+    setState('stat-summary');
   };
 
   return (
@@ -140,12 +165,22 @@ function App() {
         {state === 'stats-list' && (
           <div>
             <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                📊 최신 통계 목록
-              </h2>
-              <p className="text-gray-600">
-                최근 1달 이내 발표된 국토교통부 통계를 확인하고 카드뉴스를 생성해보세요.
-              </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                    📊 최신 통계 목록
+                  </h2>
+                  <p className="text-gray-600">
+                    최근 1달 이내 발표된 국토교통부 통계를 확인하고 카드뉴스를 생성해보세요.
+                  </p>
+                </div>
+                <button
+                  onClick={handleViewCollectedStats}
+                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 whitespace-nowrap"
+                >
+                  📋 수집된 통계표 보기
+                </button>
+              </div>
             </div>
 
             {stats.length === 0 ? (
@@ -194,8 +229,38 @@ function App() {
           />
         )}
         {state === 'viewing-table-analysis' && tableAnalysisStatName && (
-          <TableAnalysisViewer 
+          <TableAnalysisViewer
             statName={tableAnalysisStatName}
+            onBack={handleBackToList}
+          />
+        )}
+
+        {state === 'collected-stats' && (
+          <CollectedStatsViewer
+            onSelectStat={handleSelectStatForDetail}
+            onBack={handleBackToList}
+          />
+        )}
+
+        {state === 'stat-detail' && selectedStatForDetail && (
+          <StatDetailViewer
+            statName={selectedStatForDetail}
+            onBack={handleBackToList}
+            onViewDistribution={handleViewDistribution}
+            onViewSummary={handleViewSummary}
+          />
+        )}
+
+        {state === 'stat-distribution' && selectedStatForDetail && (
+          <StatDistributionViewer
+            statName={selectedStatForDetail}
+            onBack={handleBackToList}
+          />
+        )}
+
+        {state === 'stat-summary' && selectedStatForDetail && (
+          <StatSummaryViewer
+            statName={selectedStatForDetail}
             onBack={handleBackToList}
           />
         )}
