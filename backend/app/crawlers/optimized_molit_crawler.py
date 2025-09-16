@@ -937,26 +937,48 @@ class OptimizedMolitCrawler:
                 select = Select(select_element)
                 options = select.options
                 
+                table_count = 0
                 for option in options:
                     option_text = option.text.strip()
                     option_value = option.get_attribute('value')
-                    
+
                     if option_text and '(종료)' not in option_text and option_value:
+                        # 빈 옵션 텍스트 처리
+                        if not option_text or option_text in ['', '-', '선택']:
+                            table_count += 1
+                            option_text = f"통계표{table_count}"
+
+                        # 너무 긴 텍스트 정리
+                        if len(option_text) > 50:
+                            option_text = option_text[:47] + "..."
+
                         # 통계표명 분석
                         table_info = {
                             'name': option_text,
                             'value': option_value,
                             'form_id': option_value,
-                            'is_regional': '_시도별' in option_text,
-                            'is_yearly': '_연도별' in option_text,
+                            'is_regional': '시도별' in option_text or '지역별' in option_text,
+                            'is_yearly': '연도별' in option_text or '년별' in option_text,
                             'requires_date_range': False  # 기본값
                         }
-                        
+
                         stat_tables.append(table_info)
-                        
+                        print(f"통계표 발견: {option_text} (FormID: {option_value})")
+
             except Exception as e:
                 print(f"통계표 목록 수집 실패: {e}")
-            
+                # 기본 테이블이라도 추가
+                if not stat_tables:
+                    stat_tables.append({
+                        'name': '기본 통계표',
+                        'value': '',
+                        'form_id': '',
+                        'is_regional': False,
+                        'is_yearly': False,
+                        'requires_date_range': False
+                    })
+
+            print(f"총 {len(stat_tables)}개 통계표 발견")
             return stat_tables
             
         finally:
@@ -1210,11 +1232,11 @@ class OptimizedMolitCrawler:
                 # 조건에 따른 데이터 수집
                 table_data = await self._collect_table_data_with_conditions(stat_url, table_info)
                 
-                if table_data:
+                if table_data and len(table_data) > 0:
                     data_by_table[table_name] = table_data
                     collection_summary["collected_tables"] += 1
                     collection_summary["total_data_points"] += len(table_data)
-                    
+
                     # 조건별 통계
                     if table_info['is_regional']:
                         collection_summary["regional_tables"] += 1
@@ -1223,16 +1245,34 @@ class OptimizedMolitCrawler:
                         collection_summary["date_range_tables"] += 1
                     else:
                         collection_summary["default_tables"] += 1
-                    
+
                     print(f"통계표 수집 완료: {table_name} ({len(table_data)}개 데이터)")
                 else:
-                    print(f"통계표 수집 실패: {table_name}")
-                    collection_summary["errors"].append(f"데이터 수집 실패: {table_name}")
+                    # 수집 실패 시 더미 데이터 생성
+                    print(f"통계표 수집 실패: {table_name} - 더미 데이터 생성")
+                    dummy_data = [StatData(
+                        year=datetime.now().year,
+                        data={"수집상태": "데이터 수집 실패", "테이블명": table_name},
+                        table_name=table_name,
+                        collection_status="failed"
+                    )]
+                    data_by_table[table_name] = dummy_data
+                    collection_summary["errors"].append(f"데이터 수집 실패: {table_name} (더미 데이터 생성)")
                 
             except Exception as e:
-                error_msg = f"통계표 '{table_info.get('name', 'Unknown')}' 처리 오류: {e}"
+                table_name = table_info.get('name', 'Unknown')
+                error_msg = f"통계표 '{table_name}' 처리 오류: {e}"
                 print(error_msg)
-                collection_summary["errors"].append(error_msg)
+
+                # 예외 발생 시에도 더미 데이터 생성
+                dummy_data = [StatData(
+                    year=datetime.now().year,
+                    data={"수집상태": "처리 오류 발생", "테이블명": table_name, "오류내용": str(e)[:100]},
+                    table_name=table_name,
+                    collection_status="error"
+                )]
+                data_by_table[table_name] = dummy_data
+                collection_summary["errors"].append(f"{error_msg} (더미 데이터 생성)")
         
         progress_callback.update("데이터수집", 90, f"데이터 수집 완료 ({collection_summary['collected_tables']}개 통계표)")
         

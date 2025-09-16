@@ -731,8 +731,23 @@ def _create_analysis_result_from_cache(metadata: StatMetadata, stat_data: List[S
     
     # 테이블별로 데이터 그룹화
     data_by_table = {}
+    table_counter = 1
     for data_item in stat_data:
-        table_name = getattr(data_item, 'table_name', None) or "기본 통계표"
+        table_name = getattr(data_item, 'table_name', None)
+
+        # 테이블명이 없거나 기본값인 경우 개선된 이름 사용
+        if not table_name or table_name in ['', '기본 통계표']:
+            if metadata and metadata.keywords:
+                table_name = f"{metadata.keywords[0]} 통계표 {table_counter}"
+            else:
+                table_name = f"통계표 {table_counter}"
+            table_counter += 1
+        elif table_name.startswith('테이블') and table_name[2:].isdigit():
+            if metadata and metadata.keywords:
+                table_name = f"{metadata.keywords[0]} {table_name}"
+            else:
+                table_name = f"수집된 {table_name}"
+
         if table_name not in data_by_table:
             data_by_table[table_name] = []
         data_by_table[table_name].append(data_item)
@@ -1099,7 +1114,8 @@ async def view_raw_collected_data(request: GenerateStoryRequest):
             "raw_data": [
                 {
                     "year": item.year,
-                    "data": item.data
+                    "data": item.data,
+                    "table_name": getattr(item, 'table_name', None)
                 } for item in stat_data
             ]
         }
@@ -1264,8 +1280,23 @@ async def get_table_analysis(stat_name: str):
         
         # 테이블명별로 데이터 분류
         table_groups = {}
+        table_counter = 1
         for data_item in stat_data:
-            table_name = getattr(data_item, 'table_name', None) or "기본 통계표"
+            table_name = getattr(data_item, 'table_name', None)
+
+            # 테이블명이 없거나 기본값인 경우 개선된 이름 사용
+            if not table_name or table_name in ['', '기본 통계표']:
+                if metadata and metadata.keywords:
+                    table_name = f"{metadata.keywords[0]} 통계표 {table_counter}"
+                else:
+                    table_name = f"통계표 {table_counter}"
+                table_counter += 1
+            elif table_name.startswith('테이블') and table_name[2:].isdigit():
+                if metadata and metadata.keywords:
+                    table_name = f"{metadata.keywords[0]} {table_name}"
+                else:
+                    table_name = f"수집된 {table_name}"
+
             if table_name not in table_groups:
                 table_groups[table_name] = []
             table_groups[table_name].append(data_item)
@@ -1502,8 +1533,25 @@ async def get_stat_detail_by_name(stat_name: str):
 
         # 통계표별로 데이터 그룹화
         table_groups = {}
+        table_counter = 1
         for data_item in stat_data:
-            table_name = getattr(data_item, 'table_name', None) or "기본 통계표"
+            table_name = getattr(data_item, 'table_name', None)
+
+            # 테이블명이 없거나 기본값인 경우 개선된 이름 사용
+            if not table_name or table_name in ['', '기본 통계표']:
+                # 메타데이터에서 키워드 사용하여 의미있는 이름 생성
+                if metadata and metadata.keywords:
+                    table_name = f"{metadata.keywords[0]} 통계표 {table_counter}"
+                else:
+                    table_name = f"통계표 {table_counter}"
+                table_counter += 1
+            elif table_name.startswith('테이블') and table_name[2:].isdigit():
+                # "테이블1", "테이블2" 같은 기본값 개선
+                if metadata and metadata.keywords:
+                    table_name = f"{metadata.keywords[0]} {table_name}"
+                else:
+                    table_name = f"수집된 {table_name}"
+
             if table_name not in table_groups:
                 table_groups[table_name] = []
             table_groups[table_name].append(data_item)
@@ -1603,8 +1651,23 @@ async def get_stat_distribution_analysis(stat_name: str):
 
         # 통계표별 분포 분석
         table_groups = {}
+        table_counter = 1
         for data_item in stat_data:
-            table_name = getattr(data_item, 'table_name', None) or "기본 통계표"
+            table_name = getattr(data_item, 'table_name', None)
+
+            # 테이블명이 없거나 기본값인 경우 개선된 이름 사용
+            if not table_name or table_name in ['', '기본 통계표']:
+                if metadata and metadata.keywords:
+                    table_name = f"{metadata.keywords[0]} 통계표 {table_counter}"
+                else:
+                    table_name = f"통계표 {table_counter}"
+                table_counter += 1
+            elif table_name.startswith('테이블') and table_name[2:].isdigit():
+                if metadata and metadata.keywords:
+                    table_name = f"{metadata.keywords[0]} {table_name}"
+                else:
+                    table_name = f"수집된 {table_name}"
+
             if table_name not in table_groups:
                 table_groups[table_name] = []
             table_groups[table_name].append(data_item)
@@ -1733,8 +1796,23 @@ async def get_stat_objective_summary(stat_name: str):
 
         # 통계표별 객관적 요약 생성
         table_groups = {}
+        table_counter = 1
         for data_item in stat_data:
-            table_name = getattr(data_item, 'table_name', None) or "기본 통계표"
+            table_name = getattr(data_item, 'table_name', None)
+
+            # 테이블명이 없거나 기본값인 경우 개선된 이름 사용
+            if not table_name or table_name in ['', '기본 통계표']:
+                if metadata and metadata.keywords:
+                    table_name = f"{metadata.keywords[0]} 통계표 {table_counter}"
+                else:
+                    table_name = f"통계표 {table_counter}"
+                table_counter += 1
+            elif table_name.startswith('테이블') and table_name[2:].isdigit():
+                if metadata and metadata.keywords:
+                    table_name = f"{metadata.keywords[0]} {table_name}"
+                else:
+                    table_name = f"수집된 {table_name}"
+
             if table_name not in table_groups:
                 table_groups[table_name] = []
             table_groups[table_name].append(data_item)

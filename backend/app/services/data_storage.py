@@ -81,10 +81,25 @@ class DataStorageService:
         }
         
         for stat in stat_data:
-            data['statistics'].append({
+            stat_dict = {
                 'year': stat.year,
                 'data': stat.data
-            })
+            }
+            # 추가 필드들도 저장
+            if hasattr(stat, 'table_name') and stat.table_name:
+                stat_dict['table_name'] = stat.table_name
+            if hasattr(stat, 'period_text') and stat.period_text:
+                stat_dict['period_text'] = stat.period_text
+            if hasattr(stat, 'period_type') and stat.period_type:
+                stat_dict['period_type'] = stat.period_type
+            if hasattr(stat, 'raw_data_count') and stat.raw_data_count:
+                stat_dict['raw_data_count'] = stat.raw_data_count
+            if hasattr(stat, 'collection_status') and stat.collection_status:
+                stat_dict['collection_status'] = stat.collection_status
+            if hasattr(stat, 'data_quality_score') and stat.data_quality_score:
+                stat_dict['data_quality_score'] = stat.data_quality_score
+
+            data['statistics'].append(stat_dict)
         
         with open(file_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
@@ -151,7 +166,13 @@ class DataStorageService:
             for stat_dict in data['statistics']:
                 stat_data.append(StatData(
                     year=stat_dict['year'],
-                    data=stat_dict['data']
+                    data=stat_dict['data'],
+                    table_name=stat_dict.get('table_name'),
+                    period_text=stat_dict.get('period_text'),
+                    period_type=stat_dict.get('period_type'),
+                    raw_data_count=stat_dict.get('raw_data_count'),
+                    collection_status=stat_dict.get('collection_status', 'success'),
+                    data_quality_score=stat_dict.get('data_quality_score')
                 ))
             
             print(f"통계 데이터 캐시 로드 성공: {cache_key} -> {len(stat_data)}년치")

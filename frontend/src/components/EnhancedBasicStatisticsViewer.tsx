@@ -51,6 +51,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
   const [selectedTableName, setSelectedTableName] = useState<string | null>(null);
   const [rawDataByTable, setRawDataByTable] = useState<Record<string, any[]>>({});
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'overview' | 'tables' | 'distribution' | 'inspection'>('overview');
 
   useEffect(() => {
     processRealData();
@@ -71,11 +72,34 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
         const processed = processStatisticsData(rawData);
         setProcessedStats(processed);
 
-        // Group data by table names
+        // Group data by table names with enhanced naming logic
         const dataByTable: Record<string, any[]> = {};
+        let tableCounter = 1;
+
         if (rawData.raw_data && Array.isArray(rawData.raw_data)) {
           rawData.raw_data.forEach((stat: any, statIndex: number) => {
-            const tableName = stat.table_name || `테이블 ${statIndex + 1}`;
+            let tableName = stat.table_name;
+
+            // Enhanced table name processing (matching backend logic)
+            if (!tableName || tableName === '' || tableName === '기본 통계표') {
+              // Use keywords from analysisData metadata if available
+              const keywords = analysisData.metadata?.keywords;
+              if (keywords && keywords.length > 0) {
+                tableName = `${keywords[0]} 통계표 ${tableCounter}`;
+              } else {
+                tableName = `통계표 ${tableCounter}`;
+              }
+              tableCounter++;
+            } else if (tableName.startsWith('테이블') && /^테이블\d+$/.test(tableName)) {
+              // Replace generic "테이블1", "테이블2" with meaningful names
+              const keywords = analysisData.metadata?.keywords;
+              if (keywords && keywords.length > 0) {
+                tableName = `${keywords[0]} ${tableName}`;
+              } else {
+                tableName = `수집된 ${tableName}`;
+              }
+            }
+
             if (!dataByTable[tableName]) {
               dataByTable[tableName] = [];
             }
@@ -134,8 +158,24 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     let numericFields = 0;
     let textFields = 0;
 
+    // Use a helper function to generate consistent table names
+    const getEnhancedTableName = (stat: any, statIndex: number, tableCounter: { value: number }): string => {
+      let tableName = stat.table_name;
+
+      if (!tableName || tableName === '' || tableName === '기본 통계표') {
+        // Note: analysisData may not be available in this context
+        tableName = `통계표 ${tableCounter.value}`;
+        tableCounter.value++;
+      } else if (tableName.startsWith('테이블') && /^테이블\d+$/.test(tableName)) {
+        tableName = `수집된 ${tableName}`;
+      }
+
+      return tableName;
+    };
+
+    const tableCounter = { value: 1 };
     rawData.raw_data.forEach((stat: any, statIndex: number) => {
-      const tableName = stat.table_name || `테이블 ${statIndex + 1}`;
+      const tableName = getEnhancedTableName(stat, statIndex, tableCounter);
       tableNames.add(tableName);
 
       Object.entries(stat.data || {}).forEach(([key, value]) => {
@@ -345,16 +385,34 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
       <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
           <h1 className="text-2xl font-bold text-gray-900">📈 기본통계현황분석 결과 (실제 수집 데이터 기반)</h1>
-          <AnalysisActionButtons
-            onBack={onBack}
-            onDownloadMD={handleDownloadMD}
-            onDownloadPDF={handleDownloadPDF}
-            onViewOriginal={handleViewOriginal}
-            onInspectData={handleInspectData}
-            onViewTableAnalysis={onViewTableAnalysis ? () => onViewTableAnalysis(analysisData.stat_name) : undefined}
-            originalUrl={analysisData.metadata?.url}
-            analysisTitle={analysisData.stat_name}
-          />
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={onBack}
+              className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+            >
+              뒤로 가기
+            </button>
+            <button
+              onClick={handleDownloadMD}
+              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+            >
+              MD 다운로드
+            </button>
+            <button
+              onClick={handleDownloadPDF}
+              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+            >
+              PDF 다운로드
+            </button>
+            {analysisData.metadata?.url && (
+              <button
+                onClick={handleViewOriginal}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+              >
+                원본 보기
+              </button>
+            )}
+          </div>
         </div>
         
         <div className="bg-blue-50 rounded-lg p-4">
@@ -366,10 +424,61 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
         </div>
       </div>
 
+      {/* 탭 네비게이션 */}
+      <div className="bg-white rounded-lg shadow-sm border mb-6">
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex">
+            <button
+              onClick={() => setActiveTab('overview')}
+              className={`py-4 px-6 text-sm font-medium ${
+                activeTab === 'overview'
+                  ? 'border-b-2 border-blue-500 text-blue-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              📊 전체 요약
+            </button>
+            <button
+              onClick={() => setActiveTab('tables')}
+              className={`py-4 px-6 text-sm font-medium ${
+                activeTab === 'tables'
+                  ? 'border-b-2 border-blue-500 text-blue-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              📋 통계표별 분석
+            </button>
+            <button
+              onClick={() => setActiveTab('distribution')}
+              className={`py-4 px-6 text-sm font-medium ${
+                activeTab === 'distribution'
+                  ? 'border-b-2 border-blue-500 text-blue-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              📈 분포 특성
+            </button>
+            <button
+              onClick={() => setActiveTab('inspection')}
+              className={`py-4 px-6 text-sm font-medium ${
+                activeTab === 'inspection'
+                  ? 'border-b-2 border-blue-500 text-blue-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              🔍 데이터 검사
+            </button>
+          </nav>
+        </div>
+      </div>
+
       {/* 분석 내용 - PDF 다운로드 대상 */}
       <div ref={contentRef}>
-        {/* 수집된 데이터 개요 */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+        {/* 전체 요약 탭 */}
+        {activeTab === 'overview' && (
+          <>
+            {/* 수집된 데이터 개요 */}
+            <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
           <h3 className="text-xl font-semibold text-gray-900 mb-4">📊 수집된 데이터 개요</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div className="bg-green-50 rounded-lg p-4 text-center">
@@ -628,6 +737,143 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
             </div>
           </div>
         </div>
+          </>
+        )}
+
+        {/* 통계표별 분석 탭 */}
+        {activeTab === 'tables' && (
+          <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">📋 통계표별 상세 분석</h3>
+
+            {/* 통계표 선택 */}
+            <div className="bg-gray-50 rounded-lg p-4 mb-6">
+              <h4 className="font-medium text-gray-900 mb-3">수집된 통계표 선택</h4>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {Object.keys(rawDataByTable).map((tableName, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedTableName(tableName)}
+                    className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                      selectedTableName === tableName
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                    }`}
+                  >
+                    {tableName}
+                  </button>
+                ))}
+              </div>
+              {selectedTableName && (
+                <div className="text-sm text-gray-600">
+                  선택된 통계표: <span className="font-medium text-blue-600">{selectedTableName}</span>
+                </div>
+              )}
+            </div>
+
+            {/* 선택된 통계표 상세 정보 */}
+            {selectedTableName && rawDataByTable[selectedTableName] && (
+              <div className="space-y-6">
+                {/* 기본 정보 */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-blue-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-blue-700">
+                      {rawDataByTable[selectedTableName].length}
+                    </div>
+                    <div className="text-sm text-blue-600">레코드 수</div>
+                  </div>
+                  <div className="bg-green-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-green-700">
+                      {Object.keys(rawDataByTable[selectedTableName][0]?.data || {}).length}
+                    </div>
+                    <div className="text-sm text-green-600">데이터 필드</div>
+                  </div>
+                  <div className="bg-purple-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-purple-700">
+                      {getSelectedTableStats()?.count || 0}
+                    </div>
+                    <div className="text-sm text-purple-600">숫자 데이터</div>
+                  </div>
+                </div>
+
+                {/* 샘플 데이터 */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="font-medium text-gray-900 mb-3">샘플 데이터 미리보기</h4>
+                  <div className="overflow-x-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {Object.entries(rawDataByTable[selectedTableName][0]?.data || {}).slice(0, 9).map(([field, value], idx) => {
+                        let parsedValue;
+                        try {
+                          parsedValue = typeof value === 'string' && value.includes("'value'")
+                            ? JSON.parse(value.replace(/'/g, '"'))
+                            : { value, unit: 'text' };
+                        } catch {
+                          parsedValue = { value: String(value), unit: 'text' };
+                        }
+
+                        return (
+                          <div key={idx} className="bg-white p-3 rounded border">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-sm font-medium text-gray-700 truncate" title={field}>
+                                {field}
+                              </span>
+                              <span className={`text-xs px-1.5 py-0.5 rounded ${
+                                parsedValue.unit === 'number'
+                                  ? 'bg-green-100 text-green-700'
+                                  : 'bg-blue-100 text-blue-700'
+                              }`}>
+                                {parsedValue.unit}
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-900 font-mono break-all">
+                              {String(parsedValue.value).length > 50
+                                ? String(parsedValue.value).substring(0, 50) + '...'
+                                : String(parsedValue.value)
+                              }
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 분포 특성 탭 */}
+        {activeTab === 'distribution' && (
+          <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">📈 분포 특성 분석</h3>
+            <div className="text-center py-8 text-gray-500">
+              분포 특성 분석 기능은 추후 구현 예정입니다.
+              <br />
+              현재는 전체 요약 탭에서 기초 통계량을 확인하실 수 있습니다.
+            </div>
+          </div>
+        )}
+
+        {/* 데이터 검사 탭 */}
+        {activeTab === 'inspection' && (
+          <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">🔍 데이터 검사</h3>
+            {showDataInspection ? (
+              <ImprovedDataInspectionViewer
+                statName={analysisData.stat_name}
+                onBack={() => setShowDataInspection(false)}
+              />
+            ) : (
+              <div className="text-center py-8">
+                <button
+                  onClick={() => setShowDataInspection(true)}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  데이터 검사 시작
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

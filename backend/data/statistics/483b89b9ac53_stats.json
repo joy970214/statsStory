@@ -1,0 +1,26 @@
+{
+  "cache_key": "483b89b9ac53",
+  "stat_url": "http://test.url",
+  "saved_at": "2025-09-16T14:11:31.824232",
+  "data_count": 2,
+  "statistics": [
+    {
+      "year": 2023,
+      "data": {
+        "필드1": 100,
+        "필드2": "텍스트"
+      },
+      "table_name": "실제 테이블명 1",
+      "collection_status": "success"
+    },
+    {
+      "year": 2024,
+      "data": {
+        "필드1": 200,
+        "필드2": "텍스트2"
+      },
+      "table_name": "실제 테이블명 2",
+      "collection_status": "success"
+    }
+  ]
+}
