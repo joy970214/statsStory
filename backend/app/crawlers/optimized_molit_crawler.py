@@ -694,7 +694,7 @@ class OptimizedMolitCrawler:
         )
 
     async def _extract_ibsheet_data(self, driver) -> Dict[str, Any]:
-        """IBSheet에서 동적 데이터 추출"""
+        """IBSheet에서 동적 데이터 추출 - 테이블 구조 보존"""
         try:
             # 1. doSearch() 함수 실행하여 데이터 로드
             try:
@@ -702,211 +702,440 @@ class OptimizedMolitCrawler:
                 await asyncio.sleep(3)  # 데이터 로딩 대기
             except Exception as e:
                 print(f"doSearch() 실행 실패: {e}")
-            
-            # 2. IBSheet 객체에서 데이터 직접 추출
+
+            # 2. IBSheet 객체에서 테이블 구조 정보 포함하여 데이터 추출
             ibsheet_data = {}
-            
+
             # IBSheet 로딩 대기 (더 긴 시간)
             await asyncio.sleep(3)
-            
+
             # sheet01 객체에서 데이터 가져오기
             try:
                 # 여러 IBSheet 객체 이름 시도
-                row_count_script = """
+                table_structure_script = """
                 var sheetNames = ['sheet01', 'Sheet1', 'ibsheet', 'IBSheet', 'mainSheet'];
-                var rowCount = 0;
-                var foundSheet = null;
-                
+                var tableStructure = null;
+
                 for (var name of sheetNames) {
                     try {
                         if (typeof window[name] !== 'undefined' && window[name].GetDataRowCount) {
-                            rowCount = window[name].GetDataRowCount();
-                            foundSheet = name;
-                            console.log('Found IBSheet:', name, 'with', rowCount, 'rows');
+                            var sheetObj = window[name];
+                            var rowCount = sheetObj.GetDataRowCount();
+                            var colCount = 0;
+
+                            // 컬럼 수 확인
+                            for (var i = 0; i < 20; i++) {
+                                try {
+                                    var colName = sheetObj.GetColName(i);
+                                    if (colName && colName.trim() !== '') {
+                                        colCount = i + 1;
+                                    } else if (i > 5) {
+                                        break;
+                                    }
+                                } catch(e) {
+                                    break;
+                                }
+                            }
+
+                            tableStructure = {
+                                sheetName: name,
+                                rowCount: rowCount,
+                                colCount: colCount,
+                                structure: 'IBSheet'
+                            };
                             break;
                         }
                     } catch(e) {
                         console.log('Error checking', name, ':', e);
                     }
                 }
-                
-                return {rowCount: rowCount, sheetName: foundSheet};
+
+                return tableStructure;
                 """
-                result = driver.execute_script(row_count_script)
-                row_count = result.get('rowCount', 0) if isinstance(result, dict) else 0
-                sheet_name = result.get('sheetName') if isinstance(result, dict) else None
-                
-                print(f"IBSheet 데이터 행 수: {row_count} (사용된 시트: {sheet_name})")
-                
-                if row_count > 0 and sheet_name:
-                    # 컬럼 헤더 가져오기 (발견된 시트 이름 사용)
-                    col_script = f"""
+                structure_result = driver.execute_script(table_structure_script)
+
+                if structure_result and structure_result.get('rowCount', 0) > 0:
+                    sheet_name = structure_result['sheetName']
+                    row_count = structure_result['rowCount']
+                    col_count = structure_result['colCount']
+
+                    print(f"IBSheet 테이블 구조: {row_count}행 × {col_count}열 (시트: {sheet_name})")
+
+                    # 테이블 구조 메타데이터 저장
+                    ibsheet_data['_table_structure'] = {
+                        'type': 'IBSheet',
+                        'rows': row_count,
+                        'cols': col_count,
+                        'sheet_name': sheet_name
+                    }
+
+                    # 컬럼 헤더 정보 추출
+                    header_script = f"""
                     var sheetObj = window['{sheet_name}'];
+                    var headers = [];
+
                     if (sheetObj && sheetObj.GetColName) {{
-                        var cols = [];
-                        try {{
-                            for (var i = 0; i < 20; i++) {{  // 최대 20개 컬럼
+                        for (var i = 0; i < {col_count}; i++) {{
+                            try {{
                                 var colName = sheetObj.GetColName(i);
-                                if (colName && colName.trim() !== '') {{
-                                    cols.push(colName);
-                                }} else if (i > 5) {{  // 5개 연속 빈 컬럼이면 중단
-                                    break;
-                                }}
+                                headers.push(colName || `컬럼${{i+1}}`);
+                            }} catch(e) {{
+                                headers.push(`컬럼${{i+1}}`);
                             }}
-                        }} catch(e) {{
-                            console.log('Column error:', e);
                         }}
-                        return cols;
                     }}
-                    return [];
+
+                    return headers;
                     """
-                    columns = driver.execute_script(col_script)
-                    print(f"IBSheet 컬럼: {columns}")
-                    
-                    # 데이터 추출 (최대 20개 행, 효율적으로)
-                    max_rows = min(row_count, 20)
-                    max_cols = min(len(columns), 10)
-                    
-                    # 한번에 여러 셀 데이터 가져오기
-                    batch_script = f"""
+                    headers = driver.execute_script(header_script)
+                    ibsheet_data['_table_headers'] = headers
+                    print(f"IBSheet 헤더: {headers}")
+
+                    # 구조화된 데이터 추출 (행/열 위치 정보 포함)
+                    max_rows = min(row_count, 50)  # 최대 50행까지
+
+                    structured_data_script = f"""
                     var sheetObj = window['{sheet_name}'];
-                    var batchData = [];
-                    
+                    var tableData = [];
+
                     if (sheetObj && sheetObj.GetCellValue) {{
                         for (var row = 0; row < {max_rows}; row++) {{
                             var rowData = [];
-                            for (var col = 0; col < {max_cols}; col++) {{
+                            for (var col = 0; col < {col_count}; col++) {{
                                 try {{
                                     var value = sheetObj.GetCellValue(row, col);
-                                    rowData.push(value || '');
+                                    rowData.push({{
+                                        value: value || '',
+                                        row: row,
+                                        col: col,
+                                        isHeader: row === 0
+                                    }});
                                 }} catch(e) {{
-                                    rowData.push('');
+                                    rowData.push({{
+                                        value: '',
+                                        row: row,
+                                        col: col,
+                                        isHeader: row === 0
+                                    }});
                                 }}
                             }}
-                            batchData.push(rowData);
+                            tableData.push(rowData);
                         }}
                     }}
-                    
-                    return batchData;
+
+                    return tableData;
                     """
-                    
-                    batch_data = driver.execute_script(batch_script)
-                    print(f"IBSheet 배치 데이터 수집: {len(batch_data) if batch_data else 0}개 행")
-                    
-                    # 배치 데이터를 딕셔너리로 변환
-                    if batch_data:
-                        for row_idx, row_data in enumerate(batch_data):
-                            for col_idx, value in enumerate(row_data):
-                                if col_idx < len(columns) and value and str(value).strip():
-                                    col_name = columns[col_idx]
-                                    key = f"{col_name}_{row_idx+1}" if row_idx > 0 else col_name
-                                    ibsheet_data[key] = await self._convert_cell_value_fast(str(value))
-                    
+
+                    structured_data = driver.execute_script(structured_data_script)
+                    print(f"IBSheet 구조화된 데이터 수집: {len(structured_data) if structured_data else 0}개 행")
+
+                    # 구조화된 데이터를 저장 (행/열 위치 정보 유지)
+                    if structured_data:
+                        ibsheet_data['_table_data'] = []
+
+                        for row_idx, row_data in enumerate(structured_data):
+                            row_info = {
+                                'row_index': row_idx,
+                                'is_header': row_idx == 0,
+                                'cells': []
+                            }
+
+                            for col_idx, cell_data in enumerate(row_data):
+                                if cell_data.get('value') and str(cell_data['value']).strip():
+                                    cell_value = await self._convert_cell_value_fast(str(cell_data['value']))
+                                    cell_info = {
+                                        'col_index': col_idx,
+                                        'col_name': headers[col_idx] if col_idx < len(headers) else f'컬럼{col_idx+1}',
+                                        'value': cell_value,
+                                        'is_header': row_idx == 0
+                                    }
+                                    row_info['cells'].append(cell_info)
+
+                            if row_info['cells']:  # 빈 행은 제외
+                                ibsheet_data['_table_data'].append(row_info)
+
+                        # 기존 호환성을 위한 플랫 데이터도 유지
+                        for row_info in ibsheet_data['_table_data']:
+                            for cell_info in row_info['cells']:
+                                key = f"table_r{row_info['row_index']}_c{cell_info['col_index']}_{cell_info['col_name']}"
+                                ibsheet_data[key] = cell_info['value']
+
             except Exception as e:
-                print(f"IBSheet 데이터 추출 오류: {e}")
-            
-            # 3. 생성된 HTML 테이블에서도 데이터 추출 (IBSheet가 HTML로 렌더링한 경우)
-            try:
-                # IBSheet가 생성한 테이블 찾기
-                ibsheet_tables = driver.find_elements(By.CSS_SELECTOR, "[id*='sheet'], [class*='sheet'], .ibsheet")
-                for table in ibsheet_tables:
-                    try:
-                        # 테이블 내의 셀 데이터 추출
-                        cells = table.find_elements(By.CSS_SELECTOR, "td, .cell")  # 전체 셀
-                        for i, cell in enumerate(cells):
-                            cell_text = cell.text.strip()
-                            if cell_text and len(cell_text) > 0:
-                                # 숫자나 의미있는 데이터인 경우만 추출
-                                if any(char.isdigit() for char in cell_text) or len(cell_text.split()) <= 3:
-                                    key = f"ibsheet_cell_{i}"
-                                    ibsheet_data[key] = await self._convert_cell_value_fast(cell_text)
-                    except:
-                        continue
-                        
-            except Exception as e:
-                print(f"IBSheet HTML 테이블 추출 오류: {e}")
-            
+                print(f"IBSheet 구조화된 데이터 추출 오류: {e}")
+
+            # 3. Fallback: 생성된 HTML 테이블에서도 데이터 추출
+            if not ibsheet_data.get('_table_structure'):
+                try:
+                    # IBSheet가 생성한 테이블 찾기
+                    ibsheet_tables = driver.find_elements(By.CSS_SELECTOR, "[id*='sheet'], [class*='sheet'], .ibsheet, table")
+                    for table in ibsheet_tables:
+                        try:
+                            # HTML 테이블 구조 분석
+                            rows = table.find_elements(By.TAG_NAME, "tr")
+                            if len(rows) > 0:
+                                html_table_data = []
+                                headers = []
+
+                                for row_idx, row in enumerate(rows[:50]):  # 최대 50행
+                                    cells = row.find_elements(By.CSS_SELECTOR, "td, th")
+
+                                    if row_idx == 0:  # 헤더 추출
+                                        headers = [cell.text.strip() or f'컬럼{i+1}' for i, cell in enumerate(cells)]
+                                        ibsheet_data['_table_headers'] = headers
+
+                                    row_data = []
+                                    for col_idx, cell in enumerate(cells):
+                                        cell_text = cell.text.strip()
+                                        if cell_text:
+                                            cell_value = await self._convert_cell_value_fast(cell_text)
+                                            row_data.append({
+                                                'col_index': col_idx,
+                                                'col_name': headers[col_idx] if col_idx < len(headers) else f'컬럼{col_idx+1}',
+                                                'value': cell_value,
+                                                'is_header': row_idx == 0
+                                            })
+
+                                    if row_data:
+                                        html_table_data.append({
+                                            'row_index': row_idx,
+                                            'is_header': row_idx == 0,
+                                            'cells': row_data
+                                        })
+
+                                if html_table_data:
+                                    ibsheet_data['_table_structure'] = {
+                                        'type': 'HTML',
+                                        'rows': len(html_table_data),
+                                        'cols': len(headers),
+                                        'source': 'HTML_Table'
+                                    }
+                                    ibsheet_data['_table_data'] = html_table_data
+                                    print(f"HTML 테이블에서 구조화된 데이터 추출: {len(html_table_data)}행")
+                                    break
+
+                        except Exception as cell_error:
+                            print(f"HTML 테이블 셀 처리 오류: {cell_error}")
+                            continue
+
+                except Exception as e:
+                    print(f"HTML 테이블 추출 오류: {e}")
+
             return ibsheet_data
-            
+
         except Exception as e:
             print(f"IBSheet 데이터 추출 전체 오류: {e}")
             return {}
 
     async def _collect_metadata_comprehensive(self, driver) -> dict:
-        """통계정보 + 관련용어 탭에서 메타데이터 종합 수집"""
+        """통계정보 + 관련용어 탭에서 메타데이터 종합 수집 (개선된 버전)"""
         metadata_info = {
             'title': '국토교통 통계누리',
             'purpose': '통계 작성 목적',
             'frequency': '정기',
             'department': '국토교통부',
             'contact': '담당자 연락처',
+            'search_field': '',  # 검색분야 추가
+            'responsible_department': '',  # 담당부서 추가
             'keywords': [],
-            'related_terms': {}
+            'related_terms': {},
+            'statistical_info': {},  # 통계정보 상세 추가
+            'major_items': {},  # 주요항목
+            'meaning_analysis': {},  # 의미분석
+            'terminology': {}  # 관련용어
         }
-        
+
         try:
-            # 1. 통계정보 탭 수집
-            stat_info_tab = WebDriverWait(driver, 5).until(
-                EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), '통계정보')]"))
-            )
-            stat_info_tab.click()
-            await asyncio.sleep(1)
-            
-            # 통계정보 테이블에서 정보 추출
-            info_tables = driver.find_elements(By.TAG_NAME, "table")
-            for table in info_tables:
-                rows = table.find_elements(By.TAG_NAME, "tr")
-                for row in rows:
+            # 0. 기본 정보 수집 (검색분야, 담당부서)
+            try:
+                # 검색분야 추출
+                search_field_elements = driver.find_elements(By.XPATH, "//th[contains(text(), '검색분야')]/following-sibling::td | //td[contains(text(), '검색분야')]/following-sibling::td")
+                if search_field_elements:
+                    metadata_info['search_field'] = search_field_elements[0].text.strip()
+
+                # 담당부서 추출
+                dept_elements = driver.find_elements(By.XPATH, "//th[contains(text(), '담당부서')]/following-sibling::td | //td[contains(text(), '담당부서')]/following-sibling::td")
+                if dept_elements:
+                    metadata_info['responsible_department'] = dept_elements[0].text.strip()
+
+            except Exception as e:
+                print(f"기본 정보 수집 실패: {e}")
+
+            # 1. 통계정보 탭 수집 (개선된 버전)
+            try:
+                stat_info_tab = WebDriverWait(driver, 5).until(
+                    EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), '통계정보')]"))
+                )
+                stat_info_tab.click()
+                await asyncio.sleep(2)
+
+                print("통계정보 탭 수집 시작")
+
+                # table caption이 "통계 정보"인 테이블 찾기
+                stat_info_tables = driver.find_elements(By.XPATH, "//table[caption[contains(text(), '통계정보')] or caption[contains(text(), '통계 정보')]]")
+
+                if not stat_info_tables:
+                    # caption이 없는 경우 모든 테이블 확인
+                    stat_info_tables = driver.find_elements(By.TAG_NAME, "table")
+                    print(f"Caption 기반 테이블을 찾지 못함. 전체 테이블 {len(stat_info_tables)}개 확인")
+
+                for table_idx, table in enumerate(stat_info_tables):
                     try:
-                        th = row.find_element(By.TAG_NAME, "th")
-                        td = row.find_element(By.TAG_NAME, "td")
-                        key = th.text.strip()
-                        value = td.text.strip()
-                        
-                        if '통계명' in key:
-                            metadata_info['title'] = value
-                        elif '작성목적' in key:
-                            metadata_info['purpose'] = value
-                        elif '작성주기' in key or '작성빈도' in key:
-                            metadata_info['frequency'] = value
-                        elif '작성기관' in key or '담당부서' in key:
-                            metadata_info['department'] = value
-                        elif '연락처' in key or '담당자' in key:
-                            metadata_info['contact'] = value
-                            
-                    except:
+                        print(f"테이블 {table_idx + 1} 처리 중")
+
+                        # tbody 내의 tr 요소들 찾기
+                        tbody = table.find_element(By.TAG_NAME, "tbody")
+                        rows = tbody.find_elements(By.TAG_NAME, "tr")
+
+                        for row_idx, row in enumerate(rows):
+                            try:
+                                # th와 td 찾기
+                                th_elements = row.find_elements(By.TAG_NAME, "th")
+                                td_elements = row.find_elements(By.TAG_NAME, "td")
+
+                                if len(th_elements) > 0 and len(td_elements) > 0:
+                                    key = th_elements[0].text.strip()
+                                    value = td_elements[0].text.strip()
+
+                                    if key and value:
+                                        # 상세 통계정보 저장
+                                        metadata_info['statistical_info'][key] = value
+                                        print(f"통계정보 수집: {key} = {value}")
+
+                                        # 기존 필드 매핑도 유지
+                                        if '통계명' in key or '조사명' in key:
+                                            metadata_info['title'] = value
+                                        elif '작성목적' in key or '조사목적' in key:
+                                            metadata_info['purpose'] = value
+                                        elif '작성주기' in key or '작성빈도' in key or '조사주기' in key:
+                                            metadata_info['frequency'] = value
+                                        elif '작성기관' in key or '조사기관' in key:
+                                            metadata_info['department'] = value
+                                        elif '연락처' in key or '담당자' in key or '문의처' in key:
+                                            metadata_info['contact'] = value
+                                        elif '검색분야' in key:
+                                            metadata_info['search_field'] = value
+                                        elif '담당부서' in key:
+                                            metadata_info['responsible_department'] = value
+
+                            except Exception as row_error:
+                                print(f"통계정보 행 처리 오류 (행 {row_idx}): {row_error}")
+                                continue
+
+                    except Exception as table_error:
+                        print(f"통계정보 테이블 처리 오류 (테이블 {table_idx}): {table_error}")
                         continue
-            
-            # 2. 관련용어 탭 수집
+
+                print(f"통계정보 수집 완료: {len(metadata_info['statistical_info'])}개 항목")
+
+            except Exception as e:
+                print(f"통계정보 탭 수집 실패: {e}")
+
+            # 2. 관련용어 탭 수집 (개선된 버전)
             try:
                 related_terms_tab = WebDriverWait(driver, 5).until(
                     EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), '관련용어')]"))
                 )
                 related_terms_tab.click()
-                await asyncio.sleep(1)
-                
-                # 관련용어 테이블에서 용어 추출
+                await asyncio.sleep(2)
+
+                print("관련용어 탭 수집 시작")
+
+                # 주요항목, 의미분석, 관련용어 섹션별로 수집
+                sections = [
+                    {'name': 'major_items', 'keywords': ['주요항목', '주요 항목', '항목'], 'target': metadata_info['major_items']},
+                    {'name': 'meaning_analysis', 'keywords': ['의미분석', '의미 분석', '분석'], 'target': metadata_info['meaning_analysis']},
+                    {'name': 'terminology', 'keywords': ['관련용어', '관련 용어', '용어'], 'target': metadata_info['terminology']}
+                ]
+
+                # 모든 테이블 확인
                 terms_tables = driver.find_elements(By.TAG_NAME, "table")
-                for table in terms_tables:
-                    rows = table.find_elements(By.TAG_NAME, "tr")
-                    for row in rows:
+                print(f"관련용어 탭에서 {len(terms_tables)}개 테이블 발견")
+
+                for table_idx, table in enumerate(terms_tables):
+                    try:
+                        # 테이블 caption이나 주변 제목 확인
+                        table_title = ""
                         try:
-                            cells = row.find_elements(By.TAG_NAME, "td")
-                            if len(cells) >= 2:
-                                term = cells[0].text.strip()
-                                definition = cells[1].text.strip()
-                                if term and definition:
-                                    metadata_info['related_terms'][term] = definition
-                                    metadata_info['keywords'].append(term)
+                            caption = table.find_element(By.TAG_NAME, "caption")
+                            table_title = caption.text.strip()
                         except:
-                            continue
-                            
+                            # caption이 없으면 이전 제목 요소 찾기
+                            try:
+                                prev_elements = driver.execute_script("""
+                                    var table = arguments[0];
+                                    var prev = table.previousElementSibling;
+                                    var title = '';
+
+                                    while (prev && title === '') {
+                                        if (prev.tagName && prev.tagName.match(/^H[1-6]$/)) {
+                                            title = prev.textContent.trim();
+                                            break;
+                                        } else if (prev.className && prev.className.includes('title')) {
+                                            title = prev.textContent.trim();
+                                            break;
+                                        }
+                                        prev = prev.previousElementSibling;
+                                    }
+
+                                    return title;
+                                """, table)
+                                table_title = prev_elements or ""
+                            except:
+                                pass
+
+                        print(f"테이블 {table_idx + 1} 제목: '{table_title}'")
+
+                        # 해당 섹션 결정
+                        current_section = None
+                        for section in sections:
+                            if any(keyword in table_title for keyword in section['keywords']):
+                                current_section = section
+                                print(f"섹션 매칭: {section['name']}")
+                                break
+
+                        # 테이블 데이터 추출
+                        rows = table.find_elements(By.TAG_NAME, "tr")
+
+                        for row_idx, row in enumerate(rows):
+                            try:
+                                cells = row.find_elements(By.CSS_SELECTOR, "td, th")
+
+                                if len(cells) >= 2:
+                                    key = cells[0].text.strip()
+                                    value = cells[1].text.strip()
+
+                                    if key and value and key != value:  # 헤더가 아닌 실제 데이터인 경우
+                                        # 특정 섹션이 확인된 경우 해당 섹션에 저장
+                                        if current_section:
+                                            current_section['target'][key] = value
+                                            print(f"{current_section['name']} 수집: {key} = {value[:50]}...")
+                                        else:
+                                            # 섹션을 특정하지 못한 경우 일반 관련용어로 저장
+                                            metadata_info['related_terms'][key] = value
+                                            if key not in metadata_info['keywords']:
+                                                metadata_info['keywords'].append(key)
+                                            print(f"일반 용어 수집: {key} = {value[:50]}...")
+
+                            except Exception as row_error:
+                                print(f"관련용어 행 처리 오류 (테이블 {table_idx}, 행 {row_idx}): {row_error}")
+                                continue
+
+                    except Exception as table_error:
+                        print(f"관련용어 테이블 처리 오류 (테이블 {table_idx}): {table_error}")
+                        continue
+
+                print(f"관련용어 수집 완료:")
+                print(f"  - 주요항목: {len(metadata_info['major_items'])}개")
+                print(f"  - 의미분석: {len(metadata_info['meaning_analysis'])}개")
+                print(f"  - 관련용어: {len(metadata_info['terminology'])}개")
+                print(f"  - 일반용어: {len(metadata_info['related_terms'])}개")
+
             except Exception as e:
                 print(f"관련용어 탭 수집 실패: {e}")
-                
+
         except Exception as e:
-            print(f"통계정보 탭 수집 실패: {e}")
-            
+            print(f"메타데이터 종합 수집 실패: {e}")
+
         return metadata_info
 
     async def _get_stat_tables_with_conditions(self, stat_url: str) -> List[Dict[str, Any]]:

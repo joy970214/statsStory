@@ -22,8 +22,14 @@ class StatMetadata(BaseModel):
     frequency: Optional[str] = None
     department: Optional[str] = None
     contact: Optional[str] = None
+    search_field: Optional[str] = None  # 검색분야
+    responsible_department: Optional[str] = None  # 담당부서
     keywords: List[str] = []
     related_terms: Dict[str, str] = {}
+    statistical_info: Dict[str, str] = {}  # 통계정보 상세 (th: td 매핑)
+    major_items: Dict[str, str] = {}  # 주요항목과 해당내용
+    meaning_analysis: Dict[str, str] = {}  # 의미분석과 해당내용
+    terminology: Dict[str, str] = {}  # 관련용어와 해당내용
     url: Optional[str] = None
 
 class StatData(BaseModel):

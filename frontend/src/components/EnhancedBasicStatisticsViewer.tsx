@@ -259,6 +259,165 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     return new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 2 }).format(num);
   };
 
+  // 구조화된 데이터를 활용한 원본 테이블 재구성 함수 (개선된 버전)
+  const reconstructTableStructure = (rawData: any[]) => {
+    if (!rawData || rawData.length === 0) return null;
+
+    const reconstructedTables: Record<string, any[][]> = {};
+
+    rawData.forEach((stat, statIndex) => {
+      const tableName = stat.table_name || `통계표 ${statIndex + 1}`;
+      const data = stat.data || {};
+
+      // 새로운 구조화된 데이터 형식 확인
+      if (data._table_structure && data._table_data) {
+        console.log(`구조화된 데이터 발견: ${tableName}`, data._table_structure);
+
+        const tableStructure = data._table_structure;
+        const tableData = data._table_data;
+        const headers = data._table_headers || [];
+
+        const tableRows: any[][] = [];
+
+        // 구조화된 데이터를 테이블 형태로 변환
+        tableData.forEach((rowInfo: any) => {
+          const row = Array(tableStructure.cols).fill(null).map(() => ({
+            original: '',
+            value: '',
+            type: 'text',
+            formatted: '',
+            isEmpty: true,
+            isHeader: false,
+            colName: ''
+          }));
+
+          rowInfo.cells.forEach((cellInfo: any) => {
+            if (cellInfo.col_index < tableStructure.cols) {
+              const cellValue = cellInfo.value;
+              row[cellInfo.col_index] = {
+                original: cellValue.raw || cellValue.value,
+                value: cellValue.value,
+                type: cellValue.unit || 'text',
+                formatted: cellValue.unit === 'number' && typeof cellValue.value === 'number'
+                  ? formatNumber(cellValue.value)
+                  : String(cellValue.value || ''),
+                isEmpty: !cellValue.value || String(cellValue.value).trim() === '',
+                isHeader: rowInfo.is_header,
+                colName: cellInfo.col_name
+              };
+            }
+          });
+
+          // 빈 행이 아닌 경우만 추가
+          if (row.some(cell => !cell.isEmpty)) {
+            tableRows.push(row);
+          }
+        });
+
+        if (tableRows.length > 0) {
+          reconstructedTables[tableName] = tableRows;
+        }
+
+        console.log(`${tableName} 테이블 재구성 완료: ${tableRows.length}행 × ${tableStructure.cols}열`);
+      } else {
+        // 기존 방식 (Fallback) - ibsheet_cell_ 패턴
+        console.log(`기존 방식으로 처리: ${tableName}`);
+
+        const cellData: Array<{cellIndex: number, value: any, parsedValue: any}> = [];
+
+        Object.entries(data).forEach(([key, value]) => {
+          if (key.startsWith('ibsheet_cell_') || key.startsWith('table_r')) {
+            let cellIndex = 0;
+
+            if (key.startsWith('ibsheet_cell_')) {
+              cellIndex = parseInt(key.replace('ibsheet_cell_', ''));
+            } else if (key.startsWith('table_r')) {
+              // table_r0_c1_컬럼명 형태에서 인덱스 추출
+              const match = key.match(/table_r(\d+)_c(\d+)/);
+              if (match) {
+                const rowIdx = parseInt(match[1]);
+                const colIdx = parseInt(match[2]);
+                cellIndex = rowIdx * 10 + colIdx; // 임시 인덱스 계산
+              }
+            }
+
+            let parsedValue;
+            try {
+              parsedValue = typeof value === 'string' && value.includes("'value'")
+                ? JSON.parse(value.replace(/'/g, '"'))
+                : { value, unit: 'text', raw: value };
+            } catch {
+              parsedValue = { value: String(value), unit: 'text', raw: value };
+            }
+
+            cellData.push({ cellIndex, value, parsedValue });
+          }
+        });
+
+        // 셀 인덱스 순으로 정렬
+        cellData.sort((a, b) => a.cellIndex - b.cellIndex);
+
+        if (cellData.length === 0) return;
+
+        // 열 수 추정 개선
+        let estimatedCols = 6;
+        const textCells = cellData.filter(cell => cell.parsedValue.unit === 'text');
+        const numberCells = cellData.filter(cell => cell.parsedValue.unit === 'number');
+
+        if (textCells.length > 0 && numberCells.length > 0) {
+          const ratio = numberCells.length / textCells.length;
+          if (ratio > 3) {
+            estimatedCols = Math.min(10, Math.max(6, Math.ceil(Math.sqrt(cellData.length * 1.2))));
+          } else {
+            estimatedCols = Math.min(8, Math.max(5, Math.ceil(Math.sqrt(cellData.length))));
+          }
+        }
+
+        const tableRows: any[][] = [];
+
+        for (let i = 0; i < cellData.length; i += estimatedCols) {
+          const rowCells = cellData.slice(i, i + estimatedCols);
+          const row = Array(estimatedCols).fill(null).map((_, colIndex) => {
+            const cell = rowCells[colIndex];
+            if (!cell) {
+              return {
+                original: '',
+                value: '',
+                type: 'text',
+                formatted: '',
+                isEmpty: true,
+                isHeader: false,
+                colName: ''
+              };
+            }
+
+            return {
+              original: cell.parsedValue.raw || cell.parsedValue.value,
+              value: cell.parsedValue.value,
+              type: cell.parsedValue.unit,
+              formatted: cell.parsedValue.unit === 'number' && typeof cell.parsedValue.value === 'number'
+                ? formatNumber(cell.parsedValue.value)
+                : String(cell.parsedValue.value || ''),
+              isEmpty: !cell.parsedValue.value || String(cell.parsedValue.value).trim() === '',
+              isHeader: false,
+              colName: ''
+            };
+          });
+
+          if (row.some(cell => !cell.isEmpty)) {
+            tableRows.push(row);
+          }
+        }
+
+        if (tableRows.length > 0) {
+          reconstructedTables[tableName] = tableRows;
+        }
+      }
+    });
+
+    return reconstructedTables;
+  };
+
   const handleDownloadMD = () => {
     try {
       const markdown = generateBasicStatisticsMarkdown(analysisData);
@@ -615,52 +774,171 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
           </div>
         </div>
 
-        {/* 수집된 데이터 샘플 */}
+        {/* 수집된 데이터 샘플 (원본 테이블 형태) */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
           <h3 className="text-xl font-semibold text-gray-900 mb-4">
-            📋 수집된 데이터 샘플
+            📋 수집된 데이터 샘플 (원본 테이블 형태)
             {selectedTableName && (
               <span className="text-lg text-blue-600 ml-2">- {selectedTableName}</span>
             )}
           </h3>
-          <div className="overflow-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">필드명</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">값</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">타입</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">출처</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {getFilteredData().map((item, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900 font-mono">
-                      {item.field_name}
-                    </td>
-                    <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
-                      <span className={item.type === 'number' ? 'font-medium text-blue-600' : ''}>
-                        {String(item.value)}
-                      </span>
-                    </td>
-                    <td className="px-3 py-2 whitespace-nowrap text-xs">
-                      <span className={`px-2 py-1 rounded-full ${
-                        item.type === 'number' 
-                          ? 'bg-blue-100 text-blue-800' 
-                          : 'bg-gray-100 text-gray-800'
-                      }`}>
-                        {item.type}
-                      </span>
-                    </td>
-                    <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-600">
-                      {item.source_table}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+
+          <div className="bg-blue-50 rounded-lg p-3 mb-4">
+            <p className="text-sm text-blue-800">
+              💡 수집된 IBSheet 데이터를 원본 웹사이트의 테이블 형태로 재구성하여 표시합니다.
+            </p>
           </div>
+
+          {(() => {
+            const selectedData = selectedTableName && rawDataByTable[selectedTableName]
+              ? rawDataByTable[selectedTableName]
+              : Object.values(rawDataByTable).flat();
+
+            const reconstructedTables = reconstructTableStructure(selectedData);
+
+            if (!reconstructedTables || Object.keys(reconstructedTables).length === 0) {
+              return (
+                <div className="bg-gray-50 rounded-lg p-8 text-center">
+                  <div className="text-gray-500 mb-4">
+                    <div className="text-4xl mb-2">📊</div>
+                    <p>선택된 통계표에서 테이블 형태로 재구성할 수 있는 데이터가 없습니다.</p>
+                    <p className="text-sm mt-2">IBSheet 데이터가 포함된 통계표를 선택해 주세요.</p>
+                  </div>
+
+                  {/* 원본 데이터 샘플 표시 (fallback) */}
+                  <div className="mt-6 border-t pt-4">
+                    <h4 className="font-medium text-gray-700 mb-3">원본 데이터 샘플</h4>
+                    <div className="overflow-auto">
+                      <table className="min-w-full text-sm">
+                        <thead className="bg-gray-100">
+                          <tr>
+                            <th className="px-2 py-1 text-left font-medium text-gray-600">필드명</th>
+                            <th className="px-2 py-1 text-left font-medium text-gray-600">값</th>
+                            <th className="px-2 py-1 text-left font-medium text-gray-600">타입</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {getFilteredData().slice(0, 5).map((item, index) => (
+                            <tr key={index} className="border-b">
+                              <td className="px-2 py-1 font-mono text-xs">{item.field_name}</td>
+                              <td className="px-2 py-1">{String(item.value)}</td>
+                              <td className="px-2 py-1">
+                                <span className={`px-1.5 py-0.5 rounded text-xs ${
+                                  item.type === 'number' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
+                                }`}>
+                                  {item.type}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div className="space-y-6">
+                {Object.entries(reconstructedTables).map(([tableName, tableData], tableIndex) => (
+                  <div key={tableIndex} className="border rounded-lg overflow-hidden shadow-sm">
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-3 border-b">
+                      <h4 className="font-semibold text-gray-900 flex items-center">
+                        <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-2">
+                          {tableIndex + 1}
+                        </span>
+                        {tableName}
+                      </h4>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {tableData.length}행 × {tableData[0]?.length || 0}열 구조 |
+                        수집 시점: {new Date().toLocaleString('ko-KR')}
+                      </p>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <tbody>
+                          {tableData.map((row, rowIndex) => (
+                            <tr
+                              key={rowIndex}
+                              className={`border-b border-gray-100 ${
+                                rowIndex === 0 || row.some(cell => cell.isHeader)
+                                  ? 'bg-gray-50 font-semibold'
+                                  : rowIndex % 2 === 0
+                                    ? 'bg-white hover:bg-blue-25'
+                                    : 'bg-gray-25 hover:bg-blue-50'
+                              }`}
+                            >
+                              {row.map((cell, colIndex) => (
+                                <td
+                                  key={colIndex}
+                                  className={`px-3 py-2 border-r border-gray-200 ${
+                                    cell.type === 'number'
+                                      ? 'text-right font-mono'
+                                      : 'text-left'
+                                  } ${
+                                    cell.isEmpty ? 'bg-gray-100' : ''
+                                  } ${
+                                    cell.isHeader || rowIndex === 0 ? 'font-semibold bg-gray-50 text-gray-800' : ''
+                                  }`}
+                                  title={cell.colName ? `컬럼: ${cell.colName}` : ''}
+                                >
+                                  {cell.isEmpty ? (
+                                    <span className="text-gray-400">-</span>
+                                  ) : (
+                                    <div className="min-w-0">
+                                      <div className={`truncate ${
+                                        cell.type === 'number'
+                                          ? 'text-blue-600 font-medium'
+                                          : cell.isHeader || rowIndex === 0
+                                            ? 'text-gray-800 font-semibold'
+                                            : 'text-gray-900'
+                                      }`}>
+                                        {cell.formatted || '-'}
+                                      </div>
+                                      {cell.type === 'number' && cell.original !== cell.formatted && (
+                                        <div className="text-xs text-gray-500 mt-0.5 truncate" title={cell.original}>
+                                          원본: {cell.original}
+                                        </div>
+                                      )}
+                                      {cell.colName && cell.colName !== '' && (
+                                        <div className="text-xs text-gray-400 mt-0.5 truncate" title={`컬럼: ${cell.colName}`}>
+                                          {cell.colName}
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <div className="bg-gray-50 px-4 py-2 text-xs text-gray-600 border-t">
+                      📊 이 테이블은 IBSheet에서 수집된 데이터를 {tableData[0]?.length || 0}열 구조로 재구성한 원본 형태입니다. |
+                      숫자 데이터: 파란색 표시 | 헤더: 회색 배경 | 빈 셀: "-" 표시
+                    </div>
+                  </div>
+                ))}
+
+                <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                  <h4 className="font-medium text-green-900 mb-2 flex items-center">
+                    <span className="mr-2">✅</span>
+                    테이블 재구성 완료
+                  </h4>
+                  <div className="text-sm text-green-800 space-y-1">
+                    <p>• 총 {Object.keys(reconstructedTables).length}개의 테이블이 원본 형태로 재구성되었습니다.</p>
+                    <p>• 국토교통부 통계 특성을 반영하여 6-10열 구조로 최적화되었습니다.</p>
+                    <p>• 숫자 데이터는 천 단위 구분 기호가 적용되어 가독성이 향상되었습니다.</p>
+                    <p>• 첫 번째 행은 헤더로 인식하여 강조 표시됩니다.</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
         {/* 데이터 분포 특성 */}
@@ -874,6 +1152,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
             )}
           </div>
         )}
+
       </div>
     </div>
   );

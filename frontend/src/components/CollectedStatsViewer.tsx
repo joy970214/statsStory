@@ -58,6 +58,33 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
     }
   };
 
+  const deleteStat = async (cacheKey: string, statName: string) => {
+    if (!window.confirm(`정말로 '${statName}' 통계표를 삭제하시겠습니까?\n\n삭제된 데이터는 복구할 수 없습니다.`)) {
+      return;
+    }
+
+    try {
+      console.log(`통계표 삭제 시작: ${cacheKey}`);
+
+      const response = await fetch(`/api/stats/${cacheKey}`, {
+        method: 'DELETE',
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        alert(`✅ ${result.message}`);
+        // 목록 새로고침
+        await loadCollectedStats();
+      } else {
+        throw new Error(result.message || '삭제 실패');
+      }
+    } catch (err) {
+      console.error('통계표 삭제 오류:', err);
+      alert(`❌ 통계표 삭제 중 오류가 발생했습니다: ${err instanceof Error ? err.message : '알 수 없는 오류'}`);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -261,13 +288,20 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
                     onClick={() => onSelectStat(stat.stat_name)}
                     className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium whitespace-nowrap"
                   >
-                    상세 분석
+                    📊 상세 분석
                   </button>
                   <button
                     onClick={() => window.open(stat.stat_url, '_blank')}
                     className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 text-sm font-medium whitespace-nowrap"
                   >
-                    원본 보기
+                    🔗 원본 보기
+                  </button>
+                  <button
+                    onClick={() => deleteStat(stat.cache_key, stat.stat_name)}
+                    className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 text-sm font-medium whitespace-nowrap"
+                    title="이 통계표의 모든 데이터를 삭제합니다"
+                  >
+                    🗑️ 삭제
                   </button>
                 </div>
               </div>
