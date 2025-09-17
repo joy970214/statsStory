@@ -1,5 +1,6 @@
 import aiohttp
 import asyncio
+import re
 from datetime import datetime
 from bs4 import BeautifulSoup
 from typing import List, Dict, Any, Tuple, Optional, Callable
@@ -36,6 +37,64 @@ import queue
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
+
+
+def is_terminated_stat(stat_name: str) -> bool:
+    """
+    통계표명이 종료/중지된 통계인지 확인
+
+    Args:
+        stat_name: 통계표명
+
+    Returns:
+        bool: 종료/중지된 통계면 True, 아니면 False
+    """
+    if not stat_name or not stat_name.strip():
+        return True
+
+    stat_name = stat_name.strip()
+    current_year = datetime.now().year
+
+    # 먼저 연도 기반 종료 패턴 확인 (더 구체적이므로 우선)
+    year_patterns = [
+        # "2020년 이후 중지" 패턴
+        (r'(\d{4})\s*년?\s*이후\s*(중지|종료)', lambda m: int(m[0]) <= current_year - 2),
+        # "2019~2021 중지" 패턴 - 종료년도가 2년 이전인 경우만
+        (r'(\d{4})\s*~\s*(\d{4})\s*(중지|종료)', lambda m: int(m[1]) <= current_year - 2),
+        # "~2020 종료" 패턴
+        (r'~\s*(\d{4})\s*(중지|종료)', lambda m: int(m[0]) <= current_year - 2),
+        # "2020 중지" 패턴 (단독 연도는 가장 마지막에)
+        (r'(\d{4})\s*(중지|종료)', lambda m: int(m[0]) <= current_year - 2),
+    ]
+
+    # 연도 패턴이 있는지 먼저 확인
+    has_year_pattern = False
+    for pattern, condition in year_patterns:
+        matches = re.findall(pattern, stat_name, re.IGNORECASE)
+        if matches:
+            has_year_pattern = True
+            for match in matches:
+                try:
+                    if condition(match):
+                        return True
+                except (ValueError, IndexError):
+                    continue
+
+    # 연도 패턴이 없는 경우에만 기본 패턴 확인
+    if not has_year_pattern:
+        termination_patterns = [
+            '(종료)',
+            '작성중지',
+            '중지',
+            '폐지',
+            '통계작성중지'
+        ]
+
+        for pattern in termination_patterns:
+            if pattern in stat_name:
+                return True
+
+    return False
 
 
 class BrowserPool:
@@ -263,8 +322,14 @@ class OptimizedMolitCrawler:
                 frequency=metadata_info['frequency'],
                 department=metadata_info['department'],
                 contact=metadata_info['contact'],
+                search_field=metadata_info.get('search_field'),  # 새 필드 추가
+                responsible_department=metadata_info.get('responsible_department'),  # 새 필드 추가
                 keywords=metadata_info['keywords'],
                 related_terms=metadata_info['related_terms'],
+                statistical_info=metadata_info.get('statistical_info', {}),  # 새 필드 추가
+                major_items=metadata_info.get('major_items', {}),  # 새 필드 추가
+                meaning_analysis=metadata_info.get('meaning_analysis', {}),  # 새 필드 추가
+                terminology=metadata_info.get('terminology', {}),  # 새 필드 추가
                 url=stat_url
             )
             
@@ -302,7 +367,7 @@ class OptimizedMolitCrawler:
                     option_text = option.text.strip()
                     option_value = option.get_attribute('value')
                     
-                    if option_text and '(종료)' not in option_text and option_value:
+                    if option_text and not is_terminated_stat(option_text) and option_value:
                         stat_tables.append({
                             'name': option_text,
                             'value': option_value,
@@ -962,21 +1027,95 @@ class OptimizedMolitCrawler:
 
             # 1. 통계정보 탭 수집 (개선된 버전)
             try:
-                stat_info_tab = WebDriverWait(driver, 5).until(
-                    EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), '통계정보')]"))
-                )
-                stat_info_tab.click()
-                await asyncio.sleep(2)
+                # 페이지의 모든 링크 출력
+                all_links = driver.find_elements(By.TAG_NAME, "a")
+                print("페이지의 모든 링크:")
+                for i, link in enumerate(all_links[:20]):
+                    text = link.text.strip()
+                    href = link.get_attribute('href') or ''
+                    onclick = link.get_attribute('onclick') or ''
+                    if text or 'stat' in href.lower() or 'info' in href.lower():
+                        print(f"  {i+1}. '{text}' | href: {href[:50]} | onclick: {onclick[:50]}")
+
+                # 다양한 방법으로 통계정보 탭 찾기
+                stat_info_tab = None
+
+                # 방법 1: 텍스트로 찾기
+                tabs_by_text = driver.find_elements(By.XPATH, "//a[contains(text(), '통계정보') or contains(text(), '통계 정보') or contains(text(), '정보')]")
+                print(f"텍스트 기반 탭 발견: {len(tabs_by_text)}개")
+
+                # 방법 2: href 속성으로 찾기
+                tabs_by_href = driver.find_elements(By.XPATH, "//a[contains(@href, 'statInfo') or contains(@href, 'stat_info') or contains(@href, 'info')]")
+                print(f"href 기반 탭 발견: {len(tabs_by_href)}개")
+
+                # 방법 3: onclick 속성으로 찾기
+                tabs_by_onclick = driver.find_elements(By.XPATH, "//a[contains(@onclick, 'statInfo') or contains(@onclick, 'stat_info') or contains(@onclick, 'info')]")
+                print(f"onclick 기반 탭 발견: {len(tabs_by_onclick)}개")
+
+                # 사용할 탭 결정
+                if tabs_by_text:
+                    stat_info_tab = tabs_by_text[0]
+                    print(f"텍스트 기반 탭 사용: '{stat_info_tab.text.strip()}'")
+                elif tabs_by_href:
+                    stat_info_tab = tabs_by_href[0]
+                    print(f"href 기반 탭 사용: {stat_info_tab.get_attribute('href')}")
+                elif tabs_by_onclick:
+                    stat_info_tab = tabs_by_onclick[0]
+                    print(f"onclick 기반 탭 사용: {stat_info_tab.get_attribute('onclick')}")
+
+                if stat_info_tab:
+                    print("통계정보 탭 클릭 시도")
+                    driver.execute_script("arguments[0].click();", stat_info_tab)
+                    await asyncio.sleep(3)  # 로딩 시간 증가
+                else:
+                    print("통계정보 탭을 찾을 수 없습니다")
 
                 print("통계정보 탭 수집 시작")
 
+                # 페이지 내용 디버깅
+                print("현재 페이지 제목:", driver.title)
+                print("현재 URL:", driver.current_url)
+
+                # 페이지 소스 일부 확인
+                page_source = driver.page_source
+                print(f"페이지 소스 길이: {len(page_source)}")
+
+                # 탭 관련 키워드 검색
+                if '통계정보' in page_source:
+                    print("페이지에 '통계정보' 텍스트 발견")
+                if '관련용어' in page_source:
+                    print("페이지에 '관련용어' 텍스트 발견")
+                if 'statInfo' in page_source:
+                    print("페이지에 'statInfo' 텍스트 발견")
+
+                # iframe 확인
+                iframes = driver.find_elements(By.TAG_NAME, "iframe")
+                print(f"iframe 개수: {len(iframes)}")
+                for i, iframe in enumerate(iframes):
+                    src = iframe.get_attribute('src') or ''
+                    print(f"  iframe {i+1}: {src}")
+
+                # 모든 탭 확인
+                all_tabs = driver.find_elements(By.TAG_NAME, "a")
+                tab_texts = [tab.text.strip() for tab in all_tabs[:10] if tab.text.strip()]
+                print("페이지의 링크들:", tab_texts)
+
                 # table caption이 "통계 정보"인 테이블 찾기
                 stat_info_tables = driver.find_elements(By.XPATH, "//table[caption[contains(text(), '통계정보')] or caption[contains(text(), '통계 정보')]]")
+                print(f"Caption 기반 통계정보 테이블: {len(stat_info_tables)}개")
 
                 if not stat_info_tables:
                     # caption이 없는 경우 모든 테이블 확인
                     stat_info_tables = driver.find_elements(By.TAG_NAME, "table")
                     print(f"Caption 기반 테이블을 찾지 못함. 전체 테이블 {len(stat_info_tables)}개 확인")
+
+                    # 각 테이블의 caption 확인
+                    for i, table in enumerate(stat_info_tables[:5]):
+                        try:
+                            caption = table.find_element(By.TAG_NAME, "caption")
+                            print(f"테이블 {i+1} caption: '{caption.text.strip()}'")
+                        except:
+                            print(f"테이블 {i+1}: caption 없음")
 
                 for table_idx, table in enumerate(stat_info_tables):
                     try:
@@ -1032,13 +1171,35 @@ class OptimizedMolitCrawler:
 
             # 2. 관련용어 탭 수집 (개선된 버전)
             try:
-                related_terms_tab = WebDriverWait(driver, 5).until(
-                    EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), '관련용어')]"))
-                )
-                related_terms_tab.click()
-                await asyncio.sleep(2)
+                # 다양한 방법으로 관련용어 탭 찾기
+                related_terms_tab = None
+                try:
+                    related_terms_tab = WebDriverWait(driver, 5).until(
+                        EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), '관련용어')]"))
+                    )
+                except:
+                    try:
+                        related_terms_tab = WebDriverWait(driver, 3).until(
+                            EC.element_to_be_clickable((By.XPATH, "//a[contains(@href, 'terms') or contains(@onclick, 'terms') or contains(text(), '용어')]"))
+                        )
+                    except:
+                        # 다른 방법으로 찾기
+                        terms_tabs = driver.find_elements(By.XPATH, "//a[contains(@id, 'tab') and contains(text(), '용어')]")
+                        if terms_tabs:
+                            related_terms_tab = terms_tabs[0]
+
+                if related_terms_tab:
+                    print("관련용어 탭 클릭 시도")
+                    driver.execute_script("arguments[0].click();", related_terms_tab)
+                    await asyncio.sleep(3)  # 로딩 시간 증가
+                else:
+                    print("관련용어 탭을 찾을 수 없습니다")
 
                 print("관련용어 탭 수집 시작")
+
+                # 페이지 내용 디버깅
+                print("관련용어 탭 - 현재 페이지 제목:", driver.title)
+                print("관련용어 탭 - 현재 URL:", driver.current_url)
 
                 # 주요항목, 의미분석, 관련용어 섹션별로 수집
                 sections = [
@@ -1171,7 +1332,7 @@ class OptimizedMolitCrawler:
                     option_text = option.text.strip()
                     option_value = option.get_attribute('value')
 
-                    if option_text and '(종료)' not in option_text and option_value:
+                    if option_text and not is_terminated_stat(option_text) and option_value:
                         # 빈 옵션 텍스트 처리
                         if not option_text or option_text in ['', '-', '선택']:
                             table_count += 1

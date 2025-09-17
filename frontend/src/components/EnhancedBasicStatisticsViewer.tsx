@@ -277,10 +277,17 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
         const tableData = data._table_data;
         const headers = data._table_headers || [];
 
+        // 필수 데이터 검증
+        if (!tableStructure.cols || !tableStructure.rows) {
+          console.warn(`${tableName}: 테이블 구조 정보가 불완전합니다.`, tableStructure);
+          return;
+        }
+
         const tableRows: any[][] = [];
 
         // 구조화된 데이터를 테이블 형태로 변환
-        tableData.forEach((rowInfo: any) => {
+        if (Array.isArray(tableData)) {
+          tableData.forEach((rowInfo: any) => {
           const row = Array(tableStructure.cols).fill(null).map(() => ({
             original: '',
             value: '',
@@ -291,28 +298,33 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
             colName: ''
           }));
 
-          rowInfo.cells.forEach((cellInfo: any) => {
-            if (cellInfo.col_index < tableStructure.cols) {
-              const cellValue = cellInfo.value;
-              row[cellInfo.col_index] = {
-                original: cellValue.raw || cellValue.value,
-                value: cellValue.value,
-                type: cellValue.unit || 'text',
-                formatted: cellValue.unit === 'number' && typeof cellValue.value === 'number'
-                  ? formatNumber(cellValue.value)
-                  : String(cellValue.value || ''),
-                isEmpty: !cellValue.value || String(cellValue.value).trim() === '',
-                isHeader: rowInfo.is_header,
-                colName: cellInfo.col_name
-              };
+          if (Array.isArray(rowInfo.cells)) {
+            rowInfo.cells.forEach((cellInfo: any) => {
+              if (cellInfo && typeof cellInfo.col_index === 'number' && cellInfo.col_index < tableStructure.cols) {
+                const cellValue = cellInfo.value || {};
+                row[cellInfo.col_index] = {
+                  original: cellValue.raw || cellValue.value || '',
+                  value: cellValue.value || '',
+                  type: cellValue.unit || 'text',
+                  formatted: cellValue.unit === 'number' && typeof cellValue.value === 'number'
+                    ? formatNumber(cellValue.value)
+                    : String(cellValue.value || ''),
+                  isEmpty: !cellValue.value || String(cellValue.value).trim() === '',
+                  isHeader: rowInfo.is_header || false,
+                  colName: cellInfo.col_name || ''
+                };
+              }
+            });
+          }
+
+            // 빈 행이 아닌 경우만 추가
+            if (row.some(cell => !cell.isEmpty)) {
+              tableRows.push(row);
             }
           });
-
-          // 빈 행이 아닌 경우만 추가
-          if (row.some(cell => !cell.isEmpty)) {
-            tableRows.push(row);
-          }
-        });
+        } else {
+          console.warn(`${tableName}: tableData가 배열이 아닙니다.`, typeof tableData, tableData);
+        }
 
         if (tableRows.length > 0) {
           reconstructedTables[tableName] = tableRows;
