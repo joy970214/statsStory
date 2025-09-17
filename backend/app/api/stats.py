@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query, BackgroundTasks, Request
 from fastapi.responses import StreamingResponse
 from typing import List, Optional, Dict, Any
+from pathlib import Path
 from app.models.stat_models import (
     RecentStatsResponse, 
     StatMetadata, 
@@ -293,13 +294,51 @@ async def generate_advanced_cardnews(request: GenerateStoryRequest):
             "analysis_quality": "높음"
         }
         
+        # 5. raw_data 수집 (실제 수집된 데이터)
+        raw_data = []
+        raw_data_by_table = {}
+        try:
+            # stat_data에서 raw_data 추출
+            for data_item in stat_data:
+                if hasattr(data_item, 'data') and data_item.data:
+                    table_name = getattr(data_item, 'table_name', f"통계표 {data_item.year}")
+                    raw_data.append({
+                        "table_name": table_name,
+                        "year": data_item.year,
+                        "data": data_item.data
+                    })
+                    if table_name not in raw_data_by_table:
+                        raw_data_by_table[table_name] = []
+                    raw_data_by_table[table_name].append({
+                        "table_name": table_name,
+                        "year": data_item.year,
+                        "data": data_item.data
+                    })
+        except Exception as raw_error:
+            print(f"raw_data 수집 오류: {raw_error}")
+
+        # 6. 메타데이터에 새로운 필드들 추가 (통계정보, 관련용어 등)
+        enhanced_metadata = metadata.dict() if metadata else {}
+        if metadata:
+            # 새로 수집된 메타데이터 필드들 추가
+            enhanced_metadata.update({
+                "search_field": getattr(metadata, 'search_field', None),
+                "responsible_department": getattr(metadata, 'responsible_department', None),
+                "statistical_info": getattr(metadata, 'statistical_info', {}),
+                "major_items": getattr(metadata, 'major_items', {}),
+                "meaning_analysis": getattr(metadata, 'meaning_analysis', {}),
+                "terminology": getattr(metadata, 'terminology', {})
+            })
+
         return {
             "stat_name": request.stat_name,
             "analysis_date": datetime.now().isoformat(),
             "analysis_type": "기본통계현황분석",
-            "metadata": metadata.dict() if metadata else None,
+            "metadata": enhanced_metadata,
             "analysis_summary": analysis_summary,
             "basic_statistics": basic_stats_result,
+            "raw_data": raw_data,
+            "raw_data_by_table": raw_data_by_table,
             "insights": f"{metadata.title if metadata else request.stat_name}에 대한 기초통계 현황 분석이 완료되었습니다."
         }
         
@@ -1970,9 +2009,9 @@ async def delete_collected_stat(cache_key: str):
 
         # 삭제할 파일들 목록
         files_to_delete = [
-            Path(f"app/data/metadata/{cache_key}_metadata.json"),
-            Path(f"app/data/statistics/{cache_key}_stats.json"),
-            Path(f"app/data/excel/{cache_key}_data.xlsx")
+            Path(f"data/metadata/{cache_key}_metadata.json"),
+            Path(f"data/statistics/{cache_key}_stats.json"),
+            Path(f"data/excel/{cache_key}_data.xlsx")
         ]
 
         deleted_files = []

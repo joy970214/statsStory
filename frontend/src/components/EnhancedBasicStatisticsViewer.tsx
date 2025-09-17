@@ -73,10 +73,17 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
         setProcessedStats(processed);
 
         // Group data by table names with enhanced naming logic
-        const dataByTable: Record<string, any[]> = {};
-        let tableCounter = 1;
+        let dataByTable: Record<string, any[]> = {};
 
-        if (rawData.raw_data && Array.isArray(rawData.raw_data)) {
+        // Use raw_data_by_table if available (more organized)
+        if (rawData.raw_data_by_table) {
+          dataByTable = rawData.raw_data_by_table;
+          console.log('raw_data_by_table 사용:', Object.keys(dataByTable));
+        } else if (rawData.raw_data && Array.isArray(rawData.raw_data)) {
+          // Fallback: group raw_data by table name
+          console.log('raw_data에서 테이블별 그룹화');
+          let tableCounter = 1;
+
           rawData.raw_data.forEach((stat: any, statIndex: number) => {
             let tableName = stat.table_name;
 
@@ -1084,6 +1091,110 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                     <div className="text-sm text-purple-600">숫자 데이터</div>
                   </div>
                 </div>
+
+                {/* 수집된 메타데이터 정보 */}
+                {analysisData.metadata && (
+                  <div className="bg-indigo-50 rounded-lg p-4 mb-6">
+                    <h4 className="font-medium text-indigo-900 mb-4">📋 수집된 메타데이터 정보</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* 기본 정보 */}
+                      <div className="space-y-3">
+                        <h5 className="font-medium text-indigo-800">기본 정보</h5>
+                        <div className="space-y-2 text-sm">
+                          {analysisData.metadata.search_field && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">검색분야:</span>
+                              <span className="font-medium text-gray-900">{analysisData.metadata.search_field}</span>
+                            </div>
+                          )}
+                          {analysisData.metadata.responsible_department && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">담당부서:</span>
+                              <span className="font-medium text-gray-900">{analysisData.metadata.responsible_department}</span>
+                            </div>
+                          )}
+                          {analysisData.metadata.department && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">부서:</span>
+                              <span className="font-medium text-gray-900">{analysisData.metadata.department}</span>
+                            </div>
+                          )}
+                          {analysisData.metadata.frequency && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">주기:</span>
+                              <span className="font-medium text-gray-900">{analysisData.metadata.frequency}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* 통계정보 */}
+                      {analysisData.metadata.statistical_info && Object.keys(analysisData.metadata.statistical_info).length > 0 && (
+                        <div className="space-y-3">
+                          <h5 className="font-medium text-indigo-800">통계정보</h5>
+                          <div className="space-y-2 text-sm max-h-32 overflow-y-auto">
+                            {Object.entries(analysisData.metadata.statistical_info).map(([key, value], idx) => (
+                              <div key={idx} className="flex justify-between">
+                                <span className="text-gray-600">{key}:</span>
+                                <span className="font-medium text-gray-900 text-right flex-1 ml-2">{value}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 관련용어 정보 */}
+                    <div className="mt-4 pt-4 border-t border-indigo-200">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* 주요항목 */}
+                        {analysisData.metadata.major_items && Object.keys(analysisData.metadata.major_items).length > 0 && (
+                          <div className="space-y-2">
+                            <h6 className="font-medium text-indigo-800 text-sm">주요항목</h6>
+                            <div className="text-xs space-y-1 max-h-24 overflow-y-auto">
+                              {Object.entries(analysisData.metadata.major_items).map(([key, value], idx) => (
+                                <div key={idx} className="bg-white rounded p-2">
+                                  <div className="font-medium text-gray-700">{key}</div>
+                                  <div className="text-gray-600">{value}</div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* 의미분석 */}
+                        {analysisData.metadata.meaning_analysis && Object.keys(analysisData.metadata.meaning_analysis).length > 0 && (
+                          <div className="space-y-2">
+                            <h6 className="font-medium text-indigo-800 text-sm">의미분석</h6>
+                            <div className="text-xs space-y-1 max-h-24 overflow-y-auto">
+                              {Object.entries(analysisData.metadata.meaning_analysis).map(([key, value], idx) => (
+                                <div key={idx} className="bg-white rounded p-2">
+                                  <div className="font-medium text-gray-700">{key}</div>
+                                  <div className="text-gray-600">{value}</div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* 관련용어 */}
+                        {analysisData.metadata.terminology && Object.keys(analysisData.metadata.terminology).length > 0 && (
+                          <div className="space-y-2">
+                            <h6 className="font-medium text-indigo-800 text-sm">관련용어</h6>
+                            <div className="text-xs space-y-1 max-h-24 overflow-y-auto">
+                              {Object.entries(analysisData.metadata.terminology).map(([key, value], idx) => (
+                                <div key={idx} className="bg-white rounded p-2">
+                                  <div className="font-medium text-gray-700">{key}</div>
+                                  <div className="text-gray-600">{value}</div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* 샘플 데이터 */}
                 <div className="bg-gray-50 rounded-lg p-4">

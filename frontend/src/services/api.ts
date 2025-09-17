@@ -32,6 +32,12 @@ export interface StatMetadata {
   keywords: string[];
   related_terms: Record<string, string>;
   url?: string;
+  search_field?: string;
+  responsible_department?: string;
+  statistical_info?: Record<string, string>;
+  major_items?: Record<string, string>;
+  meaning_analysis?: Record<string, string>;
+  terminology?: Record<string, string>;
 }
 
 export interface CardNewsSection {
@@ -164,6 +170,16 @@ export interface AdvancedCardNewsResponse {
     total_data_points: number;
     analysis_focus: string;
   };
+  raw_data?: Array<{
+    table_name: string;
+    year: number;
+    data: Record<string, any>;
+  }>;
+  raw_data_by_table?: Record<string, Array<{
+    table_name: string;
+    year: number;
+    data: Record<string, any>;
+  }>>;
 }
 
 export const statsAPI = {
