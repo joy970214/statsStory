@@ -275,14 +275,13 @@ async def generate_advanced_cardnews(request: GenerateStoryRequest):
                     StatData(year=2024, data={"총합": 1400, "증가율": 7.7})
                 ]
         
-        # 3. 기초통계 분석 수행
+        # 3. 기초통계 분석 수행 (개선된 분석 함수 사용)
         try:
-            from app.services.mcp_client import mcp_client
-            basic_stats_result = await mcp_client.call_pandas_analysis("basic_statistics", 
-                                                                     cache_key=f"stat_{hash(stat_url)}")
-            print("MCP 기초통계 분석 완료")
-        except Exception as mcp_error:
-            print(f"MCP 서비스 오류, 기본 통계 분석으로 대체: {mcp_error}")
+            # 우리가 구현한 종합 분석 함수 사용
+            basic_stats_result = _calculate_basic_statistics_from_comprehensive(stat_data)
+            print("개선된 기초통계 분석 완료")
+        except Exception as e:
+            print(f"기초통계 분석 오류, 기본 분석으로 대체: {e}")
             # 기본 통계 분석 수행
             basic_stats_result = _calculate_basic_statistics(stat_data)
         
@@ -434,6 +433,10 @@ async def get_analysis_status(task_id: str):
 async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
     """최적화된 분석 실행 (백그라운드)"""
     try:
+        # SSE 연결이 먼저 완료되도록 2초 지연
+        print(f"[TASK] 분석 시작 전 SSE 연결 대기: {task_id}")
+        await asyncio.sleep(2)
+
         stat_url = request.stat_url or "https://stat.molit.go.kr/portal/cate/statView.do"
         
         # 캐시 디버깅을 위한 로그 추가
@@ -506,6 +509,36 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
         
         # 분석 결과를 기존 API 형태로 변환
         basic_statistics = _calculate_basic_statistics_from_comprehensive(analysis_result)
+
+        # URL 검증 및 제안
+        from app.services.url_validator import URLValidator
+        url_validator = URLValidator()
+
+        # 수집된 테이블명 추출 (다양한 데이터 타입 지원)
+        collected_table_names = []
+        try:
+            if hasattr(analysis_result, 'collected_tables'):
+                collected_table_names = [table.table_name for table in analysis_result.collected_tables]
+            elif hasattr(analysis_result, 'data_by_table'):
+                collected_table_names = list(analysis_result.data_by_table.keys())
+            elif isinstance(analysis_result, list):
+                # 캐시된 데이터 (리스트 형태)인 경우
+                collected_table_names = [item.table_name for item in analysis_result if hasattr(item, 'table_name')]
+        except Exception as e:
+            print(f"테이블명 추출 중 오류: {e}")
+
+        validation_result = url_validator.validate_url_and_suggest(stat_url, collected_table_names, request.stat_name)
+
+        # 검증 결과 로깅
+        if validation_result.get("url_mismatch"):
+            print(f"⚠️ URL 불일치 감지:")
+            print(f"  요청 URL: {stat_url}")
+            print(f"  수집된 테이블: {collected_table_names}")
+            if validation_result.get("correct_url"):
+                print(f"  올바른 URL: {validation_result['correct_url']}")
+                print(f"  올바른 통계명: {validation_result['detected_stat_name']}")
+        else:
+            print(f"✅ URL 검증 통과: {stat_url}")
         
         # 데이터 저장 (메타데이터와 통계 데이터를 캐시에 저장)
         if analysis_result.metadata and analysis_result.data_by_table:
@@ -555,7 +588,15 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
                 "analysis_quality": "높음"
             },
             "basic_statistics": basic_statistics,
-            "insights": f"{analysis_result.stat_title}에 대한 최적화된 기초통계 현황 분석이 완료되었습니다.",
+            "url_validation": {
+                "is_valid": validation_result.get("is_valid", True),
+                "warnings": validation_result.get("validation_warnings", []),
+                "url_mismatch": validation_result.get("url_mismatch", False),
+                "correct_url": validation_result.get("correct_url"),
+                "detected_stat_name": validation_result.get("detected_stat_name"),
+                "validation_message": url_validator.format_validation_message(validation_result)
+            },
+            "insights": f"{analysis_result.stat_title}에 대한 기초통계 현황 분석이 완료되었습니다.",
             "comprehensive_analysis": analysis_result,  # 종합 분석 결과도 포함
             "completed_at": datetime.now().isoformat()
         }
@@ -635,20 +676,32 @@ def _analyze_table_data(table_name: str, table_data: List[StatData]) -> dict:
             }
         }
     
-    # 3. 데이터 샘플 (처음 5개)
+    # 3. 데이터 샘플 (원본 테이블 형태)
     data_samples = []
+    original_table_format = None
+
+    # _table_data에서 원본 테이블 형태 생성 시도
+    for item in table_data:
+        if hasattr(item, 'data') and item.data and '_table_data' in item.data:
+            try:
+                original_table_format = _generate_original_table_format(item.data['_table_data'])
+                break
+            except Exception as e:
+                print(f"원본 테이블 형태 생성 실패: {e}")
+
+    # 기존 샘플 데이터도 유지 (백업용)
     for i, item in enumerate(table_data[:5]):
         sample = {
             "record_index": i + 1,
             "year": item.year,
             "sample_data": {}
         }
-        
+
         if item.data:
             # 중요한 필드만 선별 (숫자 데이터 우선)
-            sorted_fields = sorted(item.data.items(), 
+            sorted_fields = sorted(item.data.items(),
                                  key=lambda x: (x[0] not in numeric_fields, x[0]))
-            
+
             for key, value in sorted_fields[:8]:  # 최대 8개 필드
                 parsed_value = _parse_cell_value(value)
                 sample["sample_data"][key] = {
@@ -656,7 +709,7 @@ def _analyze_table_data(table_name: str, table_data: List[StatData]) -> dict:
                     "value": parsed_value.get('value'),
                     "unit": parsed_value.get('unit', 'text')
                 }
-        
+
         data_samples.append(sample)
     
     # 4. 분포 특성
@@ -679,7 +732,7 @@ def _analyze_table_data(table_name: str, table_data: List[StatData]) -> dict:
     # 5. 객관적 현황 요약
     objective_summary = _generate_objective_summary(table_name, data_overview, basic_statistics)
     
-    return {
+    result = {
         "table_name": table_name,
         "data_overview": data_overview,
         "basic_statistics": basic_statistics,
@@ -687,6 +740,82 @@ def _analyze_table_data(table_name: str, table_data: List[StatData]) -> dict:
         "distribution_characteristics": distribution_characteristics,
         "objective_summary": objective_summary
     }
+
+    # 원본 테이블 형태가 생성되었으면 추가
+    if original_table_format:
+        result["original_table_format"] = original_table_format
+
+    return result
+
+def _generate_original_table_format(table_data_str):
+    """_table_data를 원본 테이블 형태로 변환"""
+    try:
+        import json
+        import ast
+
+        # JSON 문자열 또는 파이썬 표현식 파싱
+        if isinstance(table_data_str, str):
+            try:
+                # JSON으로 파싱 시도
+                table_data = json.loads(table_data_str)
+            except json.JSONDecodeError:
+                # JSON 파싱 실패시 ast.literal_eval 시도
+                table_data = ast.literal_eval(table_data_str)
+        else:
+            table_data = table_data_str
+
+        # 테이블 구조 분석
+        headers = []
+        data_rows = []
+
+        # 헤더 찾기
+        header_row = None
+        for row in table_data:
+            if row.get('is_header', False):
+                header_row = row
+                break
+
+        if header_row:
+            # 헤더 셀들을 col_index 순으로 정렬
+            header_cells = sorted(header_row.get('cells', []), key=lambda x: x.get('col_index', 0))
+            headers = [cell.get('value', {}).get('value', f"컬럼{cell.get('col_index', 0)}") for cell in header_cells]
+
+        # 데이터 행 처리 (최대 10행만)
+        data_row_count = 0
+        for row in table_data:
+            if not row.get('is_header', False) and data_row_count < 10:
+                cells = row.get('cells', [])
+                if cells:  # 빈 행이 아닌 경우만
+                    # 셀들을 col_index 순으로 정렬
+                    sorted_cells = sorted(cells, key=lambda x: x.get('col_index', 0))
+
+                    # 행 데이터 구성
+                    row_data = {}
+                    for i, cell in enumerate(sorted_cells):
+                        col_name = headers[i] if i < len(headers) else f"컬럼{i+1}"
+                        cell_value = cell.get('value', {})
+
+                        row_data[col_name] = {
+                            'value': cell_value.get('value', ''),
+                            'unit': cell_value.get('unit', 'text'),
+                            'raw': cell_value.get('raw', '')
+                        }
+
+                    if row_data:  # 빈 행이 아닌 경우만 추가
+                        data_rows.append(row_data)
+                        data_row_count += 1
+
+        return {
+            'headers': headers,
+            'data_rows': data_rows,
+            'total_rows': len(data_rows),
+            'display_note': '원본 사이트 테이블 형태로 표시 (최대 10행)'
+        }
+
+    except Exception as e:
+        print(f"원본 테이블 형태 생성 중 오류: {e}")
+        return None
+
 
 def _parse_cell_value(value):
     """셀 값 파싱 (JSON 문자열 또는 일반 값)"""
@@ -774,18 +903,12 @@ def _create_analysis_result_from_cache(metadata: StatMetadata, stat_data: List[S
     for data_item in stat_data:
         table_name = getattr(data_item, 'table_name', None)
 
-        # 테이블명이 없거나 기본값인 경우 개선된 이름 사용
-        if not table_name or table_name in ['', '기본 통계표']:
-            if metadata and metadata.keywords:
-                table_name = f"{metadata.keywords[0]} 통계표 {table_counter}"
-            else:
-                table_name = f"통계표 {table_counter}"
+        # 실제 수집된 테이블명 사용 - 키워드 추가하지 않음
+        if not table_name or table_name.strip() in ['', '기본 통계표']:
+            # 테이블명이 완전히 없는 경우만 기본명 사용
+            table_name = f"통계표 {table_counter}"
             table_counter += 1
-        elif table_name.startswith('테이블') and table_name[2:].isdigit():
-            if metadata and metadata.keywords:
-                table_name = f"{metadata.keywords[0]} {table_name}"
-            else:
-                table_name = f"수집된 {table_name}"
+        # 실제 수집된 테이블명이 있으면 그대로 사용 (키워드 추가 제거)
 
         if table_name not in data_by_table:
             data_by_table[table_name] = []
@@ -800,39 +923,127 @@ def _create_analysis_result_from_cache(metadata: StatMetadata, stat_data: List[S
     )
 
 def _calculate_basic_statistics_from_comprehensive(analysis_result) -> dict:
-    """종합 분석 결과에서 기초 통계 추출"""
+    """종합 분석 결과에서 기초 통계 추출 (대폭 개선된 버전)"""
     try:
-        # 수집된 데이터에서 숫자 데이터 추출
+        # 수집된 데이터에서 숫자 데이터 추출 - 더 포괄적인 파싱
         all_numeric_values = []
-        
+
+        print("=== 기초통계 계산 시작 ===")
+
         for table_name, table_data_list in analysis_result.data_by_table.items():
+            print(f"테이블 '{table_name}' 처리 중 ({len(table_data_list)}개 데이터)")
+
             for data_item in table_data_list:
                 if data_item.data:
+                    # 기본 데이터 필드에서 숫자 추출
                     for key, value in data_item.data.items():
                         try:
+                            # 딕셔너리 형태의 값 처리
                             if isinstance(value, dict) and value.get("unit") == "number":
-                                all_numeric_values.append(value.get("value", 0))
+                                numeric_val = value.get("value")
+                                if isinstance(numeric_val, (int, float)):
+                                    all_numeric_values.append(numeric_val)
+
+                            # 직접적인 숫자 값 처리
                             elif isinstance(value, (int, float)):
                                 all_numeric_values.append(value)
-                        except:
+
+                            # JSON 문자열 처리 (_table_data 필드) - 더 상세하게
+                            elif isinstance(value, str) and key == "_table_data":
+                                try:
+                                    import json
+                                    table_data = json.loads(value)
+                                    if isinstance(table_data, list):
+                                        for row in table_data:
+                                            if isinstance(row, dict) and 'cells' in row:
+                                                for cell in row.get('cells', []):
+                                                    if isinstance(cell, dict) and 'value' in cell:
+                                                        cell_value = cell['value']
+                                                        if isinstance(cell_value, dict):
+                                                            if cell_value.get('unit') == 'number':
+                                                                numeric_val = cell_value.get('value')
+                                                                if isinstance(numeric_val, (int, float)):
+                                                                    all_numeric_values.append(numeric_val)
+                                except Exception as json_error:
+                                    print(f"JSON 파싱 오류: {json_error}")
+                                    continue
+
+                            # 문자열에서 숫자 추출 시도
+                            elif isinstance(value, str) and value.strip():
+                                # 쉼표가 포함된 숫자 처리 (예: "21,400")
+                                try:
+                                    clean_value = value.replace(',', '').replace(' ', '').strip()
+                                    if clean_value.lstrip('-').replace('.', '').isdigit():
+                                        numeric_val = float(clean_value)
+                                        all_numeric_values.append(numeric_val)
+                                except:
+                                    continue
+
+                        except Exception as extract_error:
                             continue
-        
-        if all_numeric_values:
+
+        print(f"1차 추출된 숫자 데이터 개수: {len(all_numeric_values)}")
+
+        # 유효한 숫자만 필터링 (NaN, Infinity 제거)
+        valid_numeric_values = []
+        for val in all_numeric_values:
+            try:
+                if isinstance(val, (int, float)) and not (val != val or val == float('inf') or val == float('-inf')):
+                    valid_numeric_values.append(float(val))
+            except:
+                continue
+
+        print(f"유효한 숫자 데이터 개수: {len(valid_numeric_values)}")
+
+        # 이상값 필터링 (너무 극단적인 값 제거)
+        if len(valid_numeric_values) > 10:
+            # IQR 방식으로 이상값 제거
             import numpy as np
-            return {
-                "mean": float(np.mean(all_numeric_values)),
-                "median": float(np.median(all_numeric_values)),
-                "max": float(np.max(all_numeric_values)),
-                "min": float(np.min(all_numeric_values)),
-                "total": float(np.sum(all_numeric_values)),
-                "count": len(all_numeric_values)
+            q1 = np.percentile(valid_numeric_values, 25)
+            q3 = np.percentile(valid_numeric_values, 75)
+            iqr = q3 - q1
+            lower_bound = q1 - 3 * iqr  # 3*IQR로 느슨하게 설정
+            upper_bound = q3 + 3 * iqr
+
+            filtered_values = [val for val in valid_numeric_values if lower_bound <= val <= upper_bound]
+
+            print(f"이상값 제거 후: {len(filtered_values)}개 (제거된: {len(valid_numeric_values) - len(filtered_values)}개)")
+            valid_numeric_values = filtered_values
+
+        print(f"최종 숫자 데이터 개수: {len(valid_numeric_values)}")
+        if len(valid_numeric_values) > 0:
+            print(f"샘플 값들: {sorted(valid_numeric_values)[:10]}")  # 정렬된 처음 10개 출력
+
+        if valid_numeric_values:
+            import numpy as np
+
+            result = {
+                "mean": float(np.mean(valid_numeric_values)),
+                "median": float(np.median(valid_numeric_values)),
+                "max": float(np.max(valid_numeric_values)),
+                "min": float(np.min(valid_numeric_values)),
+                "total": float(np.sum(valid_numeric_values)),
+                "count": len(valid_numeric_values)
             }
+
+            print(f"계산된 기초통계:")
+            print(f"  - 평균: {result['mean']:.2f}")
+            print(f"  - 중위수: {result['median']:.2f}")
+            print(f"  - 최댓값: {result['max']:.2f}")
+            print(f"  - 최솟값: {result['min']:.2f}")
+            print(f"  - 총합: {result['total']:.2f}")
+            print(f"  - 개수: {result['count']}")
+
+            return result
         else:
+            print("계산할 수 있는 숫자 데이터가 없습니다")
             return {
                 "mean": 0, "median": 0, "max": 0, "min": 0, "total": 0, "count": 0
             }
     except Exception as e:
         print(f"기초통계 계산 오류: {e}")
+        import traceback
+        traceback.print_exc()
         return {
             "mean": 0, "median": 0, "max": 0, "min": 0, "total": 0, "count": 0
         }
@@ -1323,18 +1534,12 @@ async def get_table_analysis(stat_name: str):
         for data_item in stat_data:
             table_name = getattr(data_item, 'table_name', None)
 
-            # 테이블명이 없거나 기본값인 경우 개선된 이름 사용
-            if not table_name or table_name in ['', '기본 통계표']:
-                if metadata and metadata.keywords:
-                    table_name = f"{metadata.keywords[0]} 통계표 {table_counter}"
-                else:
-                    table_name = f"통계표 {table_counter}"
+            # 실제 수집된 테이블명 사용 - 키워드 추가하지 않음
+            if not table_name or table_name.strip() in ['', '기본 통계표']:
+                # 테이블명이 완전히 없는 경우만 기본명 사용
+                table_name = f"통계표 {table_counter}"
                 table_counter += 1
-            elif table_name.startswith('테이블') and table_name[2:].isdigit():
-                if metadata and metadata.keywords:
-                    table_name = f"{metadata.keywords[0]} {table_name}"
-                else:
-                    table_name = f"수집된 {table_name}"
+            # 실제 수집된 테이블명이 있으면 그대로 사용 (키워드 추가 제거)
 
             if table_name not in table_groups:
                 table_groups[table_name] = []
@@ -1694,18 +1899,12 @@ async def get_stat_distribution_analysis(stat_name: str):
         for data_item in stat_data:
             table_name = getattr(data_item, 'table_name', None)
 
-            # 테이블명이 없거나 기본값인 경우 개선된 이름 사용
-            if not table_name or table_name in ['', '기본 통계표']:
-                if metadata and metadata.keywords:
-                    table_name = f"{metadata.keywords[0]} 통계표 {table_counter}"
-                else:
-                    table_name = f"통계표 {table_counter}"
+            # 실제 수집된 테이블명 사용 - 키워드 추가하지 않음
+            if not table_name or table_name.strip() in ['', '기본 통계표']:
+                # 테이블명이 완전히 없는 경우만 기본명 사용
+                table_name = f"통계표 {table_counter}"
                 table_counter += 1
-            elif table_name.startswith('테이블') and table_name[2:].isdigit():
-                if metadata and metadata.keywords:
-                    table_name = f"{metadata.keywords[0]} {table_name}"
-                else:
-                    table_name = f"수집된 {table_name}"
+            # 실제 수집된 테이블명이 있으면 그대로 사용 (키워드 추가 제거)
 
             if table_name not in table_groups:
                 table_groups[table_name] = []
@@ -1839,18 +2038,12 @@ async def get_stat_objective_summary(stat_name: str):
         for data_item in stat_data:
             table_name = getattr(data_item, 'table_name', None)
 
-            # 테이블명이 없거나 기본값인 경우 개선된 이름 사용
-            if not table_name or table_name in ['', '기본 통계표']:
-                if metadata and metadata.keywords:
-                    table_name = f"{metadata.keywords[0]} 통계표 {table_counter}"
-                else:
-                    table_name = f"통계표 {table_counter}"
+            # 실제 수집된 테이블명 사용 - 키워드 추가하지 않음
+            if not table_name or table_name.strip() in ['', '기본 통계표']:
+                # 테이블명이 완전히 없는 경우만 기본명 사용
+                table_name = f"통계표 {table_counter}"
                 table_counter += 1
-            elif table_name.startswith('테이블') and table_name[2:].isdigit():
-                if metadata and metadata.keywords:
-                    table_name = f"{metadata.keywords[0]} {table_name}"
-                else:
-                    table_name = f"수집된 {table_name}"
+            # 실제 수집된 테이블명이 있으면 그대로 사용 (키워드 추가 제거)
 
             if table_name not in table_groups:
                 table_groups[table_name] = []
@@ -2000,6 +2193,59 @@ async def get_stat_objective_summary(stat_name: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"객관적 현황 요약 생성 오류: {str(e)}")
+
+@router.get("/stats/suggest-urls", summary="통계명으로 URL 제안")
+async def suggest_urls_by_name(stat_name: str):
+    """통계명을 기반으로 올바른 URL들을 제안"""
+    try:
+        from app.services.url_validator import URLValidator
+
+        url_validator = URLValidator()
+        suggestions = url_validator.suggest_urls_by_name(stat_name)
+
+        return {
+            "stat_name": stat_name,
+            "suggestions": [
+                {
+                    "rsid": stat.rsid,
+                    "name": stat.name,
+                    "category": stat.category,
+                    "description": stat.description,
+                    "keywords": stat.keywords,
+                    "url": stat.correct_url
+                }
+                for stat in suggestions
+            ],
+            "total_suggestions": len(suggestions)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"URL 제안 생성 오류: {str(e)}")
+
+@router.get("/stats/available", summary="사용 가능한 모든 통계 목록")
+async def get_available_stats():
+    """사용 가능한 모든 국토교통부 통계 목록"""
+    try:
+        from app.services.url_validator import URLValidator
+
+        url_validator = URLValidator()
+        all_stats = url_validator.get_all_available_stats()
+
+        return {
+            "available_stats": [
+                {
+                    "rsid": stat.rsid,
+                    "name": stat.name,
+                    "category": stat.category,
+                    "description": stat.description,
+                    "keywords": stat.keywords,
+                    "url": stat.correct_url
+                }
+                for stat in all_stats
+            ],
+            "total_count": len(all_stats)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"통계 목록 조회 오류: {str(e)}")
 
 @router.delete("/stats/{cache_key}", summary="수집된 통계표 삭제")
 async def delete_collected_stat(cache_key: str):

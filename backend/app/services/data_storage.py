@@ -56,8 +56,15 @@ class DataStorageService:
                 'frequency': metadata.frequency,
                 'department': metadata.department,
                 'contact': metadata.contact,
+                'search_field': metadata.search_field,
+                'responsible_department': metadata.responsible_department,
                 'keywords': metadata.keywords,
-                'related_terms': metadata.related_terms
+                'related_terms': metadata.related_terms,
+                'statistical_info': metadata.statistical_info,
+                'major_items': metadata.major_items,
+                'meaning_analysis': metadata.meaning_analysis,
+                'terminology': metadata.terminology,
+                'url': metadata.url
             }
         }
         
@@ -133,8 +140,15 @@ class DataStorageService:
                 frequency=metadata_dict['frequency'],
                 department=metadata_dict['department'],
                 contact=metadata_dict['contact'],
-                keywords=metadata_dict['keywords'],
-                related_terms=metadata_dict['related_terms']
+                search_field=metadata_dict.get('search_field'),
+                responsible_department=metadata_dict.get('responsible_department'),
+                keywords=metadata_dict.get('keywords', []),
+                related_terms=metadata_dict.get('related_terms', {}),
+                statistical_info=metadata_dict.get('statistical_info', {}),
+                major_items=metadata_dict.get('major_items', {}),
+                meaning_analysis=metadata_dict.get('meaning_analysis', {}),
+                terminology=metadata_dict.get('terminology', {}),
+                url=metadata_dict.get('url')
             )
             
             print(f"메타데이터 캐시 로드 성공: {cache_key} -> {metadata.title}")
@@ -265,36 +279,71 @@ class DataStorageService:
             
             # Excel 파일에 여러 시트로 저장
             with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
-                # 1. 메타데이터 시트
-                metadata_df = pd.DataFrame([{
-                    '항목': '통계 ID',
-                    '내용': metadata.id
-                }, {
-                    '항목': '제목',
-                    '내용': metadata.title
-                }, {
-                    '항목': '목적',
-                    '내용': metadata.purpose
-                }, {
-                    '항목': '주기',
-                    '내용': metadata.frequency
-                }, {
-                    '항목': '작성기관',
-                    '내용': metadata.department
-                }, {
-                    '항목': '담당자',
-                    '내용': metadata.contact
-                }, {
-                    '항목': '키워드',
-                    '내용': ', '.join(metadata.keywords) if metadata.keywords else ''
-                }, {
-                    '항목': 'URL',
-                    '내용': stat_url
-                }, {
-                    '항목': '저장 시간',
-                    '내용': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                }])
-                
+                # 1. 통합 메타데이터 시트 (모든 메타데이터 정보 포함)
+                metadata_records = []
+
+                # 기본 메타데이터
+                metadata_records.extend([
+                    {'구분': '기본정보', '항목': '통계 ID', '내용': metadata.id},
+                    {'구분': '기본정보', '항목': '제목', '내용': metadata.title},
+                    {'구분': '기본정보', '항목': '목적', '내용': metadata.purpose},
+                    {'구분': '기본정보', '항목': '주기', '내용': metadata.frequency},
+                    {'구분': '기본정보', '항목': '작성기관', '내용': metadata.department},
+                    {'구분': '기본정보', '항목': '담당자', '내용': metadata.contact},
+                    {'구분': '기본정보', '항목': '검색분야', '내용': metadata.search_field or ''},
+                    {'구분': '기본정보', '항목': '담당부서', '내용': metadata.responsible_department or ''},
+                    {'구분': '기본정보', '항목': '키워드', '내용': ', '.join(metadata.keywords) if metadata.keywords else ''},
+                    {'구분': '기본정보', '항목': 'URL', '내용': stat_url},
+                    {'구분': '기본정보', '항목': '저장 시간', '내용': datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+                ])
+
+                # 통계정보 상세 추가
+                if metadata.statistical_info:
+                    for key, value in metadata.statistical_info.items():
+                        metadata_records.append({
+                            '구분': '통계정보상세',
+                            '항목': key,
+                            '내용': str(value)
+                        })
+
+                # 주요항목 추가
+                if metadata.major_items:
+                    for item, content in metadata.major_items.items():
+                        metadata_records.append({
+                            '구분': '주요항목',
+                            '항목': item,
+                            '내용': str(content)
+                        })
+
+                # 의미분석 추가
+                if metadata.meaning_analysis:
+                    for item, content in metadata.meaning_analysis.items():
+                        metadata_records.append({
+                            '구분': '의미분석',
+                            '항목': item,
+                            '내용': str(content)
+                        })
+
+                # 관련용어 추가
+                if metadata.terminology:
+                    for term, definition in metadata.terminology.items():
+                        metadata_records.append({
+                            '구분': '용어정의',
+                            '항목': term,
+                            '내용': str(definition)
+                        })
+
+                # 기타 관련정보 추가
+                if metadata.related_terms:
+                    for term, definition in metadata.related_terms.items():
+                        metadata_records.append({
+                            '구분': '관련용어',
+                            '항목': term,
+                            '내용': str(definition)
+                        })
+
+                # 통합 메타데이터 DataFrame 생성
+                metadata_df = pd.DataFrame(metadata_records)
                 metadata_df.to_excel(writer, sheet_name='메타데이터', index=False)
                 
                 # 2. 통계 데이터 시트
@@ -321,18 +370,7 @@ class DataStorageService:
                     stats_df = pd.DataFrame(stats_records)
                     stats_df.to_excel(writer, sheet_name='통계데이터', index=False)
                 
-                # 3. 관련 용어 시트 (있는 경우)
-                if metadata.related_terms:
-                    terms_records = []
-                    for term, definition in metadata.related_terms.items():
-                        terms_records.append({
-                            '용어': term,
-                            '정의': definition
-                        })
-                    
-                    if terms_records:
-                        terms_df = pd.DataFrame(terms_records)
-                        terms_df.to_excel(writer, sheet_name='관련용어', index=False)
+                # 모든 메타데이터 관련 정보는 이미 위의 통합 메타데이터 시트에 포함됨
             
             print(f"Excel 파일 저장 완료: {cache_key} -> {excel_path}")
             return excel_path
