@@ -613,19 +613,26 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     const tableData = rawDataByTable[selectedTableName];
     const numericValues: number[] = [];
 
-    tableData.forEach(stat => {
+    console.log('선택된 테이블:', selectedTableName);
+    console.log('테이블 데이터:', tableData);
+
+    tableData.forEach((stat, statIndex) => {
+      console.log(`통계 ${statIndex}:`, stat);
+
       // _table_data가 있는 경우 JSON 파싱하여 숫자 데이터 추출
       if (stat.data?._table_data) {
         try {
           const tableDataParsed = JSON.parse(stat.data._table_data);
+          console.log('_table_data 파싱 성공:', tableDataParsed);
 
-          tableDataParsed.forEach((row: any) => {
+          tableDataParsed.forEach((row: any, rowIndex: number) => {
             if (row.cells) {
-              row.cells.forEach((cell: any) => {
+              row.cells.forEach((cell: any, cellIndex: number) => {
                 if (cell.value && typeof cell.value === 'object') {
                   const cellValue = cell.value;
                   if (cellValue.unit === 'number' && typeof cellValue.value === 'number') {
                     numericValues.push(cellValue.value);
+                    console.log(`숫자 데이터 추출: 행${rowIndex}, 셀${cellIndex}, 값:`, cellValue.value);
                   }
                 }
               });
@@ -633,6 +640,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
           });
         } catch (error) {
           console.warn('_table_data 파싱 오류:', error);
+          console.warn('원본 데이터:', stat.data._table_data);
         }
       }
 
@@ -656,6 +664,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
           if (numericValue !== null) {
             numericValues.push(numericValue);
+            console.log(`기존 방식 숫자 데이터: ${key} = ${numericValue}`);
           }
         } catch (error) {
           // Skip parsing errors
@@ -663,7 +672,11 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
       });
     });
 
+    console.log('총 추출된 숫자 데이터:', numericValues);
+    console.log('숫자 데이터 개수:', numericValues.length);
+
     if (numericValues.length === 0) {
+      console.log('숫자 데이터 없음, fallback 사용');
       return processedStats?.numeric_stats || {
         total: 0,
         mean: 0,
@@ -679,7 +692,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     const mean = numericValues.reduce((sum, val) => sum + val, 0) / numericValues.length;
     const variance = numericValues.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / numericValues.length;
 
-    return {
+    const stats = {
       total: numericValues.reduce((sum, val) => sum + val, 0),
       mean: mean,
       median: sortedValues[Math.floor(sortedValues.length / 2)],
@@ -688,6 +701,9 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
       count: numericValues.length,
       std_dev: Math.sqrt(variance)
     };
+
+    console.log('계산된 통계:', stats);
+    return stats;
   };
 
   // 데이터 검사 모드일 때는 EnhancedDataInspectionViewer 렌더링

@@ -1368,19 +1368,34 @@ async def view_raw_collected_data(request: GenerateStoryRequest):
         stat_data = cached_stat_data
         metadata = cached_metadata
         
+        # raw_data 구성
+        raw_data = [
+            {
+                "year": item.year,
+                "data": item.data,
+                "table_name": getattr(item, 'table_name', None)
+            } for item in stat_data
+        ]
+
+        # raw_data_by_table 구성 (테이블별 그룹화)
+        raw_data_by_table = {}
+        for item in raw_data:
+            table_name = item.get('table_name')
+            if not table_name or table_name in ['', '기본 통계표']:
+                table_name = '기본 통계표'
+
+            if table_name not in raw_data_by_table:
+                raw_data_by_table[table_name] = []
+            raw_data_by_table[table_name].append(item)
+
         return {
             "metadata": {
                 "stat_name": request.stat_name,
                 "collection_time": datetime.now().isoformat(),
                 "source_info": getattr(metadata, 'url', None)
             },
-            "raw_data": [
-                {
-                    "year": item.year,
-                    "data": item.data,
-                    "table_name": getattr(item, 'table_name', None)
-                } for item in stat_data
-            ]
+            "raw_data": raw_data,
+            "raw_data_by_table": raw_data_by_table
         }
         
     except Exception as e:
