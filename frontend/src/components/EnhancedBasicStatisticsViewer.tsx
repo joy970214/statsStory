@@ -762,60 +762,124 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               )}
             </div>
 
-            {/* 수집된 데이터 개요 */}
+            {/* 통계표 선택 */}
             <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">📊 수집된 데이터 개요</h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-            <div className="bg-green-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-green-700">
-                {processedStats.data_structure.table_count}
+              <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                📋 통계표 선택
+                <span className="ml-3 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                  {processedStats.data_structure.table_count}개 수집됨
+                </span>
+              </h3>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-medium text-gray-900 mb-3">수집된 통계표 목록 (클릭하여 선택)</h4>
+                <div className="flex flex-wrap gap-2">
+                  {processedStats.data_structure.collected_tables.map((table, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedTableName(table)}
+                      className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                        selectedTableName === table
+                          ? 'bg-blue-600 text-white shadow-md'
+                          : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                      }`}
+                    >
+                      {table}
+                    </button>
+                  ))}
+                </div>
+                {selectedTableName && (
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <span className="text-sm font-medium text-blue-900">현재 선택된 통계표:</span>
+                    <span className="text-sm font-bold text-blue-700 ml-2">{selectedTableName}</span>
+                  </div>
+                )}
               </div>
-              <div className="text-sm text-green-600">수집된 통계표</div>
             </div>
-            <div className="bg-blue-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-blue-700">
-                {processedStats.data_structure.total_fields}
-              </div>
-              <div className="text-sm text-blue-600">총 데이터 필드</div>
-            </div>
-            <div className="bg-purple-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-purple-700">
-                {processedStats.data_structure.numeric_fields}
-              </div>
-              <div className="text-sm text-purple-600">숫자 데이터</div>
-            </div>
-            <div className="bg-orange-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-orange-700">
-                {processedStats.data_structure.text_fields}
-              </div>
-              <div className="text-sm text-orange-600">텍스트 데이터</div>
-            </div>
-          </div>
 
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">수집된 통계표 목록 (클릭하여 선택)</h4>
-            <div className="flex flex-wrap gap-2">
-              {processedStats.data_structure.collected_tables.map((table, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedTableName(table)}
-                  className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                    selectedTableName === table
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
-                  }`}
-                >
-                  {table}
-                </button>
-              ))}
-            </div>
-            {selectedTableName && (
-              <div className="mt-3 text-sm text-gray-600">
-                선택된 통계표: <span className="font-medium text-blue-600">{selectedTableName}</span>
+            {/* 선택된 통계표 상세 정보 */}
+            <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                🔍 선택된 통계표 상세 정보
+                {selectedTableName && (
+                  <span className="text-lg text-blue-600 ml-2">- {selectedTableName}</span>
+                )}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-blue-50 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-blue-700">
+                    {(() => {
+                      // 선택된 테이블의 필드 수 계산
+                      if (!selectedTableName || !rawDataByTable[selectedTableName]) {
+                        return 0;
+                      }
+                      const tableData = rawDataByTable[selectedTableName];
+                      let totalFields = 0;
+                      tableData.forEach(stat => {
+                        totalFields += Object.keys(stat.data || {}).length;
+                      });
+                      return totalFields;
+                    })()}
+                  </div>
+                  <div className="text-sm text-blue-600">총 데이터 필드</div>
+                </div>
+                <div className="bg-purple-50 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-purple-700">
+                    {(() => {
+                      // 선택된 테이블의 숫자 데이터 수 계산
+                      if (!selectedTableName || !rawDataByTable[selectedTableName]) {
+                        return 0;
+                      }
+                      const tableData = rawDataByTable[selectedTableName];
+                      let numericFields = 0;
+                      tableData.forEach(stat => {
+                        Object.entries(stat.data || {}).forEach(([key, value]) => {
+                          try {
+                            const parsedValue = typeof value === 'string' && value.includes("'value'")
+                              ? JSON.parse(value.replace(/'/g, '"'))
+                              : { value, unit: 'text', raw: value };
+                            if (parsedValue.unit === 'number') {
+                              numericFields++;
+                            }
+                          } catch (error) {
+                            // Skip parsing errors
+                          }
+                        });
+                      });
+                      return numericFields;
+                    })()}
+                  </div>
+                  <div className="text-sm text-purple-600">숫자 데이터</div>
+                </div>
+                <div className="bg-orange-50 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-orange-700">
+                    {(() => {
+                      // 선택된 테이블의 텍스트 데이터 수 계산
+                      if (!selectedTableName || !rawDataByTable[selectedTableName]) {
+                        return 0;
+                      }
+                      const tableData = rawDataByTable[selectedTableName];
+                      let textFields = 0;
+                      tableData.forEach(stat => {
+                        Object.entries(stat.data || {}).forEach(([key, value]) => {
+                          try {
+                            const parsedValue = typeof value === 'string' && value.includes("'value'")
+                              ? JSON.parse(value.replace(/'/g, '"'))
+                              : { value, unit: 'text', raw: value };
+                            if (parsedValue.unit !== 'number') {
+                              textFields++;
+                            }
+                          } catch (error) {
+                            textFields++;
+                          }
+                        });
+                      });
+                      return textFields;
+                    })()}
+                  </div>
+                  <div className="text-sm text-orange-600">텍스트 데이터</div>
+                </div>
               </div>
-            )}
-          </div>
-        </div>
+            </div>
 
         {/* 기초통계 지표 */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
