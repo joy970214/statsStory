@@ -1093,7 +1093,7 @@ async def health_check():
 
 
 def _calculate_basic_statistics(stat_data):
-    """기본 통계 분석 수행"""
+    """기본 통계 분석 수행 - _table_data JSON 구조 파싱 지원"""
     if not stat_data:
         return {
             "mean": 0,
@@ -1103,58 +1103,71 @@ def _calculate_basic_statistics(stat_data):
             "total": 0,
             "count": 0
         }
-    
-    # 첫 번째 데이터의 모든 키를 가져와서 수치형 데이터만 분석
-    numeric_data = {}
-    
+
+    # 모든 숫자 데이터를 수집
+    numeric_values = []
+
     for item in stat_data:
         if item.data:
+            # _table_data가 있는 경우 JSON 파싱
+            if '_table_data' in item.data:
+                try:
+                    import json
+                    table_data_str = item.data['_table_data']
+                    table_data = json.loads(table_data_str)
+
+                    # 각 행의 셀에서 숫자 데이터 추출
+                    for row in table_data:
+                        if 'cells' in row:
+                            for cell in row['cells']:
+                                if 'value' in cell and isinstance(cell['value'], dict):
+                                    cell_value = cell['value']
+                                    if cell_value.get('unit') == 'number' and isinstance(cell_value.get('value'), (int, float)):
+                                        numeric_values.append(cell_value['value'])
+                except (json.JSONDecodeError, KeyError, TypeError) as e:
+                    print(f"_table_data 파싱 오류: {e}")
+                    continue
+
+            # 기존 방식으로도 데이터 수집 (호환성 유지)
             for key, value in item.data.items():
-                if key not in numeric_data:
-                    numeric_data[key] = []
-                
+                if key.startswith('_'):  # _table_data, _table_headers 등은 건너뛰기
+                    continue
+
                 try:
                     # 문자열인 경우 숫자로 변환 시도
                     if isinstance(value, str):
                         cleaned = value.replace(',', '').replace('%', '').strip()
                         numeric_value = float(cleaned)
-                    else:
-                        numeric_value = float(value)
-                    
-                    numeric_data[key].append(numeric_value)
+                        numeric_values.append(numeric_value)
+                    elif isinstance(value, (int, float)):
+                        numeric_values.append(float(value))
                 except (ValueError, TypeError):
                     # 숫자로 변환할 수 없는 경우 무시
                     continue
-    
-    # 각 필드별 통계 계산
-    result = {}
-    for key, values in numeric_data.items():
-        if values:
-            import numpy as np
-            result[key] = {
-                "mean": float(np.mean(values)),
-                "median": float(np.median(values)),
-                "max": float(np.max(values)),
-                "min": float(np.min(values)),
-                "total": float(np.sum(values)),
-                "count": len(values),
-                "std": float(np.std(values)) if len(values) > 1 else 0
-            }
-    
-    # 전체 통계가 없으면 기본값 반환
-    if not result:
+
+    # 통계 계산
+    if not numeric_values:
         return {
             "mean": 0,
             "median": 0,
             "max": 0,
             "min": 0,
             "total": 0,
-            "count": 0
+            "count": 0,
+            "std_dev": 0
         }
-    
-    # 첫 번째 필드의 통계를 기본값으로 반환 (호환성을 위해)
-    first_key = list(result.keys())[0]
-    return result[first_key]
+
+    import numpy as np
+
+    return {
+        "mean": float(np.mean(numeric_values)),
+        "median": float(np.median(numeric_values)),
+        "max": float(np.max(numeric_values)),
+        "min": float(np.min(numeric_values)),
+        "total": float(np.sum(numeric_values)),
+        "count": len(numeric_values),
+        "std_dev": float(np.std(numeric_values)) if len(numeric_values) > 1 else 0
+    }
 
 # 데이터 분석 타입별 추가 함수들
 def _analyze_data_types(stat_data):

@@ -610,16 +610,50 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
     const tableData = rawDataByTable[selectedTableName];
     const numericValues: number[] = [];
-    
-    tableData.forEach(stat => {
-      Object.entries(stat.data || {}).forEach(([key, value]) => {
-        try {
-          const parsedValue = typeof value === 'string' && value.includes("'value'") 
-            ? JSON.parse(value.replace(/'/g, '"'))
-            : { value, unit: 'text', raw: value };
 
-          if (parsedValue.unit === 'number' && typeof parsedValue.value === 'number') {
-            numericValues.push(parsedValue.value);
+    tableData.forEach(stat => {
+      // _table_data가 있는 경우 JSON 파싱하여 숫자 데이터 추출
+      if (stat.data?._table_data) {
+        try {
+          const tableDataParsed = JSON.parse(stat.data._table_data);
+
+          tableDataParsed.forEach((row: any) => {
+            if (row.cells) {
+              row.cells.forEach((cell: any) => {
+                if (cell.value && typeof cell.value === 'object') {
+                  const cellValue = cell.value;
+                  if (cellValue.unit === 'number' && typeof cellValue.value === 'number') {
+                    numericValues.push(cellValue.value);
+                  }
+                }
+              });
+            }
+          });
+        } catch (error) {
+          console.warn('_table_data 파싱 오류:', error);
+        }
+      }
+
+      // 기존 방식으로도 데이터 수집 (호환성 유지)
+      Object.entries(stat.data || {}).forEach(([key, value]) => {
+        if (key.startsWith('_')) return; // _table_data 등은 건너뛰기
+
+        try {
+          let numericValue: number | null = null;
+
+          if (typeof value === 'number') {
+            numericValue = value;
+          } else if (typeof value === 'string') {
+            // 쉼표와 % 제거 후 숫자 변환 시도
+            const cleaned = value.replace(/,/g, '').replace(/%/g, '').trim();
+            const parsed = parseFloat(cleaned);
+            if (!isNaN(parsed)) {
+              numericValue = parsed;
+            }
+          }
+
+          if (numericValue !== null) {
+            numericValues.push(numericValue);
           }
         } catch (error) {
           // Skip parsing errors
@@ -628,20 +662,29 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     });
 
     if (numericValues.length === 0) {
-      return processedStats?.numeric_stats;
+      return processedStats?.numeric_stats || {
+        total: 0,
+        mean: 0,
+        median: 0,
+        max: 0,
+        min: 0,
+        count: 0,
+        std_dev: 0
+      };
     }
+
+    const sortedValues = [...numericValues].sort((a, b) => a - b);
+    const mean = numericValues.reduce((sum, val) => sum + val, 0) / numericValues.length;
+    const variance = numericValues.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / numericValues.length;
 
     return {
       total: numericValues.reduce((sum, val) => sum + val, 0),
-      mean: numericValues.reduce((sum, val) => sum + val, 0) / numericValues.length,
-      median: numericValues.sort((a, b) => a - b)[Math.floor(numericValues.length / 2)],
+      mean: mean,
+      median: sortedValues[Math.floor(sortedValues.length / 2)],
       max: Math.max(...numericValues),
       min: Math.min(...numericValues),
       count: numericValues.length,
-      std_dev: Math.sqrt(numericValues.reduce((sum, val) => {
-        const mean = numericValues.reduce((s, v) => s + v, 0) / numericValues.length;
-        return sum + Math.pow(val - mean, 2);
-      }, 0) / numericValues.length)
+      std_dev: Math.sqrt(variance)
     };
   };
 
