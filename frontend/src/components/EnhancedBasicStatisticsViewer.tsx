@@ -520,6 +520,8 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
       patterns.mainCategory = '부동산';
     } else if (/토지|국토/.test(title)) {
       patterns.mainCategory = '토지이용';
+    } else if (/도로|노선|차로/.test(title + tableName)) {
+      patterns.mainCategory = '도로교통';
     }
 
     // 실제 데이터에서 세부 패턴 분석
@@ -550,7 +552,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                 }
 
                 // 카테고리 데이터 확인
-                if (/총계|소계|계|단독|아파트|연립|다세대|㎡|평|호|동수|가구수/.test(value)) {
+                if (/총계|소계|계|단독|아파트|연립|다세대|㎡|평|호|동수|가구수|고속국도|일반국도|특별·광역시도|지방도|시도|군도|구도|2차로|4차로|6차로|8차로|10차로/.test(value)) {
                   patterns.hasCategoryData = true;
                   if (!patterns.categoryColumns.includes(cell.col_name)) {
                     patterns.categoryColumns.push(cell.col_name);
@@ -1053,6 +1055,33 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
             const patterns = getTablePatterns();
             if (!patterns) return <div className="text-gray-500">데이터 패턴을 분석할 수 없습니다.</div>;
 
+            // 비어있는 테이블 체크
+            const isEmpty = !patterns ||
+              (!patterns.hasNumericValues &&
+               patterns.numericColumns.length === 0 &&
+               getSelectedTableStats()?.count === 0);
+
+            if (isEmpty) {
+              return (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-2xl">⚠️</span>
+                    <h4 className="text-lg font-semibold text-yellow-800">데이터 없음</h4>
+                  </div>
+                  <p className="text-yellow-700 mb-4">
+                    선택된 통계표 "{selectedTableName || '알 수 없음'}"에는 분석 가능한 데이터가 없습니다.
+                  </p>
+                  <div className="bg-yellow-100 rounded-lg p-4">
+                    <p className="text-sm text-yellow-800">
+                      • 데이터가 수집되지 않았거나<br/>
+                      • 해당 기간에 대한 정보가 없거나<br/>
+                      • 조회 조건에 맞는 결과가 없을 수 있습니다.
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+
             return (
               <div className="space-y-6">
                 {/* 데이터 분류 및 특성 */}
@@ -1099,6 +1128,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                     <div className="text-xs text-red-500 mt-1">
                       {patterns.mainCategory === '주택건설' && '평균 준공규모'}
                       {patterns.mainCategory === '부동산' && '평균 거래가격'}
+                      {patterns.mainCategory === '도로교통' && '평균 도로연장'}
                       {!patterns.mainCategory && '평균값'}
                     </div>
                   </div>
@@ -1141,6 +1171,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                     <div className="text-xs text-blue-500 mt-1">
                       {patterns.mainCategory === '주택건설' && '전체 준공량'}
                       {patterns.mainCategory === '부동산' && '총 거래규모'}
+                      {patterns.mainCategory === '도로교통' && '총 도로연장'}
                       {!patterns.mainCategory && '총합계'}
                     </div>
                   </div>
