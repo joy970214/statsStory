@@ -476,24 +476,53 @@ class DataStorageService:
                     # 부서 정보 확인
                     department = metadata_dict.get('department', '').lower()
                     
-                    # 다양한 매칭 조건
+                    # 더 정확한 매칭 조건 (인허가/착공/준공 구분)
                     match_conditions = [
                         stat_name_lower in title_lower,  # 기본 매칭
                         title_lower in stat_name_lower,  # 반대 매칭
-                        # 키워드 매칭 (주택건설 관련)
-                        ('주택' in stat_name_lower and '주택' in title_lower),
-                        ('건설' in stat_name_lower and '착공' in title_lower),  # 건설과 착공 연관
-                        ('착공' in stat_name_lower and ('착공' in title_lower or '건설' in title_lower)),
-                        # 부서 기반 매칭 (주택 관련 부서)
-                        ('주택' in stat_name_lower and '주택' in department),
-                        ('건설' in stat_name_lower and '주택' in department),
-                        ('착공' in stat_name_lower and '주택' in department),
-                        # URL 기반 매칭 (특정 hRsId, hFormId에 대한 매칭)
-                        ('주택건설' in stat_name_lower and 'hRsId=471' in url),
-                        ('착공' in stat_name_lower and 'hFormId=5386' in url),
-                        # URL 키워드 매칭
-                        any(keyword in stat_name for keyword in url_keywords)
                     ]
+
+                    # 주택건설실적통계 세부 구분 매칭
+                    if '주택건설실적통계' in stat_name_lower:
+                        if '인허가' in stat_name_lower:
+                            # 인허가 데이터 매칭
+                            match_conditions.extend([
+                                ('인허가' in title_lower),
+                                ('건축허가' in title_lower),
+                                ('hFormId=5' in url and 'hRsId=471' in url),  # 인허가 특정 URL
+                            ])
+                        elif '착공' in stat_name_lower:
+                            # 착공 데이터 매칭
+                            match_conditions.extend([
+                                ('착공' in title_lower),
+                                ('건설착공' in title_lower),
+                                ('hFormId=5386' in url or 'hFormId=6' in url),  # 착공 특정 URL
+                            ])
+                        elif '준공' in stat_name_lower:
+                            # 준공 데이터 매칭 (기존 데이터)
+                            match_conditions.extend([
+                                ('준공' in title_lower),
+                                ('건설준공' in title_lower),
+                                ('hFormId=5387' in url or 'hFormId=7' in url),  # 준공 특정 URL
+                            ])
+                        else:
+                            # 일반 주택건설실적통계 (준공이 기본)
+                            match_conditions.extend([
+                                ('주택' in title_lower and '건설' in title_lower),
+                                ('주택건설실적' in title_lower),
+                            ])
+                    else:
+                        # 기타 일반 매칭 조건
+                        match_conditions.extend([
+                            # 키워드 매칭
+                            ('주택' in stat_name_lower and '주택' in title_lower),
+                            ('건설' in stat_name_lower and '건설' in title_lower),
+                            # 부서 기반 매칭
+                            ('주택' in stat_name_lower and '주택' in department),
+                            ('건설' in stat_name_lower and '주택' in department),
+                            # URL 키워드 매칭
+                            any(keyword in stat_name for keyword in url_keywords)
+                        ])
                     
                     if any(match_conditions):
                         # 매칭되는 데이터를 찾았음

@@ -477,11 +477,127 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     setShowDataInspection(false);
   };
 
+  // 범용적 데이터 패턴 분석 함수
+  const analyzeDataPatterns = (tableData: any[]) => {
+    if (!tableData || tableData.length === 0) return null;
+
+    const patterns = {
+      hasTimeData: false,
+      hasGeographicData: false,
+      hasCategoryData: false,
+      hasNumericValues: false,
+      timeColumns: [] as string[],
+      geographicColumns: [] as string[],
+      categoryColumns: [] as string[],
+      numericColumns: [] as string[],
+      dataClassification: 'general',
+      timePeriod: null as string | null,
+      regionalScope: null as string | null,
+      mainCategory: null as string | null
+    };
+
+    // 테이블명과 메타데이터에서 패턴 추출
+    const tableName = tableData[0]?.table_name || '';
+    const title = analysisData.metadata?.title || '';
+
+    // 시계열 패턴 감지
+    const timePattern = tableName.match(/\((\d{4})\d*\s*[~-]\s*(\d{4})\d*\)/);
+    if (timePattern) {
+      patterns.hasTimeData = true;
+      patterns.timePeriod = `${timePattern[1]}년부터 ${timePattern[2]}년까지`;
+    }
+
+    // 지역 패턴 감지
+    if (/전국|수도권|서울|인천|경기|부산|대구|광주|대전|울산|세종/.test(tableName + title)) {
+      patterns.hasGeographicData = true;
+      patterns.regionalScope = '지역별 통계';
+    }
+
+    // 주요 카테고리 감지
+    if (/주택|건설|준공/.test(title)) {
+      patterns.mainCategory = '주택건설';
+    } else if (/부동산|실거래|매매/.test(title)) {
+      patterns.mainCategory = '부동산';
+    } else if (/토지|국토/.test(title)) {
+      patterns.mainCategory = '토지이용';
+    }
+
+    // 실제 데이터에서 세부 패턴 분석
+    tableData.forEach(stat => {
+      if (stat.data?._table_data) {
+        try {
+          const tableDataParsed = JSON.parse(stat.data._table_data);
+          tableDataParsed.forEach((row: any) => {
+            if (row.cells) {
+              row.cells.forEach((cell: any) => {
+                const value = String(cell.value?.value || '');
+                const unit = cell.value?.unit;
+
+                // 시간 데이터 확인
+                if (/^\d{4}-\d{2}/.test(value)) {
+                  patterns.hasTimeData = true;
+                  if (!patterns.timeColumns.includes(cell.col_name)) {
+                    patterns.timeColumns.push(cell.col_name);
+                  }
+                }
+
+                // 지역 데이터 확인
+                if (/서울|인천|경기|부산|대구|광주|대전|울산|세종|수도권/.test(value)) {
+                  patterns.hasGeographicData = true;
+                  if (!patterns.geographicColumns.includes(cell.col_name)) {
+                    patterns.geographicColumns.push(cell.col_name);
+                  }
+                }
+
+                // 카테고리 데이터 확인
+                if (/총계|소계|계|단독|아파트|연립|다세대|㎡|평|호|동수|가구수/.test(value)) {
+                  patterns.hasCategoryData = true;
+                  if (!patterns.categoryColumns.includes(cell.col_name)) {
+                    patterns.categoryColumns.push(cell.col_name);
+                  }
+                }
+
+                // 숫자 데이터 확인
+                if (unit === 'number') {
+                  patterns.hasNumericValues = true;
+                  if (!patterns.numericColumns.includes(cell.col_name)) {
+                    patterns.numericColumns.push(cell.col_name);
+                  }
+                }
+              });
+            }
+          });
+        } catch (error) {
+          console.warn('데이터 패턴 분석 중 오류:', error);
+        }
+      }
+    });
+
+    // 데이터 분류 결정
+    if (patterns.hasGeographicData && patterns.hasTimeData) {
+      patterns.dataClassification = 'temporal-geographic';
+    } else if (patterns.hasGeographicData) {
+      patterns.dataClassification = 'geographic';
+    } else if (patterns.hasTimeData) {
+      patterns.dataClassification = 'temporal';
+    } else if (patterns.hasCategoryData) {
+      patterns.dataClassification = 'categorical';
+    }
+
+    return patterns;
+  };
+
+  // 선택된 테이블의 데이터 패턴 분석
+  const getTablePatterns = () => {
+    if (!selectedTableName || !rawDataByTable[selectedTableName]) return null;
+    return analyzeDataPatterns(rawDataByTable[selectedTableName]);
+  };
+
   // Filter data by selected table
   const getFilteredData = () => {
     if (!selectedTableName || !processedStats) return processedStats?.sample_data || [];
-    
-    return processedStats.sample_data.filter(item => 
+
+    return processedStats.sample_data.filter(item =>
       item.source_table === selectedTableName
     );
   };
@@ -881,103 +997,161 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               </div>
             </div>
 
-        {/* 기초통계 지표 */}
+        {/* 동적 데이터 분석 */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
           <h3 className="text-xl font-semibold text-gray-900 mb-6">
-            🔢 기초통계 지표 (숫자 데이터 기준)
+            📊 데이터 특성 분석
             {selectedTableName && (
               <span className="text-lg text-blue-600 ml-2">- {selectedTableName}</span>
             )}
           </h3>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
-            <div className="bg-red-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-red-700">
-                {formatNumber(getSelectedTableStats()?.mean || 0)}
-              </div>
-              <div className="text-sm text-red-600 font-medium">평균값</div>
-              <div className="text-xs text-red-500 mt-1">Mean</div>
-            </div>
 
-            <div className="bg-orange-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-orange-700">
-                {formatNumber(getSelectedTableStats()?.median || 0)}
-              </div>
-              <div className="text-sm text-orange-600 font-medium">중위수</div>
-              <div className="text-xs text-orange-500 mt-1">Median</div>
-            </div>
+          {(() => {
+            const patterns = getTablePatterns();
+            if (!patterns) return <div className="text-gray-500">데이터 패턴을 분석할 수 없습니다.</div>;
 
-            <div className="bg-yellow-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-yellow-700">
-                {formatNumber(getSelectedTableStats()?.max || 0)}
-              </div>
-              <div className="text-sm text-yellow-600 font-medium">최댓값</div>
-              <div className="text-xs text-yellow-500 mt-1">Maximum</div>
-            </div>
+            return (
+              <div className="space-y-6">
+                {/* 데이터 분류 및 특성 */}
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4">
+                  <div className="flex items-center gap-4 flex-wrap">
+                    <div className="flex items-center gap-2">
+                      <span className="text-blue-800 font-medium">📈 데이터 유형:</span>
+                      <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        {patterns.dataClassification === 'temporal-geographic' && '시계열-지역별'}
+                        {patterns.dataClassification === 'geographic' && '지역별 통계'}
+                        {patterns.dataClassification === 'temporal' && '시계열 통계'}
+                        {patterns.dataClassification === 'categorical' && '분류별 통계'}
+                        {patterns.dataClassification === 'general' && '일반 통계'}
+                      </span>
+                    </div>
 
-            <div className="bg-green-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-green-700">
-                {formatNumber(getSelectedTableStats()?.min || 0)}
-              </div>
-              <div className="text-sm text-green-600 font-medium">최솟값</div>
-              <div className="text-xs text-green-500 mt-1">Minimum</div>
-            </div>
+                    {patterns.mainCategory && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-blue-800 font-medium">🏷️ 분야:</span>
+                        <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                          {patterns.mainCategory}
+                        </span>
+                      </div>
+                    )}
 
-            <div className="bg-blue-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-blue-700">
-                {formatNumber(getSelectedTableStats()?.total || 0)}
-              </div>
-              <div className="text-sm text-blue-600 font-medium">총합계</div>
-              <div className="text-xs text-blue-500 mt-1">Total</div>
-            </div>
+                    {patterns.timePeriod && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-blue-800 font-medium">⏰ 기간:</span>
+                        <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+                          {patterns.timePeriod}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-            <div className="bg-indigo-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-indigo-700">
-                {getSelectedTableStats()?.count || 0}
-              </div>
-              <div className="text-sm text-indigo-600 font-medium">데이터 개수</div>
-              <div className="text-xs text-indigo-500 mt-1">Count</div>
-            </div>
-          </div>
+                {/* 범용적 기초통계 지표 */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                  <div className="bg-red-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-red-700">
+                      {formatNumber(getSelectedTableStats()?.mean || 0)}
+                    </div>
+                    <div className="text-sm text-red-600 font-medium">평균값</div>
+                    <div className="text-xs text-red-500 mt-1">
+                      {patterns.mainCategory === '주택건설' && '평균 준공규모'}
+                      {patterns.mainCategory === '부동산' && '평균 거래가격'}
+                      {!patterns.mainCategory && '평균값'}
+                    </div>
+                  </div>
 
-          {/* 추가 통계 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div className="bg-purple-50 rounded-lg p-4 text-center">
-              <div className="text-xl font-bold text-purple-700">
-                {formatNumber(getSelectedTableStats()?.std_dev || 0)}
+                  <div className="bg-orange-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-orange-700">
+                      {formatNumber(getSelectedTableStats()?.median || 0)}
+                    </div>
+                    <div className="text-sm text-orange-600 font-medium">중위수</div>
+                    <div className="text-xs text-orange-500 mt-1">중앙값</div>
+                  </div>
+
+                  <div className="bg-yellow-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-yellow-700">
+                      {formatNumber(getSelectedTableStats()?.max || 0)}
+                    </div>
+                    <div className="text-sm text-yellow-600 font-medium">최댓값</div>
+                    <div className="text-xs text-yellow-500 mt-1">
+                      {patterns.hasGeographicData && '지역별 최고'}
+                      {!patterns.hasGeographicData && '최댓값'}
+                    </div>
+                  </div>
+
+                  <div className="bg-green-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-green-700">
+                      {formatNumber(getSelectedTableStats()?.min || 0)}
+                    </div>
+                    <div className="text-sm text-green-600 font-medium">최솟값</div>
+                    <div className="text-xs text-green-500 mt-1">
+                      {patterns.hasGeographicData && '지역별 최저'}
+                      {!patterns.hasGeographicData && '최솟값'}
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-blue-700">
+                      {formatNumber(getSelectedTableStats()?.total || 0)}
+                    </div>
+                    <div className="text-sm text-blue-600 font-medium">총합계</div>
+                    <div className="text-xs text-blue-500 mt-1">
+                      {patterns.mainCategory === '주택건설' && '전체 준공량'}
+                      {patterns.mainCategory === '부동산' && '총 거래규모'}
+                      {!patterns.mainCategory && '총합계'}
+                    </div>
+                  </div>
+
+                  <div className="bg-indigo-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-indigo-700">
+                      {getSelectedTableStats()?.count || 0}
+                    </div>
+                    <div className="text-sm text-indigo-600 font-medium">데이터 수</div>
+                    <div className="text-xs text-indigo-500 mt-1">
+                      {patterns.hasTimeData && '시점 수'}
+                      {patterns.hasGeographicData && '지역 수'}
+                      {!patterns.hasTimeData && !patterns.hasGeographicData && '항목 수'}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="text-sm text-purple-600 font-medium">표준편차</div>
-              <div className="text-xs text-purple-500 mt-1">Standard Deviation</div>
-            </div>
-            <div className="bg-pink-50 rounded-lg p-4 text-center">
-              <div className="text-xl font-bold text-pink-700">
-                {(() => {
-                  const stats = getSelectedTableStats();
-                  return stats && stats.count > 0 && stats.mean > 0 && stats.std_dev !== undefined
-                    ? formatNumber((stats.std_dev / stats.mean) * 100)
-                    : '0';
-                })()}%
-              </div>
-              <div className="text-sm text-pink-600 font-medium">변동계수</div>
-              <div className="text-xs text-pink-500 mt-1">Coefficient of Variation</div>
-            </div>
-          </div>
+            );
+          })()}
         </div>
 
-        {/* 수집된 데이터 샘플 (원본 테이블 형태) */}
+        {/* 원본 테이블 재구성 */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
           <h3 className="text-xl font-semibold text-gray-900 mb-4">
-            📋 수집된 데이터 샘플 (원본 테이블 형태)
+            📊 원본 테이블 재구성
             {selectedTableName && (
               <span className="text-lg text-blue-600 ml-2">- {selectedTableName}</span>
             )}
           </h3>
 
-          <div className="bg-blue-50 rounded-lg p-3 mb-4">
-            <p className="text-sm text-blue-800">
-              💡 수집된 IBSheet 데이터를 원본 웹사이트의 테이블 형태로 재구성하여 표시합니다.
-            </p>
-          </div>
+          {(() => {
+            const patterns = getTablePatterns();
+            return (
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 mb-4">
+                <div className="flex items-center gap-4 flex-wrap text-sm">
+                  <span className="text-green-800 font-medium">🎯 데이터 특성:</span>
+                  <div className="flex flex-wrap gap-2">
+                    {patterns?.hasTimeData && (
+                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">시계열</span>
+                    )}
+                    {patterns?.hasGeographicData && (
+                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">지역별</span>
+                    )}
+                    {patterns?.hasCategoryData && (
+                      <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">분류별</span>
+                    )}
+                    {patterns?.hasNumericValues && (
+                      <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs">숫자데이터</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
 
           {(() => {
             const selectedData = selectedTableName && rawDataByTable[selectedTableName]
