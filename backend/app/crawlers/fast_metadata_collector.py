@@ -23,8 +23,43 @@ class FastMetadataCollector:
             driver.get(stat_url)
             await asyncio.sleep(0.5)  # 0.5초만 대기
 
-            # 2. 기본 정보 설정
-            page_title = driver.title or "통계명"
+            # 2. 통계명 정확히 추출
+            page_title = "통계명"
+            try:
+                # 페이지 타이틀에서 추출
+                full_title = driver.title or ""
+                if "국토교통통계누리" in full_title:
+                    # "도로현황 | 국토교통통계누리" 형태에서 앞부분만 추출
+                    page_title = full_title.split(" | ")[0].strip()
+
+                # h1 태그에서 추출 시도
+                if page_title == "통계명" or not page_title:
+                    try:
+                        h1_element = driver.find_element(By.TAG_NAME, "h1")
+                        if h1_element.text.strip():
+                            page_title = h1_element.text.strip()
+                    except:
+                        pass
+
+                # 검색분야나 통계명 관련 테이블에서 추출 시도
+                if page_title == "통계명" or not page_title:
+                    try:
+                        title_element = driver.find_element(
+                            By.XPATH, "//th[contains(text(), '통계명')]/following-sibling::td | //th[contains(text(), '검색분야')]/following-sibling::td"
+                        )
+                        if title_element.text.strip():
+                            # "도로시설/도로현황" 형태에서 마지막 부분 추출
+                            title_text = title_element.text.strip()
+                            if "/" in title_text:
+                                page_title = title_text.split("/")[-1]
+                            else:
+                                page_title = title_text
+                    except:
+                        pass
+
+            except Exception as e:
+                print(f"제목 추출 오류: {e}")
+
             metadata_info = {
                 'title': page_title,
                 'purpose': '통계 작성 목적',

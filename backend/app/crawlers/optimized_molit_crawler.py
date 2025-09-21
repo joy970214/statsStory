@@ -790,12 +790,48 @@ class OptimizedMolitCrawler:
     async def _extract_ibsheet_data(self, driver) -> Dict[str, Any]:
         """IBSheet에서 동적 데이터 추출 - 테이블 구조 보존"""
         try:
-            # 1. doSearch() 함수 실행하여 데이터 로드
+            # 1. 도로현황 특화 조회 조건 설정 및 데이터 로드
             try:
+                # 도로현황의 경우 기본 조회 조건 설정
+                current_url = driver.current_url
+                if 'hRsId=59' in current_url:  # 도로현황
+                    # 최신 연도로 조회 조건 설정
+                    try:
+                        # 연도 선택 (최신 연도 찾기)
+                        year_select = driver.find_element(By.NAME, "baseYear")
+                        year_options = year_select.find_elements(By.TAG_NAME, "option")
+                        if year_options:
+                            # 마지막 옵션(최신 연도) 선택
+                            latest_year = year_options[-1]
+                            latest_year.click()
+                            await asyncio.sleep(1)
+                    except:
+                        pass
+
+                    # 전체 조회 조건 설정
+                    try:
+                        # 지역 선택을 전체로 설정
+                        region_select = driver.find_element(By.NAME, "sidoCd")
+                        if region_select:
+                            driver.execute_script("arguments[0].value = '';", region_select)  # 전체 선택
+                            await asyncio.sleep(0.5)
+                    except:
+                        pass
+
+                    # 도로등급 전체 선택
+                    try:
+                        grade_select = driver.find_element(By.NAME, "roadGradeCd")
+                        if grade_select:
+                            driver.execute_script("arguments[0].value = '';", grade_select)  # 전체 선택
+                            await asyncio.sleep(0.5)
+                    except:
+                        pass
+
+                # doSearch() 함수 실행
                 driver.execute_script("if (typeof doSearch === 'function') doSearch();")
-                await asyncio.sleep(3)  # 데이터 로딩 대기
+                await asyncio.sleep(5)  # 도로현황 데이터 로딩을 위해 더 긴 대기
             except Exception as e:
-                print(f"doSearch() 실행 실패: {e}")
+                print(f"도로현황 데이터 조회 실패: {e}")
 
             # 2. IBSheet 객체에서 테이블 구조 정보 포함하여 데이터 추출
             ibsheet_data = {}
