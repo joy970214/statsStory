@@ -30,7 +30,16 @@ interface StatDetailResponse {
     title: string;
     department: string;
     keywords: string[];
-    related_terms: Record<string, string>;
+    purpose?: string;
+    frequency?: string;
+    contact?: string;
+    search_field?: string;
+    responsible_department?: string;
+    statistical_info?: Record<string, any>;
+    major_items?: Record<string, any>;
+    meaning_analysis?: Record<string, any>;
+    terminology?: Record<string, any>;
+    related_terms?: Record<string, any>;
   };
   total_tables: number;
   total_data_points: number;
@@ -174,6 +183,78 @@ export const StatDetailViewer: React.FC<Props> = ({
             </button>
           </div>
         </div>
+      </div>
+
+      {/* 메타데이터 정보 */}
+      <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+        <h3 className="text-xl font-semibold text-gray-900 mb-4">📋 메타데이터 정보</h3>
+
+        {/* 기본 정보 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="space-y-3">
+            <div>
+              <span className="text-sm font-medium text-gray-600">제목:</span>
+              <p className="text-gray-900">{detailData.metadata?.title || '정보 없음'}</p>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-gray-600">작성기관:</span>
+              <p className="text-gray-700">{detailData.metadata?.department || '정보 없음'}</p>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <div>
+              <span className="text-sm font-medium text-gray-600">키워드:</span>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {(detailData.metadata?.keywords || []).map((keyword, index) => (
+                  <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 관련용어 정보 */}
+        {((detailData.metadata?.terminology && Object.keys(detailData.metadata.terminology).length > 0) ||
+          (detailData.metadata?.related_terms && Object.keys(detailData.metadata.related_terms).length > 0)) && (
+          <div className="border-t pt-6">
+            <h4 className="text-lg font-semibold text-gray-900 mb-4">📊 관련용어 정보</h4>
+
+            {/* 수집된 관련용어 탭 정보 (terminology) */}
+            {detailData.metadata?.terminology && Object.keys(detailData.metadata.terminology).length > 0 && (
+              <div className="mb-6">
+                <h5 className="text-md font-medium text-gray-800 mb-3 flex items-center">
+                  <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded text-sm mr-2">수집된 관련용어</span>
+                </h5>
+                <div className="bg-orange-50 rounded-lg p-4">
+                  <div className="space-y-2">
+                    {Object.entries(detailData.metadata.terminology).map(([key, value], index) => (
+                      <div key={index} className="border-b border-orange-200 pb-2 last:border-b-0">
+                        <span className="text-sm font-medium text-orange-800">{key}:</span>
+                        <span className="text-sm text-orange-700 ml-2">{value || '-'}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 기존 관련용어 정보 */}
+            {detailData.metadata?.related_terms && Object.keys(detailData.metadata.related_terms).length > 0 && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="space-y-2">
+                  {Object.entries(detailData.metadata.related_terms).map(([key, value], index) => (
+                    <div key={index} className="border-b border-gray-200 pb-2 last:border-b-0">
+                      <span className="text-sm font-medium text-gray-800">{key}:</span>
+                      <span className="text-sm text-gray-700 ml-2">{value || '-'}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* 전체 요약 */}

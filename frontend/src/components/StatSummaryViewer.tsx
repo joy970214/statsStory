@@ -22,6 +22,16 @@ interface StatSummaryResponse {
     title: string;
     department: string;
     keywords: string[];
+    purpose?: string;
+    frequency?: string;
+    contact?: string;
+    search_field?: string;
+    responsible_department?: string;
+    statistical_info?: Record<string, any>;
+    major_items?: Record<string, any>;
+    meaning_analysis?: Record<string, any>;
+    terminology?: Record<string, any>;
+    related_terms?: Record<string, any>;
   };
   total_tables: number;
   analysis_date: string;
@@ -49,17 +59,49 @@ export const StatSummaryViewer: React.FC<Props> = ({ statName, onBack }) => {
       setError(null);
       console.log(`객관적 현황 요약 API 호출: ${statName}`);
 
+      // 1. 기본 요약 데이터 로드
       const response = await fetch(`/api/stats-summary/${encodeURIComponent(statName)}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const data = await response.json();
-      console.log('객관적 현황 요약 응답:', data);
-      setSummaryData(data);
+      const summaryResponse = await response.json();
+      console.log('객관적 현황 요약 응답:', summaryResponse);
+
+      // 2. 상세 메타데이터를 위해 기본통계분석 API도 호출
+      try {
+        const basicStatsResponse = await fetch(`/api/generate-advanced-cardnews`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            stat_name: statName,
+            analysis_type: '기본통계현황분석'
+          })
+        });
+
+        if (basicStatsResponse.ok) {
+          const basicStatsData = await basicStatsResponse.json();
+          console.log('기본통계분석 메타데이터:', basicStatsData.metadata);
+
+          // 기본 요약 데이터에 상세 메타데이터 병합
+          if (basicStatsData.metadata) {
+            summaryResponse.metadata = {
+              ...summaryResponse.metadata,
+              ...basicStatsData.metadata
+            };
+          }
+        }
+      } catch (metadataError) {
+        console.warn('상세 메타데이터 로드 실패:', metadataError);
+        // 메타데이터 로드 실패해도 기본 요약은 표시
+      }
+
+      setSummaryData(summaryResponse);
 
       // 첫 번째 테이블을 기본 선택
-      const tableNames = Object.keys(data.table_summaries);
+      const tableNames = Object.keys(summaryResponse.table_summaries);
       if (tableNames.length > 0) {
         setSelectedTable(tableNames[0]);
       }
@@ -149,6 +191,163 @@ export const StatSummaryViewer: React.FC<Props> = ({ statName, onBack }) => {
             뒤로 가기
           </button>
         </div>
+      </div>
+
+      {/* 메타데이터 정보 - 강제 표시 */}
+      <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+        <h3 className="text-xl font-semibold text-gray-900 mb-4">📋 메타데이터 정보 (테스트)</h3>
+        <div className="bg-yellow-100 p-2 mb-4 rounded">
+          <p className="text-sm">디버그: summaryData존재여부={summaryData ? '있음' : '없음'}, metadata존재여부={summaryData?.metadata ? '있음' : '없음'}</p>
+        </div>
+
+        {/* 기본 정보 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="space-y-3">
+            <div>
+              <span className="text-sm font-medium text-gray-600">제목:</span>
+              <p className="text-gray-900">{summaryData.metadata?.title || '정보 없음'}</p>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-gray-600">목적:</span>
+              <p className="text-gray-700">{summaryData.metadata?.purpose || '정보 없음'}</p>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-gray-600">주기:</span>
+              <p className="text-gray-700">{summaryData.metadata?.frequency || '정보 없음'}</p>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-gray-600">담당자:</span>
+              <p className="text-gray-700">{summaryData.metadata?.contact || '정보 없음'}</p>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <div>
+              <span className="text-sm font-medium text-gray-600">작성기관:</span>
+              <p className="text-gray-700">{summaryData.metadata?.department || '정보 없음'}</p>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-gray-600">검색분야:</span>
+              <p className="text-gray-700">{summaryData.metadata?.search_field || '정보 없음'}</p>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-gray-600">담당부서:</span>
+              <p className="text-gray-700">{summaryData.metadata?.responsible_department || '정보 없음'}</p>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-gray-600">키워드:</span>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {(summaryData.metadata?.keywords || []).map((keyword, index) => (
+                  <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 상세 메타정보 탭 */}
+        {(summaryData.metadata?.statistical_info || summaryData.metadata?.major_items ||
+          summaryData.metadata?.meaning_analysis || summaryData.metadata?.terminology) && (
+          <div className="border-t pt-6">
+            <h4 className="text-lg font-semibold text-gray-900 mb-4">📊 상세 메타정보</h4>
+
+            {/* 통계정보 상세 */}
+            {summaryData.metadata?.statistical_info && Object.keys(summaryData.metadata.statistical_info).length > 0 && (
+              <div className="mb-6">
+                <h5 className="text-md font-medium text-gray-800 mb-3 flex items-center">
+                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm mr-2">통계정보상세</span>
+                </h5>
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {Object.entries(summaryData.metadata.statistical_info).map(([key, value], index) => (
+                      <div key={index} className="flex flex-col">
+                        <span className="text-xs font-medium text-blue-700">{key}</span>
+                        <span className="text-sm text-blue-900">{value || '-'}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 주요항목 */}
+            {summaryData.metadata?.major_items && Object.keys(summaryData.metadata.major_items).length > 0 && (
+              <div className="mb-6">
+                <h5 className="text-md font-medium text-gray-800 mb-3 flex items-center">
+                  <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm mr-2">주요항목</span>
+                </h5>
+                <div className="bg-green-50 rounded-lg p-4">
+                  <div className="space-y-2">
+                    {Object.entries(summaryData.metadata.major_items).map(([key, value], index) => (
+                      <div key={index} className="border-b border-green-200 pb-2 last:border-b-0">
+                        <span className="text-sm font-medium text-green-800">{key}:</span>
+                        <span className="text-sm text-green-700 ml-2">{value || '-'}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 의미분석 */}
+            {summaryData.metadata?.meaning_analysis && Object.keys(summaryData.metadata.meaning_analysis).length > 0 && (
+              <div className="mb-6">
+                <h5 className="text-md font-medium text-gray-800 mb-3 flex items-center">
+                  <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm mr-2">의미분석</span>
+                </h5>
+                <div className="bg-purple-50 rounded-lg p-4">
+                  <div className="space-y-2">
+                    {Object.entries(summaryData.metadata.meaning_analysis).map(([key, value], index) => (
+                      <div key={index} className="border-b border-purple-200 pb-2 last:border-b-0">
+                        <span className="text-sm font-medium text-purple-800">{key}:</span>
+                        <span className="text-sm text-purple-700 ml-2">{value || '-'}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 용어정의 */}
+            {summaryData.metadata?.terminology && Object.keys(summaryData.metadata.terminology).length > 0 && (
+              <div className="mb-6">
+                <h5 className="text-md font-medium text-gray-800 mb-3 flex items-center">
+                  <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded text-sm mr-2">용어정의</span>
+                </h5>
+                <div className="bg-orange-50 rounded-lg p-4">
+                  <div className="space-y-2">
+                    {Object.entries(summaryData.metadata.terminology).map(([key, value], index) => (
+                      <div key={index} className="border-b border-orange-200 pb-2 last:border-b-0">
+                        <span className="text-sm font-medium text-orange-800">{key}:</span>
+                        <span className="text-sm text-orange-700 ml-2">{value || '-'}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 관련용어 */}
+            {summaryData.metadata?.related_terms && Object.keys(summaryData.metadata.related_terms).length > 0 && (
+              <div className="mb-6">
+                <h5 className="text-md font-medium text-gray-800 mb-3 flex items-center">
+                  <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm mr-2">관련용어</span>
+                </h5>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="space-y-2">
+                    {Object.entries(summaryData.metadata.related_terms).map(([key, value], index) => (
+                      <div key={index} className="border-b border-gray-200 pb-2 last:border-b-0">
+                        <span className="text-sm font-medium text-gray-800">{key}:</span>
+                        <span className="text-sm text-gray-700 ml-2">{value || '-'}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* 전체 요약 */}

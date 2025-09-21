@@ -1871,7 +1871,16 @@ async def get_stat_detail_by_name(stat_name: str):
                 "title": metadata.title,
                 "department": metadata.department,
                 "keywords": metadata.keywords,
-                "related_terms": metadata.related_terms
+                "purpose": getattr(metadata, 'purpose', None),
+                "frequency": getattr(metadata, 'frequency', None),
+                "contact": getattr(metadata, 'contact', None),
+                "search_field": getattr(metadata, 'search_field', None),
+                "responsible_department": getattr(metadata, 'responsible_department', None),
+                "statistical_info": getattr(metadata, 'statistical_info', None),
+                "major_items": getattr(metadata, 'major_items', None),
+                "meaning_analysis": getattr(metadata, 'meaning_analysis', None),
+                "terminology": getattr(metadata, 'terminology', None),
+                "related_terms": getattr(metadata, 'related_terms', None)
             },
             "total_tables": len(tables_detail),
             "total_data_points": len(stat_data),
@@ -2182,7 +2191,17 @@ async def get_stat_objective_summary(stat_name: str):
             "metadata": {
                 "title": metadata.title,
                 "department": metadata.department,
-                "keywords": metadata.keywords
+                "keywords": metadata.keywords,
+                "purpose": getattr(metadata, 'purpose', None),
+                "frequency": getattr(metadata, 'frequency', None),
+                "contact": getattr(metadata, 'contact', None),
+                "search_field": getattr(metadata, 'search_field', None),
+                "responsible_department": getattr(metadata, 'responsible_department', None),
+                "statistical_info": getattr(metadata, 'statistical_info', None),
+                "major_items": getattr(metadata, 'major_items', None),
+                "meaning_analysis": getattr(metadata, 'meaning_analysis', None),
+                "terminology": getattr(metadata, 'terminology', None),
+                "related_terms": getattr(metadata, 'related_terms', None)
             },
             "total_tables": len(table_summaries),
             "analysis_date": datetime.now().isoformat(),

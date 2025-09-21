@@ -2330,23 +2330,18 @@ class OptimizedMolitCrawler:
             print(f"통계정보 테이블 추출 오류: {e}")
 
     async def _extract_terms_details(self, driver, metadata):
-        """관련용어 탭의 테이블 구조(th/td) 추출"""
+        """관련용어 탭의 고정 구조 수집 (주요항목, 의미분석, 관련용어)"""
         try:
-            print("  관련용어 탭의 메타데이터 테이블 수집 중...")
+            print("  관련용어 탭의 메타데이터 수집 중...")
 
-            # 모든 테이블 찾기
+            # 1. 기본 테이블 구조 수집 (검색분야, 담당자 등)
             tables = driver.find_elements(By.XPATH, "//table")
-
             for table_idx, table in enumerate(tables):
                 try:
-                    # 테이블의 모든 행 처리
                     rows = table.find_elements(By.XPATH, ".//tr")
-
                     for row_idx, row in enumerate(rows):
                         try:
-                            # th 요소 찾기 (항목명)
                             th_elements = row.find_elements(By.TAG_NAME, "th")
-                            # td 요소 찾기 (내용)
                             td_elements = row.find_elements(By.TAG_NAME, "td")
 
                             # th와 td가 쌍으로 있는 경우
@@ -2355,33 +2350,125 @@ class OptimizedMolitCrawler:
                                 value = td_elements[0].text.strip()
 
                                 if key and value and len(key) < 100 and len(value) < 1000:
-                                    # 구분: 관련용어
                                     full_key = f"관련용어/{key}"
                                     metadata['terminology'][full_key] = value
-                                    print(f"    용어정의 수집: {key} = {value[:50]}...")
-
-                            # td만 여러 개 있는 경우 (첫 번째가 용어명, 두 번째가 정의)
-                            elif len(td_elements) >= 2:
-                                term = td_elements[0].text.strip()
-                                definition = td_elements[1].text.strip()
-
-                                if term and definition and len(term) < 100 and len(definition) < 1000:
-                                    # 구분: 관련용어
-                                    full_key = f"관련용어/{term}"
-                                    metadata['terminology'][full_key] = definition
-                                    print(f"    용어정의 수집: {term} = {definition[:50]}...")
+                                    print(f"    테이블 기본정보 수집: {key} = {value[:50]}...")
 
                         except Exception as row_error:
                             continue
-
                 except Exception as table_error:
                     continue
 
-            # 의미분석 관련 내용도 th/td 구조로 수집
-            self._extract_meaning_analysis_tables(driver, metadata)
+            # 2. 텍스트 패턴으로 고정 구조 수집
+            try:
+                page_text = driver.find_element(By.TAG_NAME, "body").text
+
+                # 주요항목 내용 추출 - 더 유연한 패턴
+                import re
+
+                # 패턴 1: 주요항목 다음에 오는 내용
+                major_patterns = [
+                    r'주요항목\s*([^의미분석관련용어]{20,200}?)(?=의미분석|관련용어|COPYRIGHT)',
+                    r'주요항목\s*(.*?)(?=의미분석)',
+                    r'주요항목[^가-힣]*([가-힣].{20,200}?)(?=의미분석|관련용어)'
+                ]
+
+                for pattern in major_patterns:
+                    major_match = re.search(pattern, page_text, re.DOTALL | re.IGNORECASE)
+                    if major_match:
+                        major_content = major_match.group(1).strip()
+                        # 텍스트 정리
+                        major_content = re.sub(r'^[^\w가-힣]*', '', major_content)
+                        major_content = re.sub(r'[^\w가-힣\s,\(\)\./]*$', '', major_content)
+                        if major_content and len(major_content) > 15:
+                            metadata['terminology']['관련용어/주요항목'] = major_content
+                            print(f"    주요항목 수집: {major_content[:50]}...")
+                            break
+
+                # 의미분석 내용 추출 - 더 유연한 패턴
+                meaning_patterns = [
+                    r'의미분석\s*([^주요항목관련용어]{20,500}?)(?=주요항목|관련용어|COPYRIGHT)',
+                    r'의미분석\s*(.*?)(?=관련용어)',
+                    r'의미분석[^가-힣]*([가-힣].{20,500}?)(?=관련용어|COPYRIGHT)'
+                ]
+
+                for pattern in meaning_patterns:
+                    meaning_match = re.search(pattern, page_text, re.DOTALL | re.IGNORECASE)
+                    if meaning_match:
+                        meaning_content = meaning_match.group(1).strip()
+                        # 텍스트 정리
+                        meaning_content = re.sub(r'^[^\w가-힣]*', '', meaning_content)
+                        meaning_content = re.sub(r'[^\w가-힣\s,\(\)\./]*$', '', meaning_content)
+                        if meaning_content and len(meaning_content) > 15:
+                            metadata['terminology']['관련용어/의미분석'] = meaning_content
+                            print(f"    의미분석 수집: {meaning_content[:50]}...")
+                            break
+
+                # 관련용어 내용 추출 (등록된 내용이 없다는 메시지 포함)
+                related_terms_pattern = r'관련용어\s*([^주요항목의미분석]+?)(?=주요항목|의미분석|COPYRIGHT|$)'
+                related_match = re.search(related_terms_pattern, page_text, re.DOTALL)
+                if related_match:
+                    related_content = related_match.group(1).strip()
+                    # 불필요한 텍스트 제거
+                    related_content = re.sub(r'^[^\w가-힣]+', '', related_content)
+                    related_content = re.sub(r'[^\w가-힣\s,\(\)\./]+$', '', related_content)
+                    if related_content and len(related_content) > 5:
+                        metadata['terminology']['관련용어/관련용어'] = related_content
+                        print(f"    관련용어 수집: {related_content[:50]}...")
+
+            except Exception as text_error:
+                print(f"텍스트 패턴 처리 오류: {text_error}")
+
+
+            print(f"  관련용어 탭 수집 완료: 총 {len(metadata['terminology'])}개 항목")
 
         except Exception as e:
-            print(f"관련용어 테이블 추출 오류: {e}")
+            print(f"관련용어 추출 오류: {e}")
+
+    def _extract_section_simple(self, driver, section_keyword, metadata, metadata_key):
+        """간단한 섹션 내용 추출"""
+        try:
+            # 섹션 키워드가 포함된 요소 찾기
+            elements = driver.find_elements(By.XPATH, f"//*[contains(text(), '{section_keyword}')]")
+
+            for element in elements[:3]:  # 최대 3개만 확인
+                try:
+                    # 해당 요소나 인근 요소에서 내용 추출
+                    parent = element.find_element(By.XPATH, "./..")
+
+                    # 리스트가 있는지 확인
+                    lists = parent.find_elements(By.XPATH, ".//ul | .//ol")
+                    if lists:
+                        lst = lists[0]
+                        items = lst.find_elements(By.TAG_NAME, "li")
+                        collected_items = []
+
+                        for item in items[:5]:  # 최대 5개
+                            text = item.text.strip()
+                            if text and len(text) > 3 and len(text) < 300:
+                                collected_items.append(text)
+
+                        if collected_items:
+                            content = " | ".join(collected_items)
+                            metadata['terminology'][metadata_key] = content
+                            print(f"    {section_keyword} 수집: {content[:50]}...")
+                            return
+
+                    # 리스트가 없으면 텍스트 블록 찾기
+                    text_elements = parent.find_elements(By.XPATH, ".//p | .//div")
+                    for text_elem in text_elements[:3]:
+                        text = text_elem.text.strip()
+                        if text and len(text) > 10 and len(text) < 500 and section_keyword not in text:
+                            metadata['terminology'][metadata_key] = text
+                            print(f"    {section_keyword} 수집: {text[:50]}...")
+                            return
+
+                except Exception as element_error:
+                    continue
+
+        except Exception as e:
+            print(f"{section_keyword} 섹션 추출 오류: {e}")
+
 
     def _extract_meaning_analysis_tables(self, driver, metadata):
         """의미분석 테이블 수집"""
