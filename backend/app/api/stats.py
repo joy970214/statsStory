@@ -466,14 +466,22 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
         cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
         print(f"  - cache_loaded_by_url: metadata={cached_metadata is not None}, data={cached_stat_data is not None}")
         
-        # URL로 찾지 못한 경우 stat_name으로 검색
+        # URL로 찾지 못한 경우 stat_name으로 검색 (정확한 제목 일치 확인)
         if not cached_metadata or not cached_stat_data:
             print(f"  - trying_name_search: {request.stat_name}")
             cached_metadata, cached_stat_data, found_url = storage_service.find_data_by_name(request.stat_name)
             print(f"  - cache_loaded_by_name: metadata={cached_metadata is not None}, data={cached_stat_data is not None}")
-            if found_url:
-                print(f"  - found_cached_url: {found_url}")
-                stat_url = found_url  # 캐시된 URL로 업데이트
+
+            # 제목이 정확히 일치하는지 확인
+            if cached_metadata and hasattr(cached_metadata, 'title'):
+                actual_title = cached_metadata.title
+                if actual_title != request.stat_name:
+                    print(f"  - title_mismatch: 요청={request.stat_name}, 실제={actual_title}")
+                    cached_metadata = None
+                    cached_stat_data = None
+                elif found_url:
+                    print(f"  - found_cached_url: {found_url}")
+                    stat_url = found_url  # 캐시된 URL로 업데이트
         
         print(f"[CACHE_DEBUG] 끝")
         
@@ -1353,16 +1361,25 @@ async def view_raw_collected_data(request: GenerateStoryRequest):
         # 캐시된 데이터 확인
         cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
         
-        # stat_name으로 검색
+        # stat_name으로 검색 (정확히 일치하는 것만)
         if not cached_metadata or not cached_stat_data:
             cached_metadata, cached_stat_data, found_url = storage_service.find_data_by_name(request.stat_name)
             if found_url:
-                stat_url = found_url
-        
+                # 실제 메타데이터의 title이 요청한 stat_name과 정확히 일치하는지 확인
+                if cached_metadata and hasattr(cached_metadata, 'title'):
+                    actual_title = cached_metadata.title
+                    if actual_title != request.stat_name:
+                        # 제목이 다르면 데이터가 없는 것으로 처리
+                        print(f"제목 불일치: 요청={request.stat_name}, 실제={actual_title}")
+                        cached_metadata = None
+                        cached_stat_data = None
+                    else:
+                        stat_url = found_url
+
         if not cached_metadata or not cached_stat_data:
             return {
-                "message": "수집된 데이터가 없습니다",
-                "suggestion": "먼저 분석을 실행하여 데이터를 수집해주세요."
+                "message": f"'{request.stat_name}' 데이터가 수집되지 않았습니다",
+                "suggestion": f"'{request.stat_name}' 통계를 먼저 분석하여 데이터를 수집해주세요."
             }
         
         stat_data = cached_stat_data
@@ -1379,10 +1396,27 @@ async def view_raw_collected_data(request: GenerateStoryRequest):
 
         # raw_data_by_table 구성 (테이블별 그룹화)
         raw_data_by_table = {}
+
+        # 메타데이터에서 실제 통계명 가져오기
+        actual_stat_title = getattr(metadata, 'title', None) or request.stat_name
+
         for item in raw_data:
             table_name = item.get('table_name')
+
+            # table_name이 없거나 기본값인 경우 메타데이터의 title 사용
             if not table_name or table_name in ['', '기본 통계표']:
-                table_name = '기본 통계표'
+                # 기간 정보 추가 (년도 범위 자동 계산)
+                years = [int(item.get('year', 0)) for item in raw_data if item.get('year')]
+                if years:
+                    min_year = min(years)
+                    max_year = max(years)
+                    # YYYYMM 형식을 YYYY로 변환
+                    if min_year > 10000:  # YYYYMM 형식인 경우
+                        min_year = min_year // 100
+                        max_year = max_year // 100
+                    table_name = f"{actual_stat_title} ({min_year:04d}01 ~ {max_year:04d}08)"
+                else:
+                    table_name = actual_stat_title
 
             if table_name not in raw_data_by_table:
                 raw_data_by_table[table_name] = []

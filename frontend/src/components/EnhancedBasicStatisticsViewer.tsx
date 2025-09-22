@@ -69,6 +69,18 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
       if (response.ok) {
         const rawData = await response.json();
+
+        // 백엔드에서 데이터 없음 메시지를 보낸 경우 확인
+        if (rawData.message && rawData.suggestion) {
+          console.log('데이터 없음:', rawData.message);
+          console.log('제안:', rawData.suggestion);
+
+          // 사용자에게 알리고 수집 필요함을 표시
+          alert(`${rawData.message}\n\n${rawData.suggestion}`);
+          setLoading(false);
+          return; // 여기서 중단하고 수집 프로세스로 돌아가야 함
+        }
+
         const processed = processStatisticsData(rawData);
         setProcessedStats(processed);
 
@@ -622,26 +634,56 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
       // _table_data가 있는 경우 JSON 파싱하여 숫자 데이터 추출
       if (stat.data?._table_data) {
         try {
-          const tableDataParsed = JSON.parse(stat.data._table_data);
-          console.log('_table_data 파싱 성공:', tableDataParsed);
+          console.log('_table_data 원본 타입:', typeof stat.data._table_data);
+          console.log('_table_data 원본 길이:', stat.data._table_data.length);
+          console.log('_table_data 샘플 (첫 500자):', stat.data._table_data.substring(0, 500));
 
+          const tableDataParsed = JSON.parse(stat.data._table_data);
+          console.log('_table_data 파싱 성공! 배열 길이:', tableDataParsed.length);
+          console.log('첫 번째 행 구조:', tableDataParsed[0]);
+
+          let numericCount = 0;
           tableDataParsed.forEach((row: any, rowIndex: number) => {
             if (row.cells) {
               row.cells.forEach((cell: any, cellIndex: number) => {
                 if (cell.value && typeof cell.value === 'object') {
                   const cellValue = cell.value;
+                  console.log(`행${rowIndex}, 셀${cellIndex}: unit=${cellValue.unit}, value=${cellValue.value}, type=${typeof cellValue.value}`);
+
+                  // 더 유연한 숫자 추출 로직
+                  let numericValue: number | null = null;
+
                   if (cellValue.unit === 'number' && typeof cellValue.value === 'number') {
-                    numericValues.push(cellValue.value);
-                    console.log(`숫자 데이터 추출: 행${rowIndex}, 셀${cellIndex}, 값:`, cellValue.value);
+                    numericValue = cellValue.value;
+                  } else if (typeof cellValue.value === 'string') {
+                    // 문자열에서 숫자 추출 시도 (쉼표 제거)
+                    const cleaned = cellValue.value.replace(/,/g, '').trim();
+                    const parsed = parseFloat(cleaned);
+                    if (!isNaN(parsed) && isFinite(parsed)) {
+                      numericValue = parsed;
+                    }
+                  } else if (typeof cellValue.value === 'number') {
+                    numericValue = cellValue.value;
+                  }
+
+                  if (numericValue !== null) {
+                    numericValues.push(numericValue);
+                    numericCount++;
+                    console.log(`✓ 숫자 데이터 추출 [${numericCount}]: 행${rowIndex}, 셀${cellIndex}, 값=${numericValue} (원본: ${cellValue.value}, unit: ${cellValue.unit})`);
                   }
                 }
               });
             }
           });
+
+          console.log(`총 추출된 숫자 데이터 개수: ${numericCount}`);
         } catch (error) {
-          console.warn('_table_data 파싱 오류:', error);
-          console.warn('원본 데이터:', stat.data._table_data);
+          console.error('_table_data 파싱 오류:', error);
+          console.error('원본 데이터 타입:', typeof stat.data._table_data);
+          console.error('원본 데이터 샘플:', stat.data._table_data?.substring(0, 200));
         }
+      } else {
+        console.log('_table_data가 없음. stat.data 키들:', Object.keys(stat.data || {}));
       }
 
       // 기존 방식으로도 데이터 수집 (호환성 유지)
@@ -703,6 +745,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     };
 
     console.log('계산된 통계:', stats);
+    console.log('숫자 데이터 샘플 (처음 10개):', numericValues.slice(0, 10));
     return stats;
   };
 
