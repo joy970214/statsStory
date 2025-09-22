@@ -377,3 +377,5 @@ export const StatDistributionViewer: React.FC<Props> = ({ statName, onBack }) =>
     </div>
   );
 };
+
+export default StatDistributionViewer;

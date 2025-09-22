@@ -312,3 +312,5 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
     </div>
   );
 };
+
+export default CollectedStatsViewer;

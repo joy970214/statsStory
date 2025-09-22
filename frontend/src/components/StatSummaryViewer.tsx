@@ -539,3 +539,5 @@ export const StatSummaryViewer: React.FC<Props> = ({ statName, onBack }) => {
     </div>
   );
 };
+
+export default StatSummaryViewer;

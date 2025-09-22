@@ -525,3 +525,5 @@ const TableDetailView: React.FC<TableDetailViewProps> = ({ tableData }) => {
     </div>
   );
 };
+
+export default TableAnalysisViewer;

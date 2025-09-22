@@ -428,3 +428,5 @@ export const StatDetailViewer: React.FC<Props> = ({
     </div>
   );
 };
+
+export default StatDetailViewer;

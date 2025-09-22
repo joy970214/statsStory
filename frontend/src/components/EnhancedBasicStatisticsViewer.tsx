@@ -1584,3 +1584,5 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     </div>
   );
 };
+
+export default EnhancedBasicStatisticsViewer;
