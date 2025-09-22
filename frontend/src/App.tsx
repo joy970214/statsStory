@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { StatCard } from './components/StatCard';
 import { LoadingSpinner } from './components/LoadingSpinner';
-import { EnhancedBasicStatisticsViewer } from './components/EnhancedBasicStatisticsViewer';
+import EnhancedBasicStatisticsViewer from './components/EnhancedBasicStatisticsViewer';
 import { RealTimeProgressViewer } from './components/RealTimeProgressViewer';
-import { TableAnalysisViewer } from './components/TableAnalysisViewer';
-import { CollectedStatsViewer } from './components/CollectedStatsViewer';
-import { StatDetailViewer } from './components/StatDetailViewer';
-import { StatDistributionViewer } from './components/StatDistributionViewer';
-import { StatSummaryViewer } from './components/StatSummaryViewer';
+import TableAnalysisViewer from './components/TableAnalysisViewer';
+import CollectedStatsViewer from './components/CollectedStatsViewer';
+import StatDetailViewer from './components/StatDetailViewer';
+import StatDistributionViewer from './components/StatDistributionViewer';
+import StatSummaryViewer from './components/StatSummaryViewer';
 import {
   statsAPI,
   StatItem,
@@ -33,13 +33,28 @@ function App() {
     checkOngoingTask();
   }, []);
 
-  const checkOngoingTask = () => {
+  const checkOngoingTask = async () => {
     const savedTask = localStorage.getItem('ongoingAnalysisTask');
     if (savedTask) {
       try {
         const task = JSON.parse(savedTask);
-        setOngoingTask(task);
-        setCurrentTaskId(task.taskId);
+
+        // 실제로 진행 중인 작업인지 서버에서 확인
+        try {
+          const response = await statsAPI.getAnalysisStatus(task.taskId);
+          if (response.completed) {
+            // 이미 완료된 작업이면 localStorage에서 제거
+            localStorage.removeItem('ongoingAnalysisTask');
+            return;
+          }
+          // 실제로 진행 중인 작업이면 상태 설정
+          setOngoingTask(task);
+          setCurrentTaskId(task.taskId);
+        } catch (error) {
+          // 작업 상태 확인 실패 시 localStorage에서 제거
+          console.log('저장된 작업 상태 확인 실패, 정리:', error);
+          localStorage.removeItem('ongoingAnalysisTask');
+        }
       } catch (error) {
         localStorage.removeItem('ongoingAnalysisTask');
       }
@@ -252,19 +267,18 @@ function App() {
                       onClick={async () => {
                         if (window.confirm('진행 중인 분석을 취소하시겠습니까?')) {
                           try {
+                            // 즉시 UI 상태 정리 (API 호출 전에)
+                            localStorage.removeItem('ongoingAnalysisTask');
+                            setOngoingTask(null);
+                            setCurrentTaskId(null);
+
                             console.log('작업 취소 시작, taskId:', currentTaskId);
                             if (currentTaskId) {
                               const response = await statsAPI.cancelAnalysis(currentTaskId);
                               console.log('취소 API 응답:', response);
                             }
 
-                            // localStorage 및 상태 정리
-                            localStorage.removeItem('ongoingAnalysisTask');
-                            setOngoingTask(null);
-                            setCurrentTaskId(null);
-
                             console.log('작업 취소 완료');
-                            console.log('현재 상태 - ongoingTask:', ongoingTask, 'currentTaskId:', currentTaskId);
                             alert('분석 작업이 취소되었습니다.');
 
                           } catch (error) {
