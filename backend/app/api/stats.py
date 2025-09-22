@@ -472,14 +472,35 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
             cached_metadata, cached_stat_data, found_url = storage_service.find_data_by_name(request.stat_name)
             print(f"  - cache_loaded_by_name: metadata={cached_metadata is not None}, data={cached_stat_data is not None}")
 
-            # 제목이 정확히 일치하는지 확인
+            # 제목이 유연하게 일치하는지 확인
             if cached_metadata and hasattr(cached_metadata, 'title'):
                 actual_title = cached_metadata.title
-                if actual_title != request.stat_name:
-                    print(f"  - title_mismatch: 요청={request.stat_name}, 실제={actual_title}")
+
+                # 제목 정규화 함수 (괄호 제거, 공백 제거)
+                def normalize_title(title: str) -> str:
+                    import re
+                    # 괄호와 그 안의 내용 제거
+                    normalized = re.sub(r'\([^)]*\)', '', title)
+                    # 연속된 공백을 하나로 변경하고 앞뒤 공백 제거
+                    normalized = re.sub(r'\s+', ' ', normalized).strip()
+                    return normalized
+
+                normalized_actual = normalize_title(actual_title)
+                normalized_request = normalize_title(request.stat_name)
+
+                # 정규화된 제목으로 비교 (포함 관계도 확인)
+                is_match = (
+                    normalized_actual == normalized_request or
+                    normalized_request in normalized_actual or
+                    normalized_actual in normalized_request
+                )
+
+                if not is_match:
+                    print(f"  - title_mismatch: 요청='{request.stat_name}' (정규화: '{normalized_request}'), 실제='{actual_title}' (정규화: '{normalized_actual}')")
                     cached_metadata = None
                     cached_stat_data = None
                 elif found_url:
+                    print(f"  - title_match_success: 요청='{request.stat_name}', 실제='{actual_title}'")
                     print(f"  - found_cached_url: {found_url}")
                     stat_url = found_url  # 캐시된 URL로 업데이트
         
@@ -1365,15 +1386,35 @@ async def view_raw_collected_data(request: GenerateStoryRequest):
         if not cached_metadata or not cached_stat_data:
             cached_metadata, cached_stat_data, found_url = storage_service.find_data_by_name(request.stat_name)
             if found_url:
-                # 실제 메타데이터의 title이 요청한 stat_name과 정확히 일치하는지 확인
+                # 실제 메타데이터의 title이 요청한 stat_name과 유연하게 일치하는지 확인
                 if cached_metadata and hasattr(cached_metadata, 'title'):
                     actual_title = cached_metadata.title
-                    if actual_title != request.stat_name:
-                        # 제목이 다르면 데이터가 없는 것으로 처리
-                        print(f"제목 불일치: 요청={request.stat_name}, 실제={actual_title}")
+
+                    # 제목 정규화 함수 (괄호 제거, 공백 제거)
+                    def normalize_title(title: str) -> str:
+                        import re
+                        # 괄호와 그 안의 내용 제거
+                        normalized = re.sub(r'\([^)]*\)', '', title)
+                        # 연속된 공백을 하나로 변경하고 앞뒤 공백 제거
+                        normalized = re.sub(r'\s+', ' ', normalized).strip()
+                        return normalized
+
+                    normalized_actual = normalize_title(actual_title)
+                    normalized_request = normalize_title(request.stat_name)
+
+                    # 정규화된 제목으로 비교 (포함 관계도 확인)
+                    is_match = (
+                        normalized_actual == normalized_request or
+                        normalized_request in normalized_actual or
+                        normalized_actual in normalized_request
+                    )
+
+                    if not is_match:
+                        print(f"제목 불일치: 요청='{request.stat_name}' (정규화: '{normalized_request}'), 실제='{actual_title}' (정규화: '{normalized_actual}')")
                         cached_metadata = None
                         cached_stat_data = None
                     else:
+                        print(f"제목 매칭 성공: 요청='{request.stat_name}', 실제='{actual_title}'")
                         stat_url = found_url
 
         if not cached_metadata or not cached_stat_data:
