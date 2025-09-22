@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StatCard } from './components/StatCard';
 import { LoadingSpinner } from './components/LoadingSpinner';
-import { BasicStatisticsViewer } from './components/BasicStatisticsViewer';
 import { EnhancedBasicStatisticsViewer } from './components/EnhancedBasicStatisticsViewer';
 import { ImprovedDataInspectionViewer } from './components/ImprovedDataInspectionViewer';
 import { ComprehensiveAnalysisViewer } from './components/ComprehensiveAnalysisViewer';
