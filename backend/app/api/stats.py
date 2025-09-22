@@ -167,68 +167,6 @@ async def analyze_basic(request: GenerateStoryRequest):
         print("기본 분석 오류 발생")
         raise HTTPException(status_code=500, detail="기본 분석 중 오류가 발생했습니다")
 
-@router.post("/analyze-comprehensive") 
-async def analyze_comprehensive(request: GenerateStoryRequest):
-    """종합 분석"""
-    try:
-        stat_url = request.stat_url or "https://stat.molit.go.kr/portal/cate/statView.do"
-        
-        print(f"종합 분석 요청: {request.stat_name}")
-        
-        # 1. 캐시된 데이터 확인
-        cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
-        
-        if cached_metadata and cached_stat_data:
-            print(f"캐시에서 데이터 로드: {cached_metadata.title}")
-            metadata = cached_metadata
-            stat_data = cached_stat_data
-        else:
-            # 2. 새로 수집
-            try:
-                print("=== 메타데이터 및 데이터 수집 시작 ===")
-                metadata = await crawler_service.get_stat_metadata(stat_url)
-                stat_data = await crawler_service.get_stat_data(stat_url, request.period)
-                storage_service.save_complete_data(stat_url, metadata, stat_data)
-            except Exception as crawl_error:
-                print("크롤링 오류, 더미 데이터 사용")
-                from app.models.stat_models import StatMetadata, StatData
-                metadata = StatMetadata(
-                    id="dummy",
-                    title=request.stat_name,
-                    purpose="종합 분석용 더미 데이터",
-                    frequency="연간",
-                    department="국토교통부",
-                    contact="test@molit.go.kr",
-                    keywords=["종합분석"],
-                    related_terms={}
-                )
-                stat_data = [
-                    StatData(year=2020, data={"총합": 1000}),
-                    StatData(year=2021, data={"총합": 1100}),
-                    StatData(year=2022, data={"총합": 1200}),
-                    StatData(year=2023, data={"총합": 1300}),
-                    StatData(year=2024, data={"총합": 1400})
-                ]
-        
-        # 3. 로컬 LLM 종합 분석 수행 (API 토큰 없이)
-        try:
-            from app.services.local_llm_service import local_llm_service
-            analysis_result = await local_llm_service.generate_comprehensive_analysis(stat_data, metadata)
-            print("로컬 LLM 종합 분석 완료")
-        except Exception as llm_error:
-            print(f"로컬 LLM 서비스 오류, 기본 분석으로 대체: {llm_error}")
-            # 기본 분석 결과 생성
-            analysis_result = f"{metadata.title}에 대한 종합적인 분석 결과를 제공합니다."
-        
-        return {
-            "stat_name": request.stat_name,
-            "analysis_date": datetime.now().isoformat(),
-            "metadata": metadata.dict(),
-            "analysis": analysis_result
-        }
-    except Exception as e:
-        print("종합 분석 오류 발생")
-        raise HTTPException(status_code=500, detail="종합 분석 중 오류가 발생했습니다")
 
 # 기존 동기식 API는 유지하되, 새로운 비동기 API 추가
 
@@ -1105,6 +1043,46 @@ async def get_analysis_result(task_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"결과 조회 오류: {str(e)}")
+
+@router.delete("/analysis/cancel/{task_id}")
+async def cancel_analysis(task_id: str):
+    """분석 작업 취소"""
+    try:
+        # 진행률 추적기에서 작업 상태 확인
+        status = progress_tracker.get_task_status(task_id)
+
+        if not status:
+            # 작업이 없어도 성공으로 처리 (이미 완료되었거나 만료된 경우)
+            print(f"[취소 API] 작업을 찾을 수 없음: {task_id} - 이미 완료되었거나 만료된 것으로 간주")
+            return {"message": "작업이 이미 완료되었거나 존재하지 않습니다", "task_id": task_id}
+
+        # 이미 완료된 작업인지 확인
+        if status.get("completed", False):
+            print(f"[취소 API] 이미 완료된 작업: {task_id}")
+            return {"message": "이미 완료된 작업입니다", "task_id": task_id}
+
+        # 작업 취소 - Redis에서 상태 업데이트
+        print(f"[취소 API] 작업 취소 중: {task_id}")
+        progress_tracker.set_task_status(task_id, {
+            "task_id": task_id,
+            "completed": True,
+            "progress": 100,
+            "stage": "cancelled",
+            "message": "사용자에 의해 취소됨",
+            "cancelled": True
+        })
+
+        # 메모리에서 결과 제거 (있다면)
+        if task_id in task_results:
+            del task_results[task_id]
+            print(f"[취소 API] 메모리에서 결과 제거: {task_id}")
+
+        print(f"[취소 API] 작업 취소 완료: {task_id}")
+        return {"message": "작업이 취소되었습니다", "task_id": task_id}
+
+    except Exception as e:
+        print(f"[취소 API] 작업 취소 오류: {task_id}, 오류: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"작업 취소 오류: {str(e)}")
 
 @router.post("/test-simple")
 async def test_simple():

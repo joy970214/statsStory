@@ -38,7 +38,7 @@ export const downloadPDF = async (element: HTMLElement, filename: string) => {
     const pdfFilename = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
     
     const opt = {
-      margin: 1,
+      margin: 0.1,
       filename: pdfFilename,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true },
@@ -86,9 +86,9 @@ const fallbackToPrint = (element: HTMLElement, filename: string) => {
         <head>
           <title>${filename}</title>
           <style>
-            body { 
-              font-family: 'Malgun Gothic', Arial, sans-serif; 
-              margin: 20px; 
+            body {
+              font-family: 'Malgun Gothic', Arial, sans-serif;
+              margin: 5px;
               font-size: 12px;
               line-height: 1.5;
             }
@@ -101,7 +101,10 @@ const fallbackToPrint = (element: HTMLElement, filename: string) => {
               margin: 10px 0;
             }
             @media print {
-              body { font-size: 10px; }
+              body {
+                font-size: 10px;
+                margin: 2px !important;
+              }
               .hidden { display: none; }
             }
           </style>

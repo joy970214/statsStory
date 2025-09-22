@@ -60,68 +60,7 @@ export interface GenerateStoryRequest {
   period?: string;
 }
 
-// 종합 분석 응답 타입
-export interface ComprehensiveAnalysisResponse {
-  stat_name: string;
-  analysis_date: string;
-  metadata: StatMetadata;
-  analysis: {
-    statistics_analysis: {
-      analysis_result: string;
-      status: string;
-      error?: string;
-    };
-    trend_analysis: {
-      trend_analysis: string;
-      status: string;
-      error?: string;
-    };
-    policy_insights: {
-      policy_insights: string;
-      status: string;
-      error?: string;
-    };
-    card_news: {
-      cards?: any[];
-      sections?: any[];
-      raw_response?: string;
-      status: string;
-      error?: string;
-    };
-    generated_at: string;
-  };
-}
 
-// 개별 분석 응답 타입
-export interface StatisticsAnalysisResponse {
-  stat_name: string;
-  analysis_date: string;
-  statistics_analysis: {
-    analysis_result: string;
-    status: string;
-    error?: string;
-  };
-}
-
-export interface TrendAnalysisResponse {
-  stat_name: string;
-  analysis_date: string;
-  trend_analysis: {
-    trend_analysis: string;
-    status: string;
-    error?: string;
-  };
-}
-
-export interface PolicyInsightsResponse {
-  stat_name: string;
-  analysis_date: string;
-  policy_insights: {
-    policy_insights: string;
-    status: string;
-    error?: string;
-  };
-}
 
 // 기본 분석 응답 타입
 export interface BasicAnalysisResponse {
@@ -201,29 +140,6 @@ export const statsAPI = {
     return response.data;
   },
 
-  // 종합 분석 (모든 분석 포함)
-  async generateComprehensiveAnalysis(request: GenerateStoryRequest): Promise<ComprehensiveAnalysisResponse> {
-    const response = await api.post<ComprehensiveAnalysisResponse>('/analyze-comprehensive', request);
-    return response.data;
-  },
-
-  // 통계 분석만
-  async generateStatisticsAnalysis(request: GenerateStoryRequest): Promise<StatisticsAnalysisResponse> {
-    const response = await api.post<StatisticsAnalysisResponse>('/analyze-statistics', request);
-    return response.data;
-  },
-
-  // 트렌드 분석만
-  async generateTrendAnalysis(request: GenerateStoryRequest): Promise<TrendAnalysisResponse> {
-    const response = await api.post<TrendAnalysisResponse>('/analyze-trends', request);
-    return response.data;
-  },
-
-  // 정책 시사점만
-  async generatePolicyInsights(request: GenerateStoryRequest): Promise<PolicyInsightsResponse> {
-    const response = await api.post<PolicyInsightsResponse>('/generate-policy-insights', request);
-    return response.data;
-  },
 
   // 고급 카드뉴스 생성 (기존 버전)
   async generateAdvancedCardNews(request: GenerateStoryRequest): Promise<AdvancedCardNewsResponse> {
@@ -246,6 +162,12 @@ export const statsAPI = {
   // 분석 결과 조회
   async getAnalysisResult(taskId: string): Promise<any> {
     const response = await api.get(`/analysis/result/${taskId}`);
+    return response.data;
+  },
+
+  // 분석 작업 취소
+  async cancelAnalysis(taskId: string): Promise<{message: string}> {
+    const response = await api.delete(`/analysis/cancel/${taskId}`);
     return response.data;
   },
 

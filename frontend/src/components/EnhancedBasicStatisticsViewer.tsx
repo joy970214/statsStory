@@ -1,7 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { AdvancedCardNewsResponse } from '../services/api';
-import { AnalysisActionButtons } from './AnalysisActionButtons';
-import { ImprovedDataInspectionViewer } from './ImprovedDataInspectionViewer';
 import { 
   downloadMarkdown, 
   downloadPDF, 
@@ -46,12 +44,11 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
   onViewTableAnalysis 
 }) => {
   const contentRef = useRef<HTMLDivElement>(null);
-  const [showDataInspection, setShowDataInspection] = useState(false);
   const [processedStats, setProcessedStats] = useState<ProcessedStatistics | null>(null);
   const [selectedTableName, setSelectedTableName] = useState<string | null>(null);
   const [rawDataByTable, setRawDataByTable] = useState<Record<string, any[]>>({});
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'tables' | 'distribution' | 'inspection'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'tables'>('overview');
 
   useEffect(() => {
     processRealData();
@@ -294,7 +291,6 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
         const tableStructure = data._table_structure;
         const tableData = data._table_data;
-        const headers = data._table_headers || [];
 
         // 필수 데이터 검증
         if (!tableStructure.cols || !tableStructure.rows) {
@@ -481,13 +477,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     }
   };
 
-  const handleInspectData = () => {
-    setShowDataInspection(true);
-  };
 
-  const handleBackFromInspection = () => {
-    setShowDataInspection(false);
-  };
 
   // 범용적 데이터 패턴 분석 함수
   const analyzeDataPatterns = (tableData: any[]) => {
@@ -749,15 +739,6 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     return stats;
   };
 
-  // 데이터 검사 모드일 때는 EnhancedDataInspectionViewer 렌더링
-  if (showDataInspection) {
-    return (
-      <ImprovedDataInspectionViewer 
-        statName={analysisData.stat_name} 
-        onBack={handleBackFromInspection}
-      />
-    );
-  }
 
   if (loading) {
     return (
@@ -845,26 +826,6 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               }`}
             >
               📋 통계표별 분석
-            </button>
-            <button
-              onClick={() => setActiveTab('distribution')}
-              className={`py-4 px-6 text-sm font-medium ${
-                activeTab === 'distribution'
-                  ? 'border-b-2 border-blue-500 text-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              📈 분포 특성
-            </button>
-            <button
-              onClick={() => setActiveTab('inspection')}
-              className={`py-4 px-6 text-sm font-medium ${
-                activeTab === 'inspection'
-                  ? 'border-b-2 border-blue-500 text-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              🔍 데이터 검사
             </button>
           </nav>
         </div>
@@ -1617,39 +1578,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
           </div>
         )}
 
-        {/* 분포 특성 탭 */}
-        {activeTab === 'distribution' && (
-          <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">📈 분포 특성 분석</h3>
-            <div className="text-center py-8 text-gray-500">
-              분포 특성 분석 기능은 추후 구현 예정입니다.
-              <br />
-              현재는 전체 요약 탭에서 기초 통계량을 확인하실 수 있습니다.
-            </div>
-          </div>
-        )}
 
-        {/* 데이터 검사 탭 */}
-        {activeTab === 'inspection' && (
-          <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">🔍 데이터 검사</h3>
-            {showDataInspection ? (
-              <ImprovedDataInspectionViewer
-                statName={analysisData.stat_name}
-                onBack={() => setShowDataInspection(false)}
-              />
-            ) : (
-              <div className="text-center py-8">
-                <button
-                  onClick={() => setShowDataInspection(true)}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  데이터 검사 시작
-                </button>
-              </div>
-            )}
-          </div>
-        )}
 
       </div>
     </div>
