@@ -201,22 +201,94 @@ class DataStorageService:
         metadata = self.load_metadata(stat_url, max_age_hours)
         statistics = self.load_statistics(stat_url, max_age_hours)
         return metadata, statistics
+
+    def get_cached_data_by_name(self, stat_name: str, max_age_hours: int = 24) -> Tuple[Optional[StatMetadata], Optional[List[StatData]]]:
+        """통계명 기반으로 캐시된 데이터 검색"""
+        import glob
+        import os
+        from datetime import datetime, timedelta
+
+        print(f"[CACHE] '{stat_name}' 통계의 기존 데이터를 검색 중...")
+
+        # 모든 메타데이터 파일 스캔
+        metadata_pattern = os.path.join(self.metadata_dir, "*_metadata.json")
+        metadata_files = glob.glob(metadata_pattern)
+
+        max_age = datetime.now() - timedelta(hours=max_age_hours)
+
+        for metadata_file in metadata_files:
+            try:
+                # 파일 수정 시간 체크
+                if os.path.getmtime(metadata_file) < max_age.timestamp():
+                    continue
+
+                # 메타데이터 로드해서 제목 비교
+                with open(metadata_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+
+                metadata_title = data.get('metadata', {}).get('title', '')
+
+                # 통계명 매칭 (대소문자 무시, 공백 정리)
+                if self._normalize_stat_name(metadata_title) == self._normalize_stat_name(stat_name):
+                    print(f"[CACHE] 매칭된 캐시 발견: {metadata_title}")
+
+                    # 해당하는 통계 데이터도 로드
+                    cache_key = data.get('cache_key')
+                    if cache_key:
+                        stats_file = self._get_stats_path(cache_key)
+                        if os.path.exists(stats_file):
+                            # 메타데이터 재구성
+                            metadata_obj = StatMetadata(**data['metadata'])
+
+                            # 통계 데이터 로드
+                            with open(stats_file, 'r', encoding='utf-8') as f:
+                                stats_data = json.load(f)
+                                # 실제 구조에 맞게 데이터 파싱
+                                if 'statistics' in stats_data:
+                                    stat_data_list = [StatData(**item) for item in stats_data['statistics']]
+                                elif 'data' in stats_data:
+                                    stat_data_list = [StatData(**item) for item in stats_data['data']]
+                                else:
+                                    print(f"알 수 없는 데이터 구조: {list(stats_data.keys())}")
+                                    return None, None
+
+                            return metadata_obj, stat_data_list
+
+            except Exception as e:
+                print(f"캐시 파일 읽기 오류 ({metadata_file}): {e}")
+                continue
+
+        print(f"[CACHE] '{stat_name}' 통계의 기존 데이터를 찾을 수 없음")
+        return None, None
+
+    def _normalize_stat_name(self, name: str) -> str:
+        """통계명 정규화 (비교용)"""
+        import re
+        # 괄호 안의 영문 제거, 공백/특수문자 정리
+        normalized = re.sub(r'\([^)]*\)', '', name)
+        normalized = re.sub(r'[^\w가-힣]', '', normalized)
+        # 추가 정리: 대소문자 통일, 공백 제거
+        normalized = normalized.lower().strip().replace(' ', '')
+        print(f"[NORMALIZE] '{name}' -> '{normalized}'")
+        return normalized
     
     def save_complete_data(self, stat_url: str, metadata: StatMetadata, stat_data: List[StatData]) -> str:
         """메타데이터와 통계 데이터를 함께 저장 (JSON + Excel)"""
         cache_key = self._get_cache_key(stat_url)
-        
+
         # JSON 형태로 저장 (기존 방식)
         self.save_metadata(stat_url, metadata)
         self.save_statistics(stat_url, stat_data)
-        
+
         # Excel 형태로도 저장
         excel_path = self.save_to_excel(stat_url, metadata, stat_data)
         if excel_path:
-            print(f"전체 데이터 저장 완료: {cache_key} (JSON + Excel)")
+            print(f"[SAVE] 새 데이터 저장 완료: {cache_key} (JSON + Excel)")
+            print(f"[SAVE] 통계명: {metadata.title}")
         else:
-            print(f"전체 데이터 저장 완료: {cache_key} (JSON만)")
-        
+            print(f"[SAVE] 새 데이터 저장 완료: {cache_key} (JSON만)")
+            print(f"[SAVE] 통계명: {metadata.title}")
+
         return cache_key
     
     def list_cached_files(self) -> Dict[str, List[str]]:

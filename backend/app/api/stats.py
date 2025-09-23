@@ -204,16 +204,18 @@ async def generate_advanced_cardnews(request: GenerateStoryRequest):
         # 통계명을 동적 저장소에 저장
         _store_stat_name_from_request(request.stat_name, stat_url)
 
-        # 1. 캐시된 데이터 확인
-        cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
-        
+        # 1. 통계명 기반 캐시된 데이터 확인
+        cached_metadata, cached_stat_data = storage_service.get_cached_data_by_name(request.stat_name)
+
         if cached_metadata and cached_stat_data:
-            print(f"캐시에서 데이터 로드: {cached_metadata.title}")
+            print(f"[SUCCESS] 기존 수집 데이터 발견: {cached_metadata.title}")
+            print(f"[CACHE] 캐시에서 데이터 로드 (새로 수집하지 않음)")
             metadata = cached_metadata
             stat_data = cached_stat_data
         else:
-            # 2. 새로 수집
+            # 2. 기존 데이터가 없으므로 새로 수집
             try:
+                print(f"[NEW] '{request.stat_name}' 통계 데이터를 새로 수집합니다")
                 print("=== 메타데이터 및 데이터 수집 시작 ===")
                 metadata = await crawler_service.get_stat_metadata_for_analysis(stat_url)
                 stat_data = await crawler_service.get_stat_data_for_analysis(stat_url, request.period)
@@ -430,49 +432,14 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
         if os.path.exists(stats_path):
             print(f"  - stats_file: {stats_path}")
         
-        # 캐시 로드 시도 (URL 우선, 실패 시 이름으로 검색)
-        cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
-        print(f"  - cache_loaded_by_url: metadata={cached_metadata is not None}, data={cached_stat_data is not None}")
-        
-        # URL로 찾지 못한 경우 stat_name으로 검색 (정확한 제목 일치 확인)
-        if not cached_metadata or not cached_stat_data:
-            print(f"  - trying_name_search: {request.stat_name}")
-            cached_metadata, cached_stat_data, found_url = storage_service.find_data_by_name(request.stat_name)
-            print(f"  - cache_loaded_by_name: metadata={cached_metadata is not None}, data={cached_stat_data is not None}")
+        # 통계명 기반 캐시된 데이터 확인 (새로운 시스템)
+        cached_metadata, cached_stat_data = storage_service.get_cached_data_by_name(request.stat_name)
 
-            # 제목이 유연하게 일치하는지 확인
-            if cached_metadata and hasattr(cached_metadata, 'title'):
-                actual_title = cached_metadata.title
-
-                # 제목 정규화 함수 (괄호 제거, 공백 제거)
-                def normalize_title(title: str) -> str:
-                    import re
-                    # 괄호와 그 안의 내용 제거
-                    normalized = re.sub(r'\([^)]*\)', '', title)
-                    # 연속된 공백을 하나로 변경하고 앞뒤 공백 제거
-                    normalized = re.sub(r'\s+', ' ', normalized).strip()
-                    return normalized
-
-                normalized_actual = normalize_title(actual_title)
-                normalized_request = normalize_title(request.stat_name)
-
-                # 정규화된 제목으로 비교 (포함 관계도 확인)
-                is_match = (
-                    normalized_actual == normalized_request or
-                    normalized_request in normalized_actual or
-                    normalized_actual in normalized_request
-                )
-
-                if not is_match:
-                    print(f"  - title_mismatch: 요청='{request.stat_name}' (정규화: '{normalized_request}'), 실제='{actual_title}' (정규화: '{normalized_actual}')")
-                    cached_metadata = None
-                    cached_stat_data = None
-                elif found_url:
-                    print(f"  - title_match_success: 요청='{request.stat_name}', 실제='{actual_title}'")
-                    print(f"  - found_cached_url: {found_url}")
-                    stat_url = found_url  # 캐시된 URL로 업데이트
-        
-        print(f"[CACHE_DEBUG] 끝")
+        if cached_metadata and cached_stat_data:
+            print(f"[SUCCESS] 기존 수집 데이터 발견: {cached_metadata.title}")
+            print(f"[CACHE] 캐시에서 데이터 로드 (새로 수집하지 않음)")
+        else:
+            print(f"[NEW] '{request.stat_name}' 통계 데이터를 새로 수집합니다")
         
         # 최적화된 크롤러 사용
         if OptimizedMolitCrawler is None:

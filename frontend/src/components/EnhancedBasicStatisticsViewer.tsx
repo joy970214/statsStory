@@ -1,10 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { AdvancedCardNewsResponse } from '../services/api';
-import { 
-  downloadMarkdown, 
-  downloadPDF, 
-  openOriginalUrl, 
-  generateBasicStatisticsMarkdown 
+import {
+  downloadMarkdown,
+  downloadPDF,
+  openOriginalUrl,
+  generateBasicStatisticsMarkdown
 } from '../utils/downloadUtils';
 
 interface EnhancedBasicStatisticsViewerProps {
@@ -275,175 +275,129 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     return new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 2 }).format(num);
   };
 
-  // 구조화된 데이터를 활용한 원본 테이블 재구성 함수 (개선된 버전)
-  const reconstructTableStructure = (rawData: any[]) => {
+  // IBSheet 원본 완전 재구성 함수 (실제 IBSheet 구조 그대로 재현)
+  const reconstructIBSheetTable = (rawData: any[]) => {
     if (!rawData || rawData.length === 0) return null;
 
-    const reconstructedTables: Record<string, any[][]> = {};
+    const reconstructedTables: Record<string, any> = {};
 
-    rawData.forEach((stat, statIndex) => {
-      const tableName = stat.table_name || `통계표 ${statIndex + 1}`;
-      const data = stat.data || {};
+    rawData.forEach((item: any, tableIndex: number) => {
+      if (item?.data?._table_data && item?.data?._table_structure) {
+        try {
+          const tableData = JSON.parse(item.data._table_data);
+          const tableStructure = JSON.parse(item.data._table_structure);
+          const tableName = item.table_name || `테이블 ${tableIndex + 1}`;
 
-      // 새로운 구조화된 데이터 형식 확인
-      if (data._table_structure && data._table_data) {
-        console.log(`구조화된 데이터 발견: ${tableName}`, data._table_structure);
+          // IBSheet 원본 구조 그대로 재현
+          const reconstructTable = () => {
+            // 최대 행과 열 크기 계산
+            const maxRow = Math.max(...tableData.map((row: any) => row.row_index)) + 1;
+            const maxCol = tableStructure.cols || 84;
 
-        const tableStructure = data._table_structure;
-        const tableData = data._table_data;
+            // 빈 그리드 초기화 (IBSheet 크기)
+            const grid: any[][] = [];
+            for (let r = 0; r < maxRow; r++) {
+              const row = [];
+              for (let c = 0; c < maxCol; c++) {
+                row.push({
+                  value: '',
+                  formatted: '',
+                  original: '',
+                  type: 'text',
+                  isEmpty: true,
+                  isHeader: false,
+                  isMerged: false,
+                  colName: `컬럼${c + 1}`,
+                  colspan: 1,
+                  rowspan: 1
+                });
+              }
+              grid.push(row);
+            }
 
-        // 필수 데이터 검증
-        if (!tableStructure.cols || !tableStructure.rows) {
-          console.warn(`${tableName}: 테이블 구조 정보가 불완전합니다.`, tableStructure);
-          return;
-        }
+            // 수집된 데이터를 정확한 위치에 배치
+            tableData.forEach((rowInfo: any) => {
+              const rowIndex = rowInfo.row_index;
+              if (rowIndex < maxRow && Array.isArray(rowInfo.cells)) {
 
-        const tableRows: any[][] = [];
+                // 이 행의 셀들을 col_index 순서로 정렬
+                const sortedCells = rowInfo.cells.sort((a: any, b: any) => a.col_index - b.col_index);
 
-        // 구조화된 데이터를 테이블 형태로 변환
-        if (Array.isArray(tableData)) {
-          tableData.forEach((rowInfo: any) => {
-          const row = Array(tableStructure.cols).fill(null).map(() => ({
-            original: '',
-            value: '',
-            type: 'text',
-            formatted: '',
-            isEmpty: true,
-            isHeader: false,
-            colName: ''
-          }));
+                sortedCells.forEach((cell: any, cellIndex: number) => {
+                  const colIndex = cell.col_index;
+                  if (colIndex < maxCol) {
 
-          if (Array.isArray(rowInfo.cells)) {
-            rowInfo.cells.forEach((cellInfo: any) => {
-              if (cellInfo && typeof cellInfo.col_index === 'number' && cellInfo.col_index < tableStructure.cols) {
-                const cellValue = cellInfo.value || {};
-                row[cellInfo.col_index] = {
-                  original: cellValue.raw || cellValue.value || '',
-                  value: cellValue.value || '',
-                  type: cellValue.unit || 'text',
-                  formatted: cellValue.unit === 'number' && typeof cellValue.value === 'number'
-                    ? formatNumber(cellValue.value)
-                    : String(cellValue.value || ''),
-                  isEmpty: !cellValue.value || String(cellValue.value).trim() === '',
-                  isHeader: rowInfo.is_header || false,
-                  colName: cellInfo.col_name || ''
-                };
+                    // colspan 계산 (다음 셀까지의 거리)
+                    let colspan = 1;
+                    if (cellIndex < sortedCells.length - 1) {
+                      const nextColIndex = sortedCells[cellIndex + 1].col_index;
+                      colspan = nextColIndex - colIndex;
+                    } else {
+                      // 마지막 셀: 헤더 정보를 분석해서 적절한 colspan 결정
+                      const cellValue = cell.value?.value || '';
+                      if (cellValue.includes('승용 승합 화물 특수') || cellValue.includes('관용 자가용 영업용')) {
+                        // 복합 헤더의 경우 더 넓은 병합
+                        colspan = Math.min(20, maxCol - colIndex);
+                      } else {
+                        colspan = 1;
+                      }
+                    }
+
+                    // 셀 데이터 설정
+                    const cellData = {
+                      value: cell.value?.value || '',
+                      formatted: cell.value?.value || '',
+                      original: cell.value?.raw || '',
+                      type: cell.value?.unit === 'number' ? 'number' : 'text',
+                      isEmpty: false,
+                      isHeader: cell.is_header || rowInfo.is_header,
+                      isMerged: false,
+                      colName: cell.col_name || `컬럼${colIndex + 1}`,
+                      colspan: colspan,
+                      rowspan: 1
+                    };
+
+                    // 기본 셀 설정
+                    grid[rowIndex][colIndex] = cellData;
+
+                    // 병합된 셀들을 isMerged로 표시
+                    for (let c = colIndex + 1; c < colIndex + colspan && c < maxCol; c++) {
+                      grid[rowIndex][c] = {
+                        ...grid[rowIndex][c],
+                        isMerged: true,
+                        mergedTo: { row: rowIndex, col: colIndex }
+                      };
+                    }
+                  }
+                });
               }
             });
-          }
 
-            // 빈 행이 아닌 경우만 추가
-            if (row.some(cell => !cell.isEmpty)) {
-              tableRows.push(row);
-            }
-          });
-        } else {
-          console.warn(`${tableName}: tableData가 배열이 아닙니다.`, typeof tableData, tableData);
-        }
+            return grid;
+          };
 
-        if (tableRows.length > 0) {
-          reconstructedTables[tableName] = tableRows;
-        }
+          const grid = reconstructTable();
 
-        console.log(`${tableName} 테이블 재구성 완료: ${tableRows.length}행 × ${tableStructure.cols}열`);
-      } else {
-        // 기존 방식 (Fallback) - ibsheet_cell_ 패턴
-        console.log(`기존 방식으로 처리: ${tableName}`);
-
-        const cellData: Array<{cellIndex: number, value: any, parsedValue: any}> = [];
-
-        Object.entries(data).forEach(([key, value]) => {
-          if (key.startsWith('ibsheet_cell_') || key.startsWith('table_r')) {
-            let cellIndex = 0;
-
-            if (key.startsWith('ibsheet_cell_')) {
-              cellIndex = parseInt(key.replace('ibsheet_cell_', ''));
-            } else if (key.startsWith('table_r')) {
-              // table_r0_c1_컬럼명 형태에서 인덱스 추출
-              const match = key.match(/table_r(\d+)_c(\d+)/);
-              if (match) {
-                const rowIdx = parseInt(match[1]);
-                const colIdx = parseInt(match[2]);
-                cellIndex = rowIdx * 10 + colIdx; // 임시 인덱스 계산
-              }
-            }
-
-            let parsedValue;
-            try {
-              parsedValue = typeof value === 'string' && value.includes("'value'")
-                ? JSON.parse(value.replace(/'/g, '"'))
-                : { value, unit: 'text', raw: value };
-            } catch {
-              parsedValue = { value: String(value), unit: 'text', raw: value };
-            }
-
-            cellData.push({ cellIndex, value, parsedValue });
-          }
-        });
-
-        // 셀 인덱스 순으로 정렬
-        cellData.sort((a, b) => a.cellIndex - b.cellIndex);
-
-        if (cellData.length === 0) return;
-
-        // 열 수 추정 개선
-        let estimatedCols = 6;
-        const textCells = cellData.filter(cell => cell.parsedValue.unit === 'text');
-        const numberCells = cellData.filter(cell => cell.parsedValue.unit === 'number');
-
-        if (textCells.length > 0 && numberCells.length > 0) {
-          const ratio = numberCells.length / textCells.length;
-          if (ratio > 3) {
-            estimatedCols = Math.min(10, Math.max(6, Math.ceil(Math.sqrt(cellData.length * 1.2))));
-          } else {
-            estimatedCols = Math.min(8, Math.max(5, Math.ceil(Math.sqrt(cellData.length))));
-          }
-        }
-
-        const tableRows: any[][] = [];
-
-        for (let i = 0; i < cellData.length; i += estimatedCols) {
-          const rowCells = cellData.slice(i, i + estimatedCols);
-          const row = Array(estimatedCols).fill(null).map((_, colIndex) => {
-            const cell = rowCells[colIndex];
-            if (!cell) {
-              return {
-                original: '',
-                value: '',
-                type: 'text',
-                formatted: '',
-                isEmpty: true,
-                isHeader: false,
-                colName: ''
-              };
-            }
-
-            return {
-              original: cell.parsedValue.raw || cell.parsedValue.value,
-              value: cell.parsedValue.value,
-              type: cell.parsedValue.unit,
-              formatted: cell.parsedValue.unit === 'number' && typeof cell.parsedValue.value === 'number'
-                ? formatNumber(cell.parsedValue.value)
-                : String(cell.parsedValue.value || ''),
-              isEmpty: !cell.parsedValue.value || String(cell.parsedValue.value).trim() === '',
-              isHeader: false,
-              colName: ''
-            };
-          });
-
-          if (row.some(cell => !cell.isEmpty)) {
-            tableRows.push(row);
-          }
-        }
-
-        if (tableRows.length > 0) {
-          reconstructedTables[tableName] = tableRows;
+          reconstructedTables[tableName] = {
+            grid: grid,
+            structure: {
+              rows: grid.length,
+              cols: grid[0]?.length || 0
+            },
+            mergeInfo: {}, // 이미 grid에 병합 정보가 포함됨
+            isAdvanced: true,
+            source: 'IBSheet_Original'
+          };
+        } catch (error) {
+          console.error('IBSheet 테이블 재구성 오류:', error);
         }
       }
     });
 
     return reconstructedTables;
   };
+
+
 
   const handleDownloadMD = () => {
     try {
@@ -454,6 +408,242 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
       console.error('MD 다운로드 실패:', error);
       alert('마크다운 파일 다운로드에 실패했습니다.');
     }
+  };
+
+  const handleDownloadExcel = () => {
+    try {
+      // 간단한 CSV 형식으로 통계 데이터 생성
+      const stats = processedStats?.numeric_stats;
+      if (!stats) {
+        alert('다운로드할 통계 데이터가 없습니다.');
+        return;
+      }
+
+      const csvContent = `통계명,${analysisData.stat_name}
+분석일시,${new Date(analysisData.analysis_date).toLocaleString('ko-KR')}
+
+기초통계 지표,값
+평균값,${stats.mean || 0}
+중위수,${stats.median || 0}
+최댓값,${stats.max || 0}
+최솟값,${stats.min || 0}
+총합계,${stats.total || 0}
+데이터 개수,${stats.count || 0}`;
+
+      const filename = `기본통계현황분석_${analysisData.stat_name}_${new Date().toISOString().split('T')[0]}.csv`;
+
+      // UTF-8 BOM 추가 (한글 깨짐 방지)
+      const BOM = '\uFEFF';
+      const csvWithBom = BOM + csvContent;
+
+      const blob = new Blob([csvWithBom], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('CSV 다운로드 실패:', error);
+      alert('CSV 파일 다운로드에 실패했습니다.');
+    }
+  };
+
+  // 범용적 데이터 패턴 분석 함수
+  const analyzeDataPatterns = (tableData: any[]) => {
+    if (!tableData || tableData.length === 0) {
+      return {
+        sample_data: [],
+        unique_values: {},
+        data_types: {},
+        missing_values: 0,
+        summary: "데이터 없음",
+        hasNumericValues: false,
+        numericColumns: [],
+        dataClassification: 'general',
+        mainCategory: null,
+        timePeriod: null,
+        hasGeographicData: false,
+        hasTimeData: false,
+        hasCategoryData: false
+      };
+    }
+
+    try {
+      const allFields: any[] = [];
+      const uniqueValues: Record<string, Set<any>> = {};
+      const dataTypes: Record<string, string> = {};
+      let missingValues = 0;
+      const numericColumns: string[] = [];
+      let hasGeographicData = false;
+      let hasTimeData = false;
+      let hasCategoryData = false;
+
+      tableData.forEach((stat: any) => {
+        if (stat?.data && typeof stat.data === 'object') {
+          Object.entries(stat.data).forEach(([key, value]) => {
+            if (typeof value === 'number') {
+              allFields.push(value);
+              dataTypes[key] = 'number';
+              numericColumns.push(key);
+            } else if (typeof value === 'string' && value.trim() !== '') {
+              allFields.push(value);
+              dataTypes[key] = 'string';
+              if (!uniqueValues[key]) uniqueValues[key] = new Set();
+              uniqueValues[key].add(value);
+
+              // 지역/시간/분류 데이터 감지
+              if (value.includes('서울') || value.includes('부산') || value.includes('도') || value.includes('시')) {
+                hasGeographicData = true;
+              }
+              if (value.includes('년') || value.includes('월') || /\d{4}/.test(value)) {
+                hasTimeData = true;
+              }
+              if (value.includes('승용') || value.includes('화물') || value.includes('관용')) {
+                hasCategoryData = true;
+              }
+            } else {
+              missingValues++;
+            }
+          });
+        }
+      });
+
+      return {
+        sample_data: allFields.slice(0, 20),
+        unique_values: Object.fromEntries(
+          Object.entries(uniqueValues).map(([k, v]) => [k, Array.from(v)])
+        ),
+        data_types: dataTypes,
+        missing_values: missingValues,
+        summary: `${allFields.length}개 필드 분석 완료`,
+        hasNumericValues: numericColumns.length > 0,
+        numericColumns,
+        dataClassification: hasTimeData && hasGeographicData ? 'temporal-geographic' :
+                          hasGeographicData ? 'geographic' :
+                          hasTimeData ? 'temporal' :
+                          hasCategoryData ? 'categorical' : 'general',
+        mainCategory: analysisData.stat_name?.includes('자동차') ? '도로교통' :
+                     analysisData.stat_name?.includes('주택') ? '주택건설' :
+                     analysisData.stat_name?.includes('부동산') ? '부동산' : null,
+        timePeriod: hasTimeData ? '시계열 데이터 포함' : null,
+        hasGeographicData,
+        hasTimeData,
+        hasCategoryData
+      };
+    } catch (error) {
+      console.warn('데이터 패턴 분석 중 오류:', error);
+      return {
+        sample_data: [],
+        unique_values: {},
+        data_types: {},
+        missing_values: 0,
+        summary: "분석 오류",
+        hasNumericValues: false,
+        numericColumns: [],
+        dataClassification: 'general',
+        mainCategory: null,
+        timePeriod: null,
+        hasGeographicData: false,
+        hasTimeData: false,
+        hasCategoryData: false
+      };
+    }
+  };
+
+  // 선택된 테이블의 데이터 패턴 분석
+  const getSelectedTablePatterns = () => {
+    if (!selectedTableName || !rawDataByTable[selectedTableName]) return null;
+    return analyzeDataPatterns(rawDataByTable[selectedTableName]);
+  };
+
+  // Get statistics for selected table only
+  const getSelectedTableStats = () => {
+    if (!selectedTableName || !rawDataByTable[selectedTableName]) {
+      return processedStats?.numeric_stats;
+    }
+
+    const tableData = rawDataByTable[selectedTableName];
+    const numericValues: number[] = [];
+
+    tableData.forEach((stat: any) => {
+      if (stat?.data?._table_data) {
+        try {
+          const tableDataStr = typeof stat.data._table_data === 'string'
+            ? stat.data._table_data
+            : JSON.stringify(stat.data._table_data);
+
+          let parsedData;
+          try {
+            parsedData = JSON.parse(tableDataStr);
+          } catch {
+            try {
+              parsedData = eval('(' + tableDataStr + ')');
+            } catch {
+              return;
+            }
+          }
+
+          if (Array.isArray(parsedData)) {
+            parsedData.forEach((row: any) => {
+              if (row?.cells && Array.isArray(row.cells)) {
+                row.cells.forEach((cell: any) => {
+                  if (cell?.value?.value && typeof cell.value.value === 'number') {
+                    numericValues.push(cell.value.value);
+                  }
+                });
+              }
+            });
+          }
+        } catch (error) {
+          console.warn('_table_data 파싱 오류:', error);
+        }
+      }
+
+      if (stat?.data && typeof stat.data === 'object') {
+        Object.entries(stat.data).forEach(([key, value]) => {
+          if (typeof value === 'number' && !isNaN(value)) {
+            numericValues.push(value);
+          }
+        });
+      }
+    });
+
+    if (numericValues.length === 0) {
+      return processedStats?.numeric_stats || {
+        total: 0,
+        mean: 0,
+        median: 0,
+        std: 0,
+        min: 0,
+        max: 0,
+        count: 0,
+        distribution: []
+      };
+    }
+
+    const sorted = numericValues.sort((a, b) => a - b);
+    const count = numericValues.length;
+    const total = numericValues.reduce((a, b) => a + b, 0);
+    const mean = total / count;
+    const median = count % 2 === 0
+      ? (sorted[count/2 - 1] + sorted[count/2]) / 2
+      : sorted[Math.floor(count/2)];
+    const variance = numericValues.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / count;
+    const std = Math.sqrt(variance);
+
+    return {
+      total,
+      mean,
+      median,
+      std,
+      min: Math.min(...numericValues),
+      max: Math.max(...numericValues),
+      count,
+      distribution: sorted
+    };
   };
 
   const handleDownloadPDF = async () => {
@@ -479,124 +669,6 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
 
 
-  // 범용적 데이터 패턴 분석 함수
-  const analyzeDataPatterns = (tableData: any[]) => {
-    if (!tableData || tableData.length === 0) return null;
-
-    const patterns = {
-      hasTimeData: false,
-      hasGeographicData: false,
-      hasCategoryData: false,
-      hasNumericValues: false,
-      timeColumns: [] as string[],
-      geographicColumns: [] as string[],
-      categoryColumns: [] as string[],
-      numericColumns: [] as string[],
-      dataClassification: 'general',
-      timePeriod: null as string | null,
-      regionalScope: null as string | null,
-      mainCategory: null as string | null
-    };
-
-    // 테이블명과 메타데이터에서 패턴 추출
-    const tableName = tableData[0]?.table_name || '';
-    const title = analysisData.metadata?.title || '';
-
-    // 시계열 패턴 감지
-    const timePattern = tableName.match(/\((\d{4})\d*\s*[~-]\s*(\d{4})\d*\)/);
-    if (timePattern) {
-      patterns.hasTimeData = true;
-      patterns.timePeriod = `${timePattern[1]}년부터 ${timePattern[2]}년까지`;
-    }
-
-    // 지역 패턴 감지
-    if (/전국|수도권|서울|인천|경기|부산|대구|광주|대전|울산|세종/.test(tableName + title)) {
-      patterns.hasGeographicData = true;
-      patterns.regionalScope = '지역별 통계';
-    }
-
-    // 주요 카테고리 감지
-    if (/주택|건설|준공/.test(title)) {
-      patterns.mainCategory = '주택건설';
-    } else if (/부동산|실거래|매매/.test(title)) {
-      patterns.mainCategory = '부동산';
-    } else if (/토지|국토/.test(title)) {
-      patterns.mainCategory = '토지이용';
-    } else if (/도로|노선|차로/.test(title + tableName)) {
-      patterns.mainCategory = '도로교통';
-    }
-
-    // 실제 데이터에서 세부 패턴 분석
-    tableData.forEach(stat => {
-      if (stat.data?._table_data) {
-        try {
-          const tableDataParsed = JSON.parse(stat.data._table_data);
-          tableDataParsed.forEach((row: any) => {
-            if (row.cells) {
-              row.cells.forEach((cell: any) => {
-                const value = String(cell.value?.value || '');
-                const unit = cell.value?.unit;
-
-                // 시간 데이터 확인
-                if (/^\d{4}-\d{2}/.test(value)) {
-                  patterns.hasTimeData = true;
-                  if (!patterns.timeColumns.includes(cell.col_name)) {
-                    patterns.timeColumns.push(cell.col_name);
-                  }
-                }
-
-                // 지역 데이터 확인
-                if (/서울|인천|경기|부산|대구|광주|대전|울산|세종|수도권/.test(value)) {
-                  patterns.hasGeographicData = true;
-                  if (!patterns.geographicColumns.includes(cell.col_name)) {
-                    patterns.geographicColumns.push(cell.col_name);
-                  }
-                }
-
-                // 카테고리 데이터 확인
-                if (/총계|소계|계|단독|아파트|연립|다세대|㎡|평|호|동수|가구수|고속국도|일반국도|특별·광역시도|지방도|시도|군도|구도|2차로|4차로|6차로|8차로|10차로/.test(value)) {
-                  patterns.hasCategoryData = true;
-                  if (!patterns.categoryColumns.includes(cell.col_name)) {
-                    patterns.categoryColumns.push(cell.col_name);
-                  }
-                }
-
-                // 숫자 데이터 확인
-                if (unit === 'number') {
-                  patterns.hasNumericValues = true;
-                  if (!patterns.numericColumns.includes(cell.col_name)) {
-                    patterns.numericColumns.push(cell.col_name);
-                  }
-                }
-              });
-            }
-          });
-        } catch (error) {
-          console.warn('데이터 패턴 분석 중 오류:', error);
-        }
-      }
-    });
-
-    // 데이터 분류 결정
-    if (patterns.hasGeographicData && patterns.hasTimeData) {
-      patterns.dataClassification = 'temporal-geographic';
-    } else if (patterns.hasGeographicData) {
-      patterns.dataClassification = 'geographic';
-    } else if (patterns.hasTimeData) {
-      patterns.dataClassification = 'temporal';
-    } else if (patterns.hasCategoryData) {
-      patterns.dataClassification = 'categorical';
-    }
-
-    return patterns;
-  };
-
-  // 선택된 테이블의 데이터 패턴 분석
-  const getTablePatterns = () => {
-    if (!selectedTableName || !rawDataByTable[selectedTableName]) return null;
-    return analyzeDataPatterns(rawDataByTable[selectedTableName]);
-  };
-
   // Filter data by selected table
   const getFilteredData = () => {
     if (!selectedTableName || !processedStats) return processedStats?.sample_data || [];
@@ -604,139 +676,6 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     return processedStats.sample_data.filter(item =>
       item.source_table === selectedTableName
     );
-  };
-
-  // Get statistics for selected table only
-  const getSelectedTableStats = () => {
-    if (!selectedTableName || !rawDataByTable[selectedTableName]) {
-      return processedStats?.numeric_stats;
-    }
-
-    const tableData = rawDataByTable[selectedTableName];
-    const numericValues: number[] = [];
-
-    console.log('선택된 테이블:', selectedTableName);
-    console.log('테이블 데이터:', tableData);
-
-    tableData.forEach((stat, statIndex) => {
-      console.log(`통계 ${statIndex}:`, stat);
-
-      // _table_data가 있는 경우 JSON 파싱하여 숫자 데이터 추출
-      if (stat.data?._table_data) {
-        try {
-          console.log('_table_data 원본 타입:', typeof stat.data._table_data);
-          console.log('_table_data 원본 길이:', stat.data._table_data.length);
-          console.log('_table_data 샘플 (첫 500자):', stat.data._table_data.substring(0, 500));
-
-          const tableDataParsed = JSON.parse(stat.data._table_data);
-          console.log('_table_data 파싱 성공! 배열 길이:', tableDataParsed.length);
-          console.log('첫 번째 행 구조:', tableDataParsed[0]);
-
-          let numericCount = 0;
-          tableDataParsed.forEach((row: any, rowIndex: number) => {
-            if (row.cells) {
-              row.cells.forEach((cell: any, cellIndex: number) => {
-                if (cell.value && typeof cell.value === 'object') {
-                  const cellValue = cell.value;
-                  console.log(`행${rowIndex}, 셀${cellIndex}: unit=${cellValue.unit}, value=${cellValue.value}, type=${typeof cellValue.value}`);
-
-                  // 더 유연한 숫자 추출 로직
-                  let numericValue: number | null = null;
-
-                  if (cellValue.unit === 'number' && typeof cellValue.value === 'number') {
-                    numericValue = cellValue.value;
-                  } else if (typeof cellValue.value === 'string') {
-                    // 문자열에서 숫자 추출 시도 (쉼표 제거)
-                    const cleaned = cellValue.value.replace(/,/g, '').trim();
-                    const parsed = parseFloat(cleaned);
-                    if (!isNaN(parsed) && isFinite(parsed)) {
-                      numericValue = parsed;
-                    }
-                  } else if (typeof cellValue.value === 'number') {
-                    numericValue = cellValue.value;
-                  }
-
-                  if (numericValue !== null) {
-                    numericValues.push(numericValue);
-                    numericCount++;
-                    console.log(`✓ 숫자 데이터 추출 [${numericCount}]: 행${rowIndex}, 셀${cellIndex}, 값=${numericValue} (원본: ${cellValue.value}, unit: ${cellValue.unit})`);
-                  }
-                }
-              });
-            }
-          });
-
-          console.log(`총 추출된 숫자 데이터 개수: ${numericCount}`);
-        } catch (error) {
-          console.error('_table_data 파싱 오류:', error);
-          console.error('원본 데이터 타입:', typeof stat.data._table_data);
-          console.error('원본 데이터 샘플:', stat.data._table_data?.substring(0, 200));
-        }
-      } else {
-        console.log('_table_data가 없음. stat.data 키들:', Object.keys(stat.data || {}));
-      }
-
-      // 기존 방식으로도 데이터 수집 (호환성 유지)
-      Object.entries(stat.data || {}).forEach(([key, value]) => {
-        if (key.startsWith('_')) return; // _table_data 등은 건너뛰기
-
-        try {
-          let numericValue: number | null = null;
-
-          if (typeof value === 'number') {
-            numericValue = value;
-          } else if (typeof value === 'string') {
-            // 쉼표와 % 제거 후 숫자 변환 시도
-            const cleaned = value.replace(/,/g, '').replace(/%/g, '').trim();
-            const parsed = parseFloat(cleaned);
-            if (!isNaN(parsed)) {
-              numericValue = parsed;
-            }
-          }
-
-          if (numericValue !== null) {
-            numericValues.push(numericValue);
-            console.log(`기존 방식 숫자 데이터: ${key} = ${numericValue}`);
-          }
-        } catch (error) {
-          // Skip parsing errors
-        }
-      });
-    });
-
-    console.log('총 추출된 숫자 데이터:', numericValues);
-    console.log('숫자 데이터 개수:', numericValues.length);
-
-    if (numericValues.length === 0) {
-      console.log('숫자 데이터 없음, fallback 사용');
-      return processedStats?.numeric_stats || {
-        total: 0,
-        mean: 0,
-        median: 0,
-        max: 0,
-        min: 0,
-        count: 0,
-        std_dev: 0
-      };
-    }
-
-    const sortedValues = [...numericValues].sort((a, b) => a - b);
-    const mean = numericValues.reduce((sum, val) => sum + val, 0) / numericValues.length;
-    const variance = numericValues.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / numericValues.length;
-
-    const stats = {
-      total: numericValues.reduce((sum, val) => sum + val, 0),
-      mean: mean,
-      median: sortedValues[Math.floor(sortedValues.length / 2)],
-      max: Math.max(...numericValues),
-      min: Math.min(...numericValues),
-      count: numericValues.length,
-      std_dev: Math.sqrt(variance)
-    };
-
-    console.log('계산된 통계:', stats);
-    console.log('숫자 데이터 샘플 (처음 10개):', numericValues.slice(0, 10));
-    return stats;
   };
 
 
@@ -1072,7 +1011,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
           </h3>
 
           {(() => {
-            const patterns = getTablePatterns();
+            const patterns = analyzeDataPatterns(processedStats?.sample_data || []);
             if (!patterns) return <div className="text-gray-500">데이터 패턴을 분석할 수 없습니다.</div>;
 
             // 비어있는 테이블 체크
@@ -1223,7 +1162,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
           </h3>
 
           {(() => {
-            const patterns = getTablePatterns();
+            const patterns = analyzeDataPatterns(processedStats?.sample_data || []);
             return (
               <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 mb-4">
                 <div className="flex items-center gap-4 flex-wrap text-sm">
@@ -1252,7 +1191,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               ? rawDataByTable[selectedTableName]
               : Object.values(rawDataByTable).flat();
 
-            const reconstructedTables = reconstructTableStructure(selectedData);
+            const reconstructedTables = reconstructIBSheetTable(selectedData);
 
             if (!reconstructedTables || Object.keys(reconstructedTables).length === 0) {
               return (
@@ -1299,76 +1238,122 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
             return (
               <div className="space-y-6">
-                {Object.entries(reconstructedTables).map(([tableName, tableData], tableIndex) => (
-                  <div key={tableIndex} className="border rounded-lg overflow-hidden shadow-sm">
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-3 border-b">
-                      <h4 className="font-semibold text-gray-900 flex items-center">
-                        <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-2">
-                          {tableIndex + 1}
-                        </span>
-                        {tableName}
-                      </h4>
-                      <p className="text-sm text-gray-600 mt-1">
-                        {tableData.length}행 × {tableData[0]?.length || 0}열 구조 |
-                        수집 시점: {new Date().toLocaleString('ko-KR')}
-                      </p>
+                {Object.entries(reconstructedTables).map(([tableName, tableInfo], tableIndex) => {
+                  // 새로운 구조 (고급 기능 포함) vs 기존 구조 호환성
+                  const isAdvancedTable = tableInfo.hasAdvancedFeatures;
+                  const tableData = isAdvancedTable ? tableInfo.grid : tableInfo;
+                  const structure = isAdvancedTable ? tableInfo.structure : null;
+                  const mergeInfo = isAdvancedTable ? tableInfo.mergeInfo : {};
+
+                  const rows = structure ? structure.rows : (Array.isArray(tableData) ? tableData.length : 0);
+                  const cols = structure ? structure.cols : (Array.isArray(tableData) && tableData[0] ? tableData[0].length : 0);
+
+                  return (
+                    <div key={tableIndex} className="border rounded-lg overflow-hidden shadow-sm">
+                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-3 border-b">
+                        <h4 className="font-semibold text-gray-900 flex items-center">
+                          <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-2">
+                            {tableIndex + 1}
+                          </span>
+                          {tableName}
+                          {isAdvancedTable && (
+                            <span className="ml-2 bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
+                              IBSheet 완전 재구성
+                            </span>
+                          )}
+                        </h4>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {rows}행 × {cols}열 구조
+                          {isAdvancedTable && (
+                            <span className="ml-2 text-green-600">
+                              | {Object.keys(mergeInfo).length}개 병합 셀
+                            </span>
+                          )}
+                          <span className="ml-2">| 수집 시점: {new Date().toLocaleString('ko-KR')}</span>
+                        </p>
                     </div>
 
                     <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
+                      <table className="w-full text-sm border-collapse">
                         <tbody>
-                          {tableData.map((row, rowIndex) => (
+                          {Array.isArray(tableData) && tableData.map((row, rowIndex) => (
                             <tr
                               key={rowIndex}
-                              className={`border-b border-gray-100 ${
-                                rowIndex === 0 || row.some(cell => cell.isHeader)
+                              className={`border-b border-gray-200 ${
+                                rowIndex === 0 || (Array.isArray(row) && row.some(cell => cell?.isHeader))
                                   ? 'bg-gray-50 font-semibold'
                                   : rowIndex % 2 === 0
                                     ? 'bg-white hover:bg-blue-25'
                                     : 'bg-gray-25 hover:bg-blue-50'
                               }`}
                             >
-                              {row.map((cell, colIndex) => (
-                                <td
-                                  key={colIndex}
-                                  className={`px-3 py-2 border-r border-gray-200 ${
-                                    cell.type === 'number'
-                                      ? 'text-right font-mono'
-                                      : 'text-left'
-                                  } ${
-                                    cell.isEmpty ? 'bg-gray-100' : ''
-                                  } ${
-                                    cell.isHeader || rowIndex === 0 ? 'font-semibold bg-gray-50 text-gray-800' : ''
-                                  }`}
-                                  title={cell.colName ? `컬럼: ${cell.colName}` : ''}
-                                >
-                                  {cell.isEmpty ? (
-                                    <span className="text-gray-400">-</span>
-                                  ) : (
-                                    <div className="min-w-0">
-                                      <div className={`truncate ${
-                                        cell.type === 'number'
-                                          ? 'text-blue-600 font-medium'
-                                          : cell.isHeader || rowIndex === 0
-                                            ? 'text-gray-800 font-semibold'
-                                            : 'text-gray-900'
-                                      }`}>
-                                        {cell.formatted || '-'}
-                                      </div>
-                                      {cell.type === 'number' && cell.original !== cell.formatted && (
-                                        <div className="text-xs text-gray-500 mt-0.5 truncate" title={cell.original}>
-                                          원본: {cell.original}
+                              {Array.isArray(row) && row.map((cell, colIndex) => {
+                                // 병합된 셀은 렌더링하지 않음
+                                if (cell?.isMerged) return null;
+
+                                const cellKey = `${rowIndex}_${colIndex}`;
+                                const colspan = isAdvancedTable && mergeInfo[cellKey] ? mergeInfo[cellKey].colspan : (cell?.colspan || 1);
+                                const rowspan = isAdvancedTable && mergeInfo[cellKey] ? mergeInfo[cellKey].rowspan : (cell?.rowspan || 1);
+
+                                return (
+                                  <td
+                                    key={colIndex}
+                                    colSpan={colspan}
+                                    rowSpan={rowspan}
+                                    className={`px-3 py-2 border border-gray-300 ${
+                                      cell?.type === 'number'
+                                        ? 'text-right font-mono'
+                                        : 'text-left'
+                                    } ${
+                                      cell?.isEmpty ? 'bg-gray-100' : ''
+                                    } ${
+                                      cell?.isHeader || rowIndex === 0
+                                        ? 'font-semibold bg-gradient-to-br from-blue-50 to-indigo-50 text-gray-800 border-blue-200'
+                                        : 'border-gray-300'
+                                    } ${
+                                      colspan > 1 || rowspan > 1
+                                        ? 'bg-gradient-to-br from-yellow-50 to-orange-50 border-orange-200'
+                                        : ''
+                                    }`}
+                                    title={
+                                      cell?.colName
+                                        ? `컬럼: ${cell.colName}${colspan > 1 ? ` (${colspan}열 병합)` : ''}${rowspan > 1 ? ` (${rowspan}행 병합)` : ''}`
+                                        : (colspan > 1 || rowspan > 1) ? `병합 셀: ${colspan}×${rowspan}` : ''
+                                    }
+                                  >
+                                    {cell?.isEmpty ? (
+                                      <span className="text-gray-400">-</span>
+                                    ) : (
+                                      <div className="min-w-0">
+                                        <div className={`${
+                                          cell?.type === 'number'
+                                            ? 'text-blue-600 font-medium'
+                                            : cell?.isHeader || rowIndex === 0
+                                              ? 'text-gray-800 font-semibold'
+                                              : 'text-gray-900'
+                                        } ${colspan > 1 ? 'text-center' : ''}`}>
+                                          {cell?.formatted || cell?.value || '-'}
                                         </div>
-                                      )}
-                                      {cell.colName && cell.colName !== '' && (
-                                        <div className="text-xs text-gray-400 mt-0.5 truncate" title={`컬럼: ${cell.colName}`}>
-                                          {cell.colName}
-                                        </div>
-                                      )}
+                                        {cell?.type === 'number' && cell?.original !== cell?.formatted && (
+                                          <div className="text-xs text-gray-500 mt-0.5 truncate" title={cell.original}>
+                                            원본: {cell.original}
+                                          </div>
+                                        )}
+                                        {isAdvancedTable && (colspan > 1 || rowspan > 1) && (
+                                          <div className="text-xs text-orange-600 mt-0.5">
+                                            병합: {colspan}×{rowspan}
+                                          </div>
+                                        )}
+                                        {cell?.colName && cell.colName !== '' && (
+                                          <div className="text-xs text-gray-400 mt-0.5 truncate" title={`컬럼: ${cell.colName}`}>
+                                            {cell.colName}
+                                          </div>
+                                        )}
                                     </div>
                                   )}
                                 </td>
-                              ))}
+                                );
+                              })}
                             </tr>
                           ))}
                         </tbody>
@@ -1380,7 +1365,8 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                       숫자 데이터: 파란색 표시 | 헤더: 회색 배경 | 빈 셀: "-" 표시
                     </div>
                   </div>
-                ))}
+                );
+              })}
 
                 <div className="bg-green-50 rounded-lg p-4 border border-green-200">
                   <h4 className="font-medium text-green-900 mb-2 flex items-center">

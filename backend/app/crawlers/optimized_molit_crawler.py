@@ -841,11 +841,12 @@ class OptimizedMolitCrawler:
 
             # sheet01 객체에서 데이터 가져오기
             try:
-                # 여러 IBSheet 객체 이름 시도
+                # 확장된 IBSheet 객체 탐지
                 table_structure_script = """
-                var sheetNames = ['sheet01', 'Sheet1', 'ibsheet', 'IBSheet', 'mainSheet'];
+                var sheetNames = ['sheet01', 'Sheet1', 'ibsheet', 'IBSheet', 'mainSheet', 'grid', 'dataGrid', 'sheet', 'gridSheet'];
                 var tableStructure = null;
 
+                // 1. 기본 이름으로 IBSheet 객체 찾기
                 for (var name of sheetNames) {
                     try {
                         if (typeof window[name] !== 'undefined' && window[name].GetDataRowCount) {
@@ -854,7 +855,7 @@ class OptimizedMolitCrawler:
                             var colCount = 0;
 
                             // 컬럼 수 확인
-                            for (var i = 0; i < 20; i++) {
+                            for (var i = 0; i < 30; i++) {
                                 try {
                                     var colName = sheetObj.GetColName(i);
                                     if (colName && colName.trim() !== '') {
@@ -877,6 +878,52 @@ class OptimizedMolitCrawler:
                         }
                     } catch(e) {
                         console.log('Error checking', name, ':', e);
+                    }
+                }
+
+                // 2. 전역 객체에서 IBSheet 함수가 있는 객체 찾기
+                if (!tableStructure) {
+                    try {
+                        for (var prop in window) {
+                            try {
+                                var obj = window[prop];
+                                if (obj && typeof obj === 'object' &&
+                                    typeof obj.GetDataRowCount === 'function' &&
+                                    typeof obj.GetColName === 'function') {
+
+                                    var rowCount = obj.GetDataRowCount();
+                                    var colCount = 0;
+
+                                    for (var i = 0; i < 30; i++) {
+                                        try {
+                                            var colName = obj.GetColName(i);
+                                            if (colName && colName.trim() !== '') {
+                                                colCount = i + 1;
+                                            } else if (i > 5) {
+                                                break;
+                                            }
+                                        } catch(e) {
+                                            break;
+                                        }
+                                    }
+
+                                    if (rowCount > 0 && colCount > 0) {
+                                        tableStructure = {
+                                            sheetName: prop,
+                                            rowCount: rowCount,
+                                            colCount: colCount,
+                                            structure: 'IBSheet'
+                                        };
+                                        console.log('IBSheet 객체 발견:', prop);
+                                        break;
+                                    }
+                                }
+                            } catch(e) {
+                                // 속성 접근 오류 무시
+                            }
+                        }
+                    } catch(e) {
+                        console.log('전역 객체 탐색 오류:', e);
                     }
                 }
 
@@ -920,6 +967,143 @@ class OptimizedMolitCrawler:
                     headers = driver.execute_script(header_script)
                     ibsheet_data['_table_headers'] = headers
                     print(f"IBSheet 헤더: {headers}")
+
+                    # IBSheet 완전 재구현을 위한 추가 정보 수집
+                    enhanced_info_script = f"""
+                    var sheetObj = window['{sheet_name}'];
+                    var enhancedInfo = {{
+                        mergeInfo: {{
+                            colSpans: {{}},
+                            rowSpans: {{}},
+                            mergedCells: []
+                        }},
+                        hierarchyInfo: {{
+                            maxDivLv: 1,
+                            frozenCols: 0,
+                            frozenRows: 0,
+                            headerDepth: 1
+                        }},
+                        styleInfo: {{
+                            columns: []
+                        }}
+                    }};
+
+                    if (sheetObj) {{
+                        // 1. 병합 정보 수집
+                        try {{
+                            if (sheetObj.GetColSpan && sheetObj.GetRowSpan) {{
+                                for (var r = 0; r < Math.min({row_count}, 50); r++) {{
+                                    for (var c = 0; c < {col_count}; c++) {{
+                                        try {{
+                                            var colspan = sheetObj.GetColSpan(r, c) || 1;
+                                            var rowspan = sheetObj.GetRowSpan(r, c) || 1;
+
+                                            if (colspan > 1 || rowspan > 1) {{
+                                                var cellKey = r + '_' + c;
+                                                enhancedInfo.mergeInfo.colSpans[cellKey] = colspan;
+                                                enhancedInfo.mergeInfo.rowSpans[cellKey] = rowspan;
+                                                enhancedInfo.mergeInfo.mergedCells.push({{
+                                                    row: r,
+                                                    col: c,
+                                                    colspan: colspan,
+                                                    rowspan: rowspan
+                                                }});
+                                            }}
+                                        }} catch(e) {{}}
+                                    }}
+                                }}
+                            }}
+                        }} catch(e) {{
+                            console.log('병합 정보 수집 실패:', e);
+                        }}
+
+                        // 2. 헤더 계층 구조 수집
+                        try {{
+                            if (sheetObj.GetHeaderRows) {{
+                                enhancedInfo.hierarchyInfo.headerDepth = sheetObj.GetHeaderRows();
+                            }}
+                            if (sheetObj.GetFrozenCol) {{
+                                enhancedInfo.hierarchyInfo.frozenCols = sheetObj.GetFrozenCol();
+                            }}
+                            if (sheetObj.GetFrozenRow) {{
+                                enhancedInfo.hierarchyInfo.frozenRows = sheetObj.GetFrozenRow();
+                            }}
+
+                            // 헤더 레벨 분석
+                            var maxLevel = 1;
+                            for (var i = 0; i < Math.min({col_count}, 20); i++) {{
+                                try {{
+                                    var headerText = sheetObj.GetColName ? sheetObj.GetColName(i) : '';
+                                    if (headerText && headerText.includes('|')) {{
+                                        var levels = headerText.split('|').length;
+                                        maxLevel = Math.max(maxLevel, levels);
+                                    }}
+                                }} catch(e) {{}}
+                            }}
+                            enhancedInfo.hierarchyInfo.maxDivLv = maxLevel;
+                        }} catch(e) {{
+                            console.log('헤더 계층 구조 수집 실패:', e);
+                        }}
+
+                        // 3. 컬럼 스타일 정보 수집
+                        try {{
+                            for (var c = 0; c < {col_count}; c++) {{
+                                var colInfo = {{
+                                    index: c,
+                                    type: 'Text',
+                                    width: 100,
+                                    align: 'Left',
+                                    format: '',
+                                    pointCount: 0
+                                }};
+
+                                try {{
+                                    if (sheetObj.GetColType) {{
+                                        colInfo.type = sheetObj.GetColType(c) || 'Text';
+                                    }}
+                                    if (sheetObj.GetColWidth) {{
+                                        colInfo.width = sheetObj.GetColWidth(c) || 100;
+                                    }}
+                                    if (sheetObj.GetColAlign) {{
+                                        colInfo.align = sheetObj.GetColAlign(c) || 'Left';
+                                    }}
+                                    if (sheetObj.GetColFormat) {{
+                                        colInfo.format = sheetObj.GetColFormat(c) || '';
+                                    }}
+                                    if (sheetObj.GetColPointCount) {{
+                                        colInfo.pointCount = sheetObj.GetColPointCount(c) || 0;
+                                    }}
+                                }} catch(e) {{}}
+
+                                enhancedInfo.styleInfo.columns.push(colInfo);
+                            }}
+                        }} catch(e) {{
+                            console.log('스타일 정보 수집 실패:', e);
+                        }}
+                    }}
+
+                    return enhancedInfo;
+                    """
+
+                    enhanced_info = driver.execute_script(enhanced_info_script)
+                    if enhanced_info:
+                        # 병합 정보 저장
+                        if enhanced_info.get('mergeInfo', {}).get('mergedCells'):
+                            ibsheet_data['_merge_info'] = enhanced_info['mergeInfo']
+                            print(f"IBSheet 병합 정보: {len(enhanced_info['mergeInfo']['mergedCells'])}개 병합 셀")
+
+                        # 헤더 계층 정보 저장
+                        if enhanced_info.get('hierarchyInfo'):
+                            ibsheet_data['_hierarchy_info'] = enhanced_info['hierarchyInfo']
+                            hierarchy = enhanced_info['hierarchyInfo']
+                            print(f"IBSheet 헤더 계층: {hierarchy['maxDivLv']}레벨, 고정컬럼: {hierarchy['frozenCols']}")
+
+                        # 스타일 정보 저장
+                        if enhanced_info.get('styleInfo', {}).get('columns'):
+                            ibsheet_data['_style_info'] = enhanced_info['styleInfo']
+                            columns = enhanced_info['styleInfo']['columns']
+                            numeric_cols = len([col for col in columns if col['type'] == 'Float'])
+                            print(f"IBSheet 스타일 정보: {len(columns)}개 컬럼, {numeric_cols}개 숫자 컬럼")
 
                     # 구조화된 데이터 추출 (행/열 위치 정보 포함)
                     max_rows = min(row_count, 50)  # 최대 50행까지
