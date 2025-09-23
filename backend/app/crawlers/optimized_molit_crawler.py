@@ -2063,25 +2063,24 @@ class OptimizedMolitCrawler:
             return {}
 
     def _extract_stat_name_from_url(self, stat_url: str) -> str:
-        """URL에서 통계명 추출 (hRsId 기반)"""
+        """URL에서 통계명 추출 (hRsId 기반 - 동적 저장소 사용)"""
         try:
             # URL에서 hRsId 파라미터 추출
             import re
+            from app.services.stat_name_storage import stat_name_storage
+
             if 'hRsId=' in stat_url:
                 hrsid_match = re.search(r'hRsId=(\d+)', stat_url)
                 if hrsid_match:
                     hrsid = hrsid_match.group(1)
-                    # 일반적인 주택 관련 통계 ID 매핑
-                    stat_name_map = {
-                        '31': '주택건설실적통계(인허가)',
-                        '471': '주택건설실적통계',
-                        '391': '주택착공 및 인허가 현황',
-                        '401': '건설경기동향조사',
-                        '411': '주택보급률 통계'
-                    }
-                    if hrsid in stat_name_map:
-                        return stat_name_map[hrsid]
+
+                    # 동적 저장소에서 통계명 조회
+                    stat_name = stat_name_storage.get_stat_name(hrsid)
+                    if stat_name:
+                        print(f"저장된 통계명 사용: {hrsid} -> {stat_name}")
+                        return stat_name
                     else:
+                        print(f"미등록 통계 ID: {hrsid}")
                         return f"통계 ID {hrsid}"
             return ""
         except Exception as e:

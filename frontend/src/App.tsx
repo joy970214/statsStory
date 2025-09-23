@@ -25,6 +25,7 @@ function App() {
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
   const [ongoingTask, setOngoingTask] = useState<{taskId: string, statName: string, startTime: string, statInfo?: StatItem} | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isCancelling, setIsCancelling] = useState<boolean>(false);
   const [tableAnalysisStatName, setTableAnalysisStatName] = useState<string | null>(null);
   const [selectedStatForDetail, setSelectedStatForDetail] = useState<string | null>(null);
 
@@ -93,6 +94,7 @@ function App() {
 
         // 기존 작업 취소
         try {
+          setIsCancelling(true);
           console.log('기존 작업 취소 시작, taskId:', currentTaskId);
           await statsAPI.cancelAnalysis(currentTaskId);
           localStorage.removeItem('ongoingAnalysisTask');
@@ -102,6 +104,8 @@ function App() {
         } catch (cancelError) {
           console.error('기존 작업 취소 실패:', cancelError);
           // 취소 실패해도 새 작업은 시작
+        } finally {
+          setIsCancelling(false);
         }
       }
 
@@ -259,7 +263,12 @@ function App() {
                           setState('optimized-progress');
                         }
                       }}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm"
+                      disabled={isCancelling}
+                      className={`px-4 py-2 rounded-md text-sm ${
+                        isCancelling
+                          ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                          : 'bg-blue-600 text-white hover:bg-blue-700'
+                      }`}
                     >
                       진행 상황 보기
                     </button>
@@ -267,10 +276,7 @@ function App() {
                       onClick={async () => {
                         if (window.confirm('진행 중인 분석을 취소하시겠습니까?')) {
                           try {
-                            // 즉시 UI 상태 정리 (API 호출 전에)
-                            localStorage.removeItem('ongoingAnalysisTask');
-                            setOngoingTask(null);
-                            setCurrentTaskId(null);
+                            setIsCancelling(true);
 
                             console.log('작업 취소 시작, taskId:', currentTaskId);
                             if (currentTaskId) {
@@ -278,18 +284,30 @@ function App() {
                               console.log('취소 API 응답:', response);
                             }
 
+                            // API 호출 성공 후 UI 상태 정리
+                            localStorage.removeItem('ongoingAnalysisTask');
+                            setOngoingTask(null);
+                            setCurrentTaskId(null);
+
                             console.log('작업 취소 완료');
                             alert('분석 작업이 취소되었습니다.');
 
                           } catch (error) {
                             console.error('작업 취소 실패:', error);
                             alert(`작업 취소 실패: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+                          } finally {
+                            setIsCancelling(false);
                           }
                         }
                       }}
-                      className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 text-sm"
+                      disabled={isCancelling}
+                      className={`px-4 py-2 rounded-md text-sm ${
+                        isCancelling
+                          ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                          : 'bg-red-600 text-white hover:bg-red-700'
+                      }`}
                     >
-                      취소
+                      {isCancelling ? '취소 중...' : '취소'}
                     </button>
                   </div>
                 </div>
@@ -332,6 +350,7 @@ function App() {
                     key={stat.id}
                     stat={stat}
                     onSelect={handleStatSelect}
+                    disabled={isCancelling}
                   />
                 ))}
               </div>

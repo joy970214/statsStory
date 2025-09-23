@@ -4,9 +4,10 @@ import { StatItem } from '../services/api';
 interface StatCardProps {
   stat: StatItem;
   onSelect: (stat: StatItem) => void;
+  disabled?: boolean;
 }
 
-export const StatCard: React.FC<StatCardProps> = ({ stat, onSelect }) => {
+export const StatCard: React.FC<StatCardProps> = ({ stat, onSelect, disabled = false }) => {
 
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-200">
@@ -26,10 +27,15 @@ export const StatCard: React.FC<StatCardProps> = ({ stat, onSelect }) => {
         
         <div className="flex gap-2 mt-4">
           <button
-            className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
-            onClick={() => onSelect(stat)}
+            className={`flex-1 py-2 px-4 rounded-md transition-colors ${
+              disabled
+                ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`}
+            onClick={() => !disabled && onSelect(stat)}
+            disabled={disabled}
           >
-            🔍 분석하기
+            {disabled ? '취소 중...' : '🔍 분석하기'}
           </button>
 
           {stat.url && (

@@ -19,6 +19,7 @@ from app.services.data_storage import DataStorageService
 from app.services.mcp_client import mcp_client
 from app.services.mcp_analysis_service import mcp_analysis_service
 from app.services.progress_service import progress_tracker, stream_progress, ProgressCallback
+from app.services.stat_name_storage import stat_name_storage
 try:
     from app.crawlers.optimized_molit_crawler import OptimizedMolitCrawler
 except ImportError as e:
@@ -42,6 +43,25 @@ _cache = {
 
 # 캐시 TTL (5분)
 CACHE_TTL_MINUTES = 5
+
+
+def _store_stat_name_from_request(stat_name: str, stat_url: str):
+    """요청에서 받은 통계명을 동적 저장소에 저장"""
+    try:
+        import re
+        if 'hRsId=' in stat_url:
+            hrsid_match = re.search(r'hRsId=(\d+)', stat_url)
+            if hrsid_match and stat_name:
+                hrsid = hrsid_match.group(1)
+                # 기존에 저장된 통계명과 다르거나 없는 경우에만 저장
+                existing_name = stat_name_storage.get_stat_name(hrsid)
+                if not existing_name or existing_name != stat_name:
+                    stat_name_storage.store_stat_name(hrsid, stat_name)
+                    print(f"통계명 동적 저장: {hrsid} -> {stat_name}")
+                else:
+                    print(f"이미 동일한 통계명 저장됨: {hrsid} -> {stat_name}")
+    except Exception as e:
+        print(f"통계명 저장 중 오류: {e}")
 
 @router.get("/recent-stats", response_model=RecentStatsResponse)
 async def get_recent_stats():
@@ -97,10 +117,13 @@ async def analyze_basic(request: GenerateStoryRequest):
     """기본 분석 - 메타데이터와 데이터 정리"""
     try:
         stat_url = request.stat_url or "https://stat.molit.go.kr/portal/cate/statView.do"
-        
+
         print(f"기본 분석 요청: {request.stat_name}")
         print(f"통계 URL: {stat_url}")
-        
+
+        # 통계명을 동적 저장소에 저장
+        _store_stat_name_from_request(request.stat_name, stat_url)
+
         # 1. 캐시된 데이터 확인
         cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
         
@@ -175,9 +198,12 @@ async def generate_advanced_cardnews(request: GenerateStoryRequest):
     """기본통계현황분석 - 즉시 응답 (기존 버전)"""
     try:
         stat_url = request.stat_url or "https://stat.molit.go.kr/portal/cate/statView.do"
-        
+
         print(f"기본통계현황분석 요청: {request.stat_name}")
-        
+
+        # 통계명을 동적 저장소에 저장
+        _store_stat_name_from_request(request.stat_name, stat_url)
+
         # 1. 캐시된 데이터 확인
         cached_metadata, cached_stat_data = storage_service.get_cached_data(stat_url)
         
@@ -288,9 +314,13 @@ async def generate_advanced_cardnews(request: GenerateStoryRequest):
 async def start_optimized_analysis(request: GenerateStoryRequest, background_tasks: BackgroundTasks):
     """최적화된 기본통계현황분석 시작 - 작업 ID 반환"""
     try:
+        # 통계명을 동적 저장소에 저장
+        if request.stat_url:
+            _store_stat_name_from_request(request.stat_name, request.stat_url)
+
         # 작업 ID 생성
         task_id = progress_tracker.create_task(f"기본통계현황분석: {request.stat_name}")
-        
+
         # 백그라운드에서 분석 실행
         background_tasks.add_task(run_optimized_analysis, task_id, request)
         
@@ -448,7 +478,7 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
         if OptimizedMolitCrawler is None:
             progress_tracker.update_progress(task_id, "오류", 100, "최적화된 크롤러를 로드할 수 없습니다")
             return
-            
+
         optimized_crawler = OptimizedMolitCrawler(pool_size=3, max_concurrent_tables=3)
         
         # 캐시된 데이터가 있으면 사용, 없으면 새로 수집
@@ -1061,16 +1091,18 @@ async def cancel_analysis(task_id: str):
             print(f"[취소 API] 이미 완료된 작업: {task_id}")
             return {"message": "이미 완료된 작업입니다", "task_id": task_id}
 
-        # 작업 취소 - Redis에서 상태 업데이트
+        # 작업 취소 - 진행률 업데이트로 취소 상태 설정
         print(f"[취소 API] 작업 취소 중: {task_id}")
-        progress_tracker.set_task_status(task_id, {
-            "task_id": task_id,
-            "completed": True,
-            "progress": 100,
-            "stage": "cancelled",
-            "message": "사용자에 의해 취소됨",
-            "cancelled": True
-        })
+        progress_tracker.update_progress(
+            task_id=task_id,
+            stage="cancelled",
+            progress=100,
+            message="사용자에 의해 취소됨"
+        )
+
+        # active_tasks에서 취소 플래그 설정
+        if task_id in progress_tracker.active_tasks:
+            progress_tracker.active_tasks[task_id]["cancelled"] = True
 
         # 메모리에서 결과 제거 (있다면)
         if task_id in task_results:
