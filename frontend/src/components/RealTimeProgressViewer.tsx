@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { statsAPI } from '../services/api';
+import { motion } from 'framer-motion';
+import { 
+  CheckCircleIcon, 
+  ClockIcon, 
+  SparklesIcon
+} from '@heroicons/react/24/outline';
 
 interface ProgressData {
   task_id: string;
@@ -27,7 +33,6 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
   const [progress, setProgress] = useState<ProgressData | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [eventSource, setEventSource] = useState<EventSource | null>(null);
-  const [startTime] = useState(new Date());
   const [elapsedTime, setElapsedTime] = useState(0);
 
   // 경과 시간 업데이트 타이머
@@ -38,6 +43,23 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
 
     return () => clearInterval(timer);
   }, []);
+
+  const handleCompletion = React.useCallback(async () => {
+    try {
+      // 잠시 대기 후 결과 조회 (백엔드에서 결과 저장 완료 대기)
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const result = await statsAPI.getAnalysisResult(taskId);
+      onComplete(result);
+    } catch (error) {
+      console.error('결과 조회 오류:', error);
+      onError('분석 결과를 가져오는데 실패했습니다.');
+    } finally {
+      if (eventSource) {
+        eventSource.close();
+      }
+    }
+  }, [taskId, onComplete, onError, eventSource]);
 
   useEffect(() => {
     console.log(`[RealTimeProgressViewer] useEffect 시작 - taskId: ${taskId}`);
@@ -147,24 +169,7 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
 
       console.log('[RealTimeProgressViewer] 정리 완료');
     };
-  }, [taskId]);
-
-  const handleCompletion = async () => {
-    try {
-      // 잠시 대기 후 결과 조회 (백엔드에서 결과 저장 완료 대기)
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const result = await statsAPI.getAnalysisResult(taskId);
-      onComplete(result);
-    } catch (error) {
-      console.error('결과 조회 오류:', error);
-      onError('분석 결과를 가져오는데 실패했습니다.');
-    } finally {
-      if (eventSource) {
-        eventSource.close();
-      }
-    }
-  };
+  }, [taskId, handleCompletion]);
 
   const formatElapsedTime = () => {
     const minutes = Math.floor(elapsedTime / 60);
@@ -181,77 +186,190 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
 
   if (!progress) {
     return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">분석 연결 중...</p>
-        <p className="text-sm text-gray-500">통계: {statName}</p>
-      </div>
+      <motion.div 
+        className="text-center py-12"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="relative mx-auto w-16 h-16 mb-4">
+          <motion.div 
+            className="w-16 h-16 rounded-full border-4 border-primary-200"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          />
+          <motion.div 
+            className="absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-transparent border-t-primary-600"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          />
+          <motion.div 
+            className="absolute inset-0 flex items-center justify-center"
+            animate={{ 
+              scale: [1, 1.1, 1],
+            }}
+            transition={{ 
+              duration: 1.5, 
+              repeat: Infinity, 
+              ease: "easeInOut" 
+            }}
+          >
+            <SparklesIcon className="w-6 h-6 text-primary-600" />
+          </motion.div>
+        </div>
+        <motion.p 
+          className="text-gray-700 font-medium text-lg"
+          animate={{ opacity: [0.7, 1, 0.7] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          분석 연결 중...
+        </motion.p>
+        <p className="text-sm text-gray-500 mt-2">통계: {statName}</p>
+      </motion.div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <motion.div 
+      className="max-w-2xl mx-auto"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       {/* 헤더 */}
-      <div className="mb-6 text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+      <div className="mb-8 text-center">
+        <motion.h2 
+          className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-3"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
           기본통계현황분석
-        </h2>
-        <p className="text-gray-600">{statName}</p>
-        <div className="flex justify-center items-center mt-2 text-sm text-gray-500">
-          <span className={`inline-block w-2 h-2 rounded-full mr-2 ${
-            isConnected ? 'bg-green-500' : 'bg-red-500'
-          }`}></span>
-          {isConnected ? '실시간 연결됨' : '연결 끊어짐'}
-          <span className="ml-4">경과시간: {formatElapsedTime()}</span>
-        </div>
+        </motion.h2>
+        <motion.p 
+          className="text-gray-700 font-medium text-lg mb-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          {statName}
+        </motion.p>
+        <motion.div 
+          className="flex justify-center items-center gap-4 text-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <div className="flex items-center gap-2">
+            <motion.div 
+              className={`w-3 h-3 rounded-full ${
+                isConnected ? 'bg-green-500' : 'bg-red-500'
+              }`}
+              animate={{ 
+                scale: isConnected ? [1, 1.2, 1] : 1,
+                opacity: isConnected ? [1, 0.7, 1] : 1
+              }}
+              transition={{ 
+                duration: 2, 
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+            <span className={`font-medium ${
+              isConnected ? 'text-green-600' : 'text-red-600'
+            }`}>
+              {isConnected ? '실시간 연결됨' : '연결 끊어짐'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-gray-600">
+            <ClockIcon className="w-4 h-4" />
+            <span>경과시간: {formatElapsedTime()}</span>
+          </div>
+        </motion.div>
       </div>
 
       {/* 진행률 바 */}
-      <div className="mb-6">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium text-gray-700">{progress.stage}</span>
-          <span className="text-sm font-medium text-gray-700">{progress.progress.toFixed(1)}%</span>
+      <motion.div 
+        className="mb-8"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+      >
+        <div className="flex justify-between items-center mb-3">
+          <span className="text-lg font-semibold text-gray-800">{progress.stage}</span>
+          <span className="text-lg font-bold text-primary-600">{progress.progress.toFixed(1)}%</span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-3">
-          <div 
-            className="bg-blue-600 h-3 rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${Math.min(progress.progress, 100)}%` }}
-          ></div>
+        <div className="w-full bg-gray-200 rounded-full h-4 shadow-inner">
+          <motion.div 
+            className="bg-gradient-to-r from-primary-500 to-primary-600 h-4 rounded-full shadow-lg"
+            initial={{ width: 0 }}
+            animate={{ width: `${Math.min(progress.progress, 100)}%` }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          />
         </div>
         {progress.estimated_remaining_time && (
-          <p className="text-sm text-gray-600 mt-2 text-right">
+          <motion.p 
+            className="text-sm text-gray-600 mt-3 text-right font-medium"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
             {formatRemainingTime(progress.estimated_remaining_time)}
-          </p>
+          </motion.p>
         )}
-      </div>
+      </motion.div>
 
       {/* 현재 상태 메시지 */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-        <div className="flex">
+      <motion.div 
+        className="bg-gradient-to-r from-primary-50 to-primary-100 border border-primary-200 rounded-xl p-6 mb-8 shadow-lg"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.6 }}
+      >
+        <div className="flex items-start">
           <div className="flex-shrink-0">
             {progress.progress < 100 ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+              <motion.div 
+                className="relative w-8 h-8"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              >
+                <div className="w-8 h-8 rounded-full border-4 border-primary-200"></div>
+                <div className="absolute top-0 left-0 w-8 h-8 rounded-full border-4 border-transparent border-t-primary-600"></div>
+              </motion.div>
             ) : (
-              <div className="rounded-full h-5 w-5 bg-green-500 flex items-center justify-center">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </div>
+              <motion.div 
+                className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              >
+                <CheckCircleIcon className="w-5 h-5 text-white" />
+              </motion.div>
             )}
           </div>
-          <div className="ml-3 flex-1">
-            <p className="text-sm font-medium text-blue-800">{progress.message}</p>
-            <p className="text-xs text-blue-600 mt-1">
+          <div className="ml-4 flex-1">
+            <p className="text-base font-semibold text-primary-800 mb-2">{progress.message}</p>
+            <p className="text-sm text-primary-600 flex items-center gap-2">
+              <ClockIcon className="w-4 h-4" />
               마지막 업데이트: {new Date(progress.timestamp).toLocaleTimeString()}
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* 처리 단계 표시 */}
-      <div className="bg-white border rounded-lg p-4">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">처리 단계</h3>
-        <div className="space-y-3">
+      <motion.div 
+        className="bg-white border border-gray-200 rounded-xl p-6 shadow-lg"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7 }}
+      >
+        <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
+          <SparklesIcon className="w-5 h-5 text-primary-600" />
+          처리 단계
+        </h3>
+        <div className="space-y-4">
           {[
             { name: '초기화', key: 'init', description: '최적화된 크롤러 초기화 및 설정' },
             { name: '메타데이터', key: 'metadata', description: '통계정보 및 관련용어 수집' },
@@ -265,33 +383,53 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
             const isCompleted = progress.progress > (index * 16.67);
             
             return (
-              <div key={step.key} className="flex items-start">
-                <div className="flex-shrink-0 mr-3 mt-1">
+              <motion.div 
+                key={step.key} 
+                className="flex items-start p-3 rounded-lg transition-all duration-200 hover:bg-gray-50"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.8 + index * 0.1 }}
+              >
+                <div className="flex-shrink-0 mr-4 mt-1">
                   {isCompleted ? (
-                    <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
+                    <motion.div 
+                      className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-lg"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    >
+                      <CheckCircleIcon className="w-4 h-4 text-white" />
+                    </motion.div>
                   ) : isActive ? (
-                    <div className="w-5 h-5 bg-blue-600 rounded-full animate-pulse"></div>
+                    <motion.div 
+                      className="w-6 h-6 bg-primary-600 rounded-full shadow-lg"
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        opacity: [1, 0.7, 1]
+                      }}
+                      transition={{ 
+                        duration: 1.5, 
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
                   ) : (
-                    <div className="w-5 h-5 bg-gray-300 rounded-full"></div>
+                    <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
                   )}
                 </div>
                 <div className="flex-1">
-                  <p className={`text-sm font-medium ${
-                    isActive ? 'text-blue-600' : isCompleted ? 'text-green-600' : 'text-gray-500'
+                  <p className={`text-base font-semibold mb-1 ${
+                    isActive ? 'text-primary-600' : isCompleted ? 'text-green-600' : 'text-gray-500'
                   }`}>
                     {step.name}
                   </p>
-                  <p className="text-xs text-gray-600">{step.description}</p>
+                  <p className="text-sm text-gray-600">{step.description}</p>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
