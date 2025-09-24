@@ -91,6 +91,7 @@ function App() {
       console.log('API 호출 시작...');
       const response = await statsAPI.getRecentStats();
       console.log('API 응답:', response);
+      console.log('통계 데이터 stat_field 값들:', response.stats.map(stat => ({ title: stat.title, stat_field: stat.stat_field })));
       setStats(response.stats);
       setState('stats-list');
     } catch (err) {
@@ -226,15 +227,17 @@ function App() {
     return stat.stat_field === selectedFilter;
   });
 
-  // 사용 가능한 필터 옵션들
+  // 실제 데이터에서 사용되는 stat_field 값들 추출
+  const availableStatFields = Array.from(new Set(stats.map(stat => stat.stat_field).filter(Boolean) as string[]));
+  
+  // 사용 가능한 필터 옵션들 (동적으로 생성)
   const filterOptions = [
     { key: 'all', label: '전체', color: 'primary' },
-    { key: '항공', label: '항공', color: 'blue' },
-    { key: '교통/물류', label: '교통/물류', color: 'teal' },
-    { key: '도시/건설', label: '도시/건설', color: 'purple' },
-    { key: '부동산', label: '부동산', color: 'amber' },
-    { key: '환경', label: '환경', color: 'green' },
-    { key: '기타', label: '기타', color: 'slate' }
+    ...availableStatFields.map((field, index) => ({
+      key: field,
+      label: field,
+      color: ['blue', 'teal', 'purple', 'amber', 'green', 'slate', 'indigo', 'pink', 'yellow', 'red'][index % 10] as string
+    }))
   ];
 
   return (
@@ -461,15 +464,16 @@ function App() {
                         <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                       )}
                       {option.label}
-                      {option.key !== 'all' && (
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          selectedFilter === option.key
-                            ? 'bg-white/20 text-white'
-                            : 'bg-gray-100 text-gray-500'
-                        }`}>
-                          {stats.filter(stat => stat.stat_field === option.key).length}
-                        </span>
-                      )}
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${
+                        selectedFilter === option.key
+                          ? 'bg-white/20 text-white'
+                          : 'bg-gray-100 text-gray-500'
+                      }`}>
+                        {option.key === 'all' 
+                          ? stats.length 
+                          : stats.filter(stat => stat.stat_field === option.key).length
+                        }
+                      </span>
                     </button>
                   );
                 })}

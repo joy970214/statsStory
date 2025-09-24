@@ -6,6 +6,16 @@ import {
   openOriginalUrl,
   generateBasicStatisticsMarkdown
 } from '../utils/downloadUtils';
+import { motion } from 'framer-motion';
+import { 
+  ArrowLeftIcon,
+  ChartBarIcon,
+  DocumentArrowDownIcon,
+  ArrowTopRightOnSquareIcon,
+  TableCellsIcon,
+  SparklesIcon,
+  EyeIcon
+} from '@heroicons/react/24/outline';
 
 interface EnhancedBasicStatisticsViewerProps {
   analysisData: AdvancedCardNewsResponse;
@@ -700,33 +710,48 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
   return (
     <div className="max-w-6xl mx-auto">
       {/* 헤더 */}
-      <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-        <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
-          <h1 className="text-2xl font-bold text-gray-900">📈 기본통계현황분석 결과 (실제 수집 데이터 기반)</h1>
-          <div className="flex flex-wrap gap-2">
+      <motion.div 
+        className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-8"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-2 flex items-center gap-3">
+              <ChartBarIcon className="w-8 h-8 text-primary-600" />
+              기본통계현황분석 결과
+            </h1>
+            <p className="text-gray-600 text-lg">실제 수집 데이터 기반 분석 결과</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={onBack}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+              className="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-3 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
             >
+              <ArrowLeftIcon className="w-5 h-5" />
               뒤로 가기
             </button>
             <button
               onClick={handleDownloadMD}
-              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+              className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
             >
+              <DocumentArrowDownIcon className="w-5 h-5" />
               MD 다운로드
             </button>
             <button
               onClick={handleDownloadPDF}
-              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+              className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
             >
+              <DocumentArrowDownIcon className="w-5 h-5" />
               PDF 다운로드
             </button>
             {analysisData.metadata?.url && (
               <button
                 onClick={handleViewOriginal}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
               >
+                <ArrowTopRightOnSquareIcon className="w-5 h-5" />
                 원본 보기
               </button>
             )}
@@ -740,7 +765,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
             <span className="bg-blue-200 px-2 py-1 rounded-full">실제 수집 데이터 분석</span>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* 탭 네비게이션 */}
       <div className="bg-white rounded-lg shadow-sm border mb-6">
