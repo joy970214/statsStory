@@ -122,6 +122,12 @@ export interface AdvancedCardNewsResponse {
 }
 
 export const statsAPI = {
+  // 서버 헬스 체크 (연결 상태 확인용)
+  async healthCheck(): Promise<{status: string, timestamp: string}> {
+    const response = await api.get('/health');
+    return response.data;
+  },
+
   // 최근 통계 목록 조회
   async getRecentStats(): Promise<RecentStatsResponse> {
     const response = await api.get<RecentStatsResponse>('/recent-stats');

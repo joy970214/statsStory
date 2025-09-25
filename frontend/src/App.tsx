@@ -25,9 +25,18 @@ import {
 
 type AppState = 'loading' | 'stats-list' | 'viewing-advanced-cardnews' | 'optimized-progress' | 'viewing-table-analysis' | 'collected-stats' | 'stat-detail' | 'stat-distribution' | 'stat-summary';
 
+type SystemStatus = {
+  isOnline: boolean;
+  isServerConnected: boolean;
+};
+
 function App() {
   const [state, setState] = useState<AppState>('loading');
   const [stats, setStats] = useState<StatItem[]>([]);
+  const [systemStatus, setSystemStatus] = useState<SystemStatus>({
+    isOnline: navigator.onLine,
+    isServerConnected: false
+  });
   const [optimizedResult, setOptimizedResult] = useState<any | null>(null);
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
   const [ongoingTask, setOngoingTask] = useState<{taskId: string, statName: string, startTime: string, statInfo?: StatItem} | null>(null);
@@ -41,6 +50,23 @@ function App() {
   useEffect(() => {
     loadRecentStats();
     checkOngoingTask();
+    checkSystemStatus();
+    
+    // 인터넷 연결 상태 모니터링
+    const handleOnline = () => setSystemStatus(prev => ({ ...prev, isOnline: true }));
+    const handleOffline = () => setSystemStatus(prev => ({ ...prev, isOnline: false }));
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    // 서버 연결 상태 주기적 확인
+    const serverCheckInterval = setInterval(checkServerConnection, 30000); // 30초마다
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      clearInterval(serverCheckInterval);
+    };
   }, []);
 
   // 스크롤 이벤트 리스너
@@ -78,6 +104,31 @@ function App() {
       } catch (error) {
         localStorage.removeItem('ongoingAnalysisTask');
       }
+    }
+  };
+
+  const checkSystemStatus = async () => {
+    // 인터넷 연결 상태 확인
+    const isOnline = navigator.onLine;
+
+    // 서버 연결 상태 확인 (가벼운 헬스 체크 사용)
+    let isServerConnected = false;
+    try {
+      await statsAPI.healthCheck();
+      isServerConnected = true;
+    } catch (error) {
+      isServerConnected = false;
+    }
+
+    setSystemStatus({ isOnline, isServerConnected });
+  };
+
+  const checkServerConnection = async () => {
+    try {
+      await statsAPI.healthCheck();
+      setSystemStatus(prev => ({ ...prev, isServerConnected: true }));
+    } catch (error) {
+      setSystemStatus(prev => ({ ...prev, isServerConnected: false }));
     }
   };
 
@@ -269,8 +320,31 @@ function App() {
               {/* 상태 표시 */}
               <div className="hidden md:flex items-center gap-3">
                 <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-white/50">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium text-gray-700">시스템 정상</span>
+                  {(() => {
+                    // 시스템 상태에 따른 표시
+                    if (!systemStatus.isOnline) {
+                      return (
+                        <>
+                          <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                          <span className="text-sm font-medium text-gray-700">인터넷 연결 안됨</span>
+                        </>
+                      );
+                    } else if (!systemStatus.isServerConnected) {
+                      return (
+                        <>
+                          <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                          <span className="text-sm font-medium text-gray-700">서버 연결 안됨</span>
+                        </>
+                      );
+                    } else {
+                      return (
+                        <>
+                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                          <span className="text-sm font-medium text-gray-700">시스템 정상</span>
+                        </>
+                      );
+                    }
+                  })()}
                 </div>
               </div>
               
@@ -410,58 +484,72 @@ function App() {
                 </button>
               </div>
 
-              {/* 필터 버튼들 */}
-              <div className="flex flex-wrap gap-3 mb-6">
-                {filterOptions.map((option) => {
-                  // 동적 클래스명을 미리 정의
-                  const getActiveClasses = (color: string) => {
-                    switch (color) {
-                      case 'primary':
-                        return 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg';
-                      case 'blue':
-                        return 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg';
-                      case 'teal':
-                        return 'bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg';
-                      case 'purple':
-                        return 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg';
-                      case 'amber':
-                        return 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg';
-                      case 'green':
-                        return 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg';
-                      case 'slate':
-                        return 'bg-gradient-to-r from-slate-500 to-slate-600 text-white shadow-lg';
-                      default:
-                        return 'bg-gradient-to-r from-gray-500 to-gray-600 text-white shadow-lg';
-                    }
-                  };
+              {/* 필터 버튼들과 통계 개수 */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                {/* 필터 버튼들 */}
+                <div className="flex flex-wrap gap-3">
+                  {filterOptions.map((option) => {
+                    // 동적 클래스명을 미리 정의
+                    const getActiveClasses = (color: string) => {
+                      switch (color) {
+                        case 'primary':
+                          return 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg';
+                        case 'blue':
+                          return 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg';
+                        case 'teal':
+                          return 'bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg';
+                        case 'purple':
+                          return 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg';
+                        case 'amber':
+                          return 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg';
+                        case 'green':
+                          return 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg';
+                        case 'slate':
+                          return 'bg-gradient-to-r from-slate-500 to-slate-600 text-white shadow-lg';
+                        default:
+                          return 'bg-gradient-to-r from-gray-500 to-gray-600 text-white shadow-lg';
+                      }
+                    };
 
-                  return (
-                    <button
-                      key={option.key}
-                      onClick={() => setSelectedFilter(option.key)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
-                        selectedFilter === option.key
-                          ? getActiveClasses(option.color)
-                          : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      {selectedFilter === option.key && (
-                        <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                      )}
-                      {option.label}
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${
-                        selectedFilter === option.key
-                          ? 'bg-white/20 text-white'
-                          : 'bg-gray-100 text-gray-500'
-                      }`}>
-                        {option.key === 'all' 
-                          ? stats.length 
-                          : stats.filter(stat => stat.stat_field === option.key).length
-                        }
-                      </span>
-                    </button>
-                  );
-                })}
+                    return (
+                      <button
+                        key={option.key}
+                        onClick={() => setSelectedFilter(option.key)}
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
+                          selectedFilter === option.key
+                            ? getActiveClasses(option.color)
+                            : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        {selectedFilter === option.key && (
+                          <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                        )}
+                        {option.label}
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${
+                          selectedFilter === option.key
+                            ? 'bg-white/20 text-white'
+                            : 'bg-gray-100 text-gray-500'
+                        }`}>
+                          {option.key === 'all' 
+                            ? stats.length 
+                            : stats.filter(stat => stat.stat_field === option.key).length
+                          }
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* 통계 개수 표시 */}
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <ChartBarIcon className="w-4 h-4" />
+                  <span>
+                    {selectedFilter === 'all' 
+                      ? `전체 ${stats.length}개 통계` 
+                      : `"${filterOptions.find(opt => opt.key === selectedFilter)?.label}" ${stats.filter(stat => stat.stat_field === selectedFilter).length}개 통계`
+                    }
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -496,26 +584,18 @@ function App() {
               </div>
             ) : (
               <>
-                {/* 필터 결과 정보 */}
-                <div className="mb-6 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <ChartBarIcon className="w-4 h-4" />
-                    <span>
-                      {selectedFilter === 'all' 
-                        ? `전체 ${filteredStats.length}개 통계` 
-                        : `"${filterOptions.find(opt => opt.key === selectedFilter)?.label}" ${filteredStats.length}개 통계`
-                      }
-                    </span>
-                  </div>
-                  {selectedFilter !== 'all' && (
+                {/* 필터 초기화 버튼 (필요한 경우에만 표시) */}
+                {selectedFilter !== 'all' && (
+                  <div className="mb-4 flex justify-end">
                     <button
                       onClick={() => setSelectedFilter('all')}
-                      className="text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors duration-200"
+                      className="text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors duration-200 flex items-center gap-2"
                     >
+                      <ChartBarIcon className="w-4 h-4" />
                       필터 초기화
                     </button>
-                  )}
-                </div>
+                  </div>
+                )}
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredStats.map((stat) => (

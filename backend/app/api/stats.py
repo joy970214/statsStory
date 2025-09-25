@@ -45,6 +45,12 @@ _cache = {
 CACHE_TTL_MINUTES = 5
 
 
+@router.get("/health")
+async def health_check():
+    """서버 연결 상태 확인용 간단한 헬스 체크"""
+    return {"status": "ok", "timestamp": datetime.now().isoformat()}
+
+
 def _store_stat_name_from_request(stat_name: str, stat_url: str):
     """요청에서 받은 통계명을 동적 저장소에 저장"""
     try:

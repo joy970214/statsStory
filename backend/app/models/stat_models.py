@@ -52,6 +52,7 @@ class ComprehensiveStatAnalysis(BaseModel):
     total_data_points: int = 0
     collection_summary: Dict[str, Any] = {}  # 수집 요약 정보
     analysis_insights: List[str] = []  # 분석 인사이트
+    metadata_by_table: Dict[str, StatMetadata] = {}  # 통계표별 메타데이터
     created_at: datetime
 
 class GenerateStoryRequest(BaseModel):

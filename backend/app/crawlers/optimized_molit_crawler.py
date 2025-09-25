@@ -224,65 +224,72 @@ class OptimizedMolitCrawler:
             self.browser_pool.cleanup()
 
     async def get_comprehensive_stat_analysis_optimized(
-        self, 
-        stat_url: str, 
+        self,
+        stat_url: str,
         progress_callback: Optional[ProgressCallback] = None
     ) -> ComprehensiveStatAnalysis:
-        """최적화된 종합 통계 분석 - 병렬 처리 및 실시간 진행률"""
-        
+        """최적화된 종합 통계 분석 - 통계표별 개별 메타데이터 수집 방식"""
+
         if not progress_callback:
             progress_callback = ProgressCallback()
-            
+
         print(f"최적화된 종합 통계 분석 시작: {stat_url}")
         progress_callback.update("초기화", 0, "분석 시작")
-        
+
         try:
-            # 1단계: 메타데이터 수집 (5%)
-            progress_callback.update("메타데이터", 5, "통계 메타데이터 수집 중")
-            metadata = await self._get_metadata_fast(stat_url)
-            
-            # 2단계: 통계표 목록과 조건 분석 (15%)
-            progress_callback.update("통계표목록", 15, "통계표 목록 및 조건 분석 중")
+            # 1단계: 통계표 목록 수집 (10%)
+            progress_callback.update("통계표목록", 10, "통계표 목록 수집 중")
             stat_tables_with_conditions = await self._get_stat_tables_with_conditions(stat_url)
-            
+
             total_tables = len(stat_tables_with_conditions)
-            progress_callback.update("통계표목록", 20, f"{total_tables}개 통계표 발견 (조건 분석 완료)")
-            
+            progress_callback.update("통계표목록", 15, f"{total_tables}개 통계표 발견")
+
             if total_tables == 0:
+                # 기본 메타데이터만 수집하여 빈 분석 결과 반환
+                basic_metadata = await self._get_metadata_fast(stat_url)
                 progress_callback.update("완료", 100, "수집할 통계표가 없습니다")
-                return self._create_empty_analysis(stat_url, metadata)
-            
-            # 3단계: 조건별 데이터 수집 (20% -> 90%)
-            progress_callback.update("데이터수집", 20, f"병렬 데이터 수집 시작 ({total_tables}개 통계표)")
-            
-            data_by_table, collection_summary = await self._collect_tables_with_conditions_parallel(
+                return self._create_empty_analysis(stat_url, basic_metadata)
+
+            # 2단계: 통계표별 메타데이터 + 데이터 수집 (15% -> 90%)
+            progress_callback.update("데이터수집", 15, f"통계표별 메타데이터 및 데이터 수집 시작")
+
+            data_by_table, metadata_by_table, collection_summary = await self._collect_tables_with_individual_metadata_parallel(
                 stat_url, stat_tables_with_conditions, progress_callback
             )
-            
-            # 4단계: 분석 인사이트 생성 (95%)
+
+            # 통합 메타데이터 생성 (첫 번째 통계표의 메타데이터를 기본으로 사용)
+            main_metadata = None
+            if metadata_by_table:
+                main_metadata = list(metadata_by_table.values())[0]
+            else:
+                # fallback으로 기본 메타데이터 수집
+                main_metadata = await self._get_metadata_fast(stat_url)
+
+            # 3단계: 분석 인사이트 생성 (95%)
             progress_callback.update("분석", 95, "분석 인사이트 생성 중")
-            insights = await self._generate_analysis_insights(metadata, data_by_table, collection_summary)
-            
-            # 5단계: 최종 결과 생성 (100%)
+            insights = await self._generate_analysis_insights(main_metadata, data_by_table, collection_summary)
+
+            # 4단계: 최종 결과 생성 (100%)
             total_data_points = sum(len(table_data) for table_data in data_by_table.values())
-            
+
             analysis_result = ComprehensiveStatAnalysis(
                 stat_url=stat_url,
-                stat_title=metadata.title,
-                metadata=metadata,
+                stat_title=main_metadata.title,
+                metadata=main_metadata,
                 collected_tables=list(data_by_table.keys()),
                 data_by_table=data_by_table,
                 total_data_points=total_data_points,
                 collection_summary=collection_summary,
                 analysis_insights=insights,
-                created_at=datetime.now()
+                created_at=datetime.now(),
+                metadata_by_table=metadata_by_table  # 통계표별 메타데이터 추가
             )
-            
-            progress_callback.update("완료", 100, 
+
+            progress_callback.update("완료", 100,
                 f"분석 완료: {len(data_by_table)}개 테이블, {total_data_points}개 데이터 포인트")
-            
+
             return analysis_result
-            
+
         except Exception as e:
             progress_callback.update("오류", 100, f"분석 실패: {str(e)}")
             print(f"최적화된 종합 분석 실패: {e}")
@@ -1948,6 +1955,118 @@ class OptimizedMolitCrawler:
         progress_callback.update("데이터수집", 90, f"데이터 수집 완료 ({collection_summary['collected_tables']}개 통계표)")
         
         return data_by_table, collection_summary
+
+    async def _collect_tables_with_individual_metadata_parallel(
+        self,
+        stat_url: str,
+        stat_tables_with_conditions: List[Dict[str, Any]],
+        progress_callback: ProgressCallback
+    ) -> Tuple[Dict[str, List[StatData]], Dict[str, StatMetadata], Dict[str, Any]]:
+        """통계표별 개별 메타데이터 및 데이터 수집"""
+
+        data_by_table = {}
+        metadata_by_table = {}
+        collection_summary = {
+            "total_tables": len(stat_tables_with_conditions),
+            "collected_tables": 0,
+            "failed_tables": 0,
+            "total_data_points": 0,
+            "errors": []
+        }
+
+        # 각 통계표를 개별적으로 처리
+        for i, table_info in enumerate(stat_tables_with_conditions):
+            table_name = table_info['name']
+
+            try:
+                # 진행률 업데이트
+                progress = 15 + (i * 75 // len(stat_tables_with_conditions))
+                progress_callback.update(
+                    "데이터수집",
+                    progress,
+                    f"'{table_name}' 메타데이터 및 데이터 수집 중 ({i+1}/{len(stat_tables_with_conditions)})"
+                )
+
+                print(f"통계표별 수집 시작: {table_name}")
+
+                # 1. 해당 통계표의 개별 메타데이터 수집
+                table_metadata = await self._get_metadata_for_specific_table(stat_url, table_info)
+
+                # 2. 통계표 데이터 수집
+                table_data = await self._collect_table_data_with_conditions(stat_url, table_info)
+
+                if table_data and len(table_data) > 0:
+                    # 성공적으로 수집된 경우
+                    data_by_table[table_name] = table_data
+                    metadata_by_table[table_name] = table_metadata
+                    collection_summary["collected_tables"] += 1
+                    collection_summary["total_data_points"] += len(table_data)
+
+                    print(f"통계표별 수집 완료: {table_name} ({len(table_data)}개 데이터)")
+                else:
+                    # 데이터 수집 실패
+                    collection_summary["failed_tables"] += 1
+                    collection_summary["errors"].append(f"{table_name}: 데이터 수집 실패")
+                    print(f"통계표 수집 실패: {table_name}")
+
+            except Exception as e:
+                # 예외 발생 시
+                error_msg = f"통계표 '{table_name}' 수집 중 오류: {str(e)}"
+                print(error_msg)
+                collection_summary["failed_tables"] += 1
+                collection_summary["errors"].append(error_msg)
+
+                # 오류 발생시에도 기본 메타데이터라도 저장
+                try:
+                    basic_metadata = await self._get_metadata_fast(stat_url)
+                    basic_metadata.title = f"{basic_metadata.title} - {table_name}"
+                    metadata_by_table[table_name] = basic_metadata
+                except:
+                    pass
+
+        progress_callback.update("데이터수집", 90,
+            f"통계표별 수집 완료 ({collection_summary['collected_tables']}개 성공, {collection_summary['failed_tables']}개 실패)")
+
+        return data_by_table, metadata_by_table, collection_summary
+
+    async def _get_metadata_for_specific_table(self, stat_url: str, table_info: Dict[str, Any]) -> StatMetadata:
+        """특정 통계표에 대한 개별 메타데이터 수집"""
+
+        # 기본 메타데이터를 먼저 수집
+        base_metadata = await self._get_metadata_fast(stat_url)
+
+        # 통계표별 특화 정보 추가
+        table_name = table_info.get('name', '')
+
+        # 통계표명을 제목에 포함
+        enhanced_title = f"{base_metadata.title} - {table_name}"
+
+        # 통계표별 특화된 메타데이터 생성
+        table_metadata = StatMetadata(
+            id=base_metadata.id,  # 필수 필드 추가
+            title=enhanced_title,
+            purpose=base_metadata.purpose,
+            frequency=base_metadata.frequency,
+            department=base_metadata.department,
+            contact=base_metadata.contact,
+            search_field=base_metadata.search_field,
+            responsible_department=base_metadata.responsible_department,
+            keywords=base_metadata.keywords + [table_name] if base_metadata.keywords else [table_name],
+            related_terms=base_metadata.related_terms,
+            statistical_info={
+                **base_metadata.statistical_info,
+                "통계표정보/통계표명": table_name,
+                "통계표정보/지역별여부": "예" if table_info.get('is_regional', False) else "아니오",
+                "통계표정보/연도별여부": "예" if table_info.get('is_yearly', False) else "아니오",
+                "통계표정보/수집조건": str(table_info.get('conditions', {}))  # 문자열로 변환
+            },
+            major_items=base_metadata.major_items,
+            meaning_analysis=base_metadata.meaning_analysis,
+            terminology=base_metadata.terminology,
+            url=stat_url
+        )
+
+        return table_metadata
 
     async def _detect_date_format(self, driver) -> str:
         """날짜 입력 필드 형식 자동 감지"""
