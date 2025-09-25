@@ -1,4 +1,9 @@
 {
   "32": "미분양주택현황보고",
-  "54": "교통부문수송실적보고"
+  "54": "교통부문수송실적보고",
+  "58": "자동차등록현황보고",
+  "79": "항공교통관제업무통계",
+  "건축허가·착공·준공통계": "https://stat.molit.go.kr/portal/cate/statView.do?hRsId=466&hFormId=7061&hDivEng=&month_yn=",
+  "자동차관리사업자업체현황분기": "https://stat.molit.go.kr/portal/cate/statView.do?hRsId=437&hFormId=4392&hDivEng=&month_yn=",
+  "437": "자동차관리사업자업체현황분기"
 }

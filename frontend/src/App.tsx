@@ -287,7 +287,7 @@ function App() {
         isScrolled ? 'shadow-lg bg-white/60' : 'shadow-none'
       }`}>
         {/* 배경 장식 */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 via-transparent to-secondary-500/5"></div>
+        <div className="absolute inset-0"></div>
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 via-secondary-500 to-primary-600"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -363,7 +363,7 @@ function App() {
       </header>
 
       {/* 메인 콘텐츠 */}
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 w-full">
         {error && (
           <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-6 shadow-sm">
             <div className="flex items-start gap-3">
@@ -434,12 +434,10 @@ function App() {
                               await statsAPI.cancelAnalysis(currentTaskId);
                             }
 
-                            // API 호출 성공 후 UI 상태 정리
+                            // API 호출 성공 후 UI 상태 정리 (알림은 SSE를 통해 받음)
                             localStorage.removeItem('ongoingAnalysisTask');
                             setOngoingTask(null);
                             setCurrentTaskId(null);
-
-                            alert('분석 작업이 취소되었습니다.');
 
                           } catch (error) {
                             console.error('작업 취소 실패:', error);

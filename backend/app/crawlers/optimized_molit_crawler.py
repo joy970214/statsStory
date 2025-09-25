@@ -1662,13 +1662,26 @@ class OptimizedMolitCrawler:
         finally:
             self.browser_pool.return_browser(driver)
 
-    async def _collect_table_data_with_conditions(self, stat_url: str, table_info: Dict[str, Any]) -> List[StatData]:
+    async def _collect_table_data_with_conditions(self, stat_url: str, table_info: Dict[str, Any], progress_callback=None) -> List[StatData]:
         """통계표 조건에 따른 데이터 수집"""
+
+        # 취소 체크 함수
+        def check_cancellation():
+            if progress_callback and hasattr(progress_callback, 'is_cancelled') and progress_callback.is_cancelled():
+                print(f"[CANCELLATION] 데이터 수집 중 취소 감지: {table_info.get('name', 'Unknown')}")
+                raise Exception("작업이 사용자에 의해 취소되었습니다")
+
         driver = self.browser_pool.get_browser()
         try:
+            # 초기 취소 체크
+            check_cancellation()
+
             driver.get(stat_url)
             await asyncio.sleep(1)
-            
+
+            # 페이지 로딩 후 취소 체크
+            check_cancellation()
+
             # 통계표보기 탭으로 이동
             try:
                 table_view_tab = WebDriverWait(driver, 5).until(
@@ -1676,6 +1689,9 @@ class OptimizedMolitCrawler:
                 )
                 table_view_tab.click()
                 await asyncio.sleep(1)
+
+                # 탭 이동 후 취소 체크
+                check_cancellation()
             except:
                 pass
             
@@ -1687,6 +1703,9 @@ class OptimizedMolitCrawler:
                 select = Select(select_element)
                 select.select_by_value(table_info['form_id'])
                 await asyncio.sleep(1)
+
+                # 통계표 선택 후 취소 체크
+                check_cancellation()
             except Exception as e:
                 print(f"통계표 선택 실패: {e}")
                 return []
@@ -1743,19 +1762,25 @@ class OptimizedMolitCrawler:
             
             # IBSheet 기반 데이터 수집 (메인 방식)
             print(f"IBSheet 데이터 수집 시작: {table_info['name']}")
-            
+
+            # IBSheet 수집 시작 전 취소 체크
+            check_cancellation()
+
             if table_info['is_regional'] or '시·군·구별' in table_info['name']:
                 print(f"지역별 데이터 수집: {table_info['name']}")
                 await self._click_search_button(driver)
+                check_cancellation()  # 검색 버튼 클릭 후 취소 체크
                 return await self._extract_current_data(driver, table_info['name'])
-                
+
             elif table_info['is_yearly'] or await self._should_use_date_range(driver):
                 print(f"연도별/날짜범위 데이터 수집: {table_info['name']}")
+                check_cancellation()  # 날짜 범위 수집 전 취소 체크
                 return await self._collect_data_with_date_range(driver, table_info['name'], date_format)
-                
+
             else:
                 print(f"[Fallback] 기본 데이터 수집: {table_info['name']}")
                 await self._click_search_button(driver)
+                check_cancellation()  # 검색 버튼 클릭 후 취소 체크
                 return await self._extract_current_data(driver, table_info['name'])
                 
         finally:
@@ -1979,6 +2004,11 @@ class OptimizedMolitCrawler:
             table_name = table_info['name']
 
             try:
+                # 취소 체크 (각 통계표 처리 전)
+                if progress_callback and hasattr(progress_callback, 'is_cancelled') and progress_callback.is_cancelled():
+                    print(f"[CANCELLATION] 통계표 처리 중 취소 감지: {table_name}")
+                    raise Exception("작업이 사용자에 의해 취소되었습니다")
+
                 # 진행률 업데이트
                 progress = 15 + (i * 75 // len(stat_tables_with_conditions))
                 progress_callback.update(
@@ -1993,7 +2023,7 @@ class OptimizedMolitCrawler:
                 table_metadata = await self._get_metadata_for_specific_table(stat_url, table_info)
 
                 # 2. 통계표 데이터 수집
-                table_data = await self._collect_table_data_with_conditions(stat_url, table_info)
+                table_data = await self._collect_table_data_with_conditions(stat_url, table_info, progress_callback)
 
                 if table_data and len(table_data) > 0:
                     # 성공적으로 수집된 경우

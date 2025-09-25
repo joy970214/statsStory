@@ -105,6 +105,13 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
         setProgress(data);
         setIsConnected(true);
 
+        // 취소된 경우 알림 표시
+        if (data.stage === '취소됨' || data.message?.includes('취소')) {
+          alert('데이터 수집이 취소되었습니다.');
+          onError('작업이 사용자에 의해 취소되었습니다.');
+          return;
+        }
+
         // 완료 시 결과 가져오기
         if (data.progress >= 100) {
           handleCompletion();
