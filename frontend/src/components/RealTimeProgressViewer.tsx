@@ -44,23 +44,6 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
     return () => clearInterval(timer);
   }, []);
 
-  const handleCompletion = React.useCallback(async () => {
-    try {
-      // 잠시 대기 후 결과 조회 (백엔드에서 결과 저장 완료 대기)
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const result = await statsAPI.getAnalysisResult(taskId);
-      onComplete(result);
-    } catch (error) {
-      console.error('결과 조회 오류:', error);
-      onError('분석 결과를 가져오는데 실패했습니다.');
-    } finally {
-      if (eventSource) {
-        eventSource.close();
-      }
-    }
-  }, [taskId, onComplete, onError, eventSource]);
-
   useEffect(() => {
     console.log(`[RealTimeProgressViewer] useEffect 시작 - taskId: ${taskId}`);
 
@@ -75,6 +58,24 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
 
     let sse: EventSource | null = null;
     let connectionTimeout: NodeJS.Timeout;
+
+    // 완료 처리 함수 (useEffect 내부로 이동)
+    const handleCompletion = async () => {
+      try {
+        // 잠시 대기 후 결과 조회 (백엔드에서 결과 저장 완료 대기)
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const result = await statsAPI.getAnalysisResult(taskId);
+        onComplete(result);
+      } catch (error) {
+        console.error('결과 조회 오류:', error);
+        onError('분석 결과를 가져오는데 실패했습니다.');
+      } finally {
+        if (sse) {
+          sse.close();
+        }
+      }
+    };
 
     // 브라우저 종료 시 EventSource 정리를 위한 이벤트 리스너
     const handleBeforeUnload = () => {
@@ -95,19 +96,19 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
+
     // SSE 연결 시작 (약간의 지연 후)
     const timeoutId = setTimeout(() => {
       console.log(`[RealTimeProgressViewer] 지연 후 SSE 연결 실행 - taskId: ${taskId}`);
       sse = statsAPI.subscribeToProgress(taskId, (data: any) => {
         console.log('[RealTimeProgressViewer] 진행률 업데이트 수신:', data);
-        
+
         if (data.type === 'connection') {
           console.log('[RealTimeProgressViewer] 연결 확인 메시지 수신');
           setIsConnected(true);
           return;
         }
-        
+
         if (data.type === 'heartbeat') {
           console.log('[RealTimeProgressViewer] 하트비트 수신');
           return; // 하트비트는 무시
@@ -169,7 +170,7 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
 
       console.log('[RealTimeProgressViewer] 정리 완료');
     };
-  }, [taskId, handleCompletion]);
+  }, [taskId]);
 
   const formatElapsedTime = () => {
     const minutes = Math.floor(elapsedTime / 60);

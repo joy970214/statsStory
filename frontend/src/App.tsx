@@ -678,14 +678,9 @@ function App() {
           
           {/* 하단 구분선 및 저작권 */}
           <div className="border-t border-gray-700 mt-8 pt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <div className="flex items-center gap-2 text-sm text-gray-400">
-                <span>© 2024 통계이야기. All rights reserved.</span>
-              </div>
-              <div className="flex items-center gap-4 text-sm text-gray-400">
-                <span className="hover:text-white transition-colors cursor-pointer">개인정보처리방침</span>
-                <span className="hover:text-white transition-colors cursor-pointer">이용약관</span>
-                <span className="hover:text-white transition-colors cursor-pointer">문의하기</span>
+            <div className="flex justify-center items-center">
+              <div className="text-sm text-gray-400">
+                <span>© 2025 통계이야기. All rights reserved.</span>
               </div>
             </div>
           </div>
