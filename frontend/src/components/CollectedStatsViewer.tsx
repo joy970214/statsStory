@@ -54,15 +54,12 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
     try {
       setLoading(true);
       setError(null);
-      console.log('수집된 통계표 목록 API 호출 시작...');
-
       const response = await fetch('/api/stats-list');
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
-      console.log('수집된 통계표 목록 응답:', data);
       setStatsData(data);
     } catch (err) {
       console.error('수집된 통계표 목록 로드 오류:', err);
@@ -78,7 +75,6 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
     }
 
     try {
-      console.log(`통계표 삭제 시작: ${cacheKey}`);
 
       const response = await fetch(`/api/stats/${cacheKey}`, {
         method: 'DELETE',

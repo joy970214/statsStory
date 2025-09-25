@@ -28,8 +28,6 @@ type AppState = 'loading' | 'stats-list' | 'viewing-advanced-cardnews' | 'optimi
 function App() {
   const [state, setState] = useState<AppState>('loading');
   const [stats, setStats] = useState<StatItem[]>([]);
-  const [selectedStat, setSelectedStat] = useState<StatItem | null>(null);
-  const [advancedCardNews, setAdvancedCardNews] = useState<AdvancedCardNewsResponse | null>(null);
   const [optimizedResult, setOptimizedResult] = useState<any | null>(null);
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
   const [ongoingTask, setOngoingTask] = useState<{taskId: string, statName: string, startTime: string, statInfo?: StatItem} | null>(null);
@@ -75,7 +73,6 @@ function App() {
           setCurrentTaskId(task.taskId);
         } catch (error) {
           // 작업 상태 확인 실패 시 localStorage에서 제거
-          console.log('저장된 작업 상태 확인 실패, 정리:', error);
           localStorage.removeItem('ongoingAnalysisTask');
         }
       } catch (error) {
@@ -88,10 +85,7 @@ function App() {
     try {
       setState('loading');
       setError(null);
-      console.log('API 호출 시작...');
       const response = await statsAPI.getRecentStats();
-      console.log('API 응답:', response);
-      console.log('통계 데이터 stat_field 값들:', response.stats.map(stat => ({ title: stat.title, stat_field: stat.stat_field })));
       setStats(response.stats);
       setState('stats-list');
     } catch (err) {
@@ -118,12 +112,10 @@ function App() {
         // 기존 작업 취소
         try {
           setIsCancelling(true);
-          console.log('기존 작업 취소 시작, taskId:', currentTaskId);
           await statsAPI.cancelAnalysis(currentTaskId);
           localStorage.removeItem('ongoingAnalysisTask');
           setOngoingTask(null);
           setCurrentTaskId(null);
-          console.log('기존 분석 작업이 취소되었습니다.');
         } catch (cancelError) {
           console.error('기존 작업 취소 실패:', cancelError);
           // 취소 실패해도 새 작업은 시작
@@ -132,7 +124,6 @@ function App() {
         }
       }
 
-      setSelectedStat(stat);
       setError(null);
 
       const request = {
@@ -165,8 +156,6 @@ function App() {
 
   const handleBackToList = () => {
     setState('stats-list');
-    setSelectedStat(null);
-    setAdvancedCardNews(null);
     setOptimizedResult(null);
     setTableAnalysisStatName(null);
     setSelectedStatForDetail(null);
@@ -347,8 +336,7 @@ function App() {
                   <div className="flex gap-3">
                     <button
                       onClick={() => {
-                        if (currentTaskId && ongoingTask?.statInfo) {
-                          setSelectedStat(ongoingTask.statInfo);
+                        if (currentTaskId && ongoingTask) {
                           setState('optimized-progress');
                         }
                       }}
@@ -368,10 +356,8 @@ function App() {
                           try {
                             setIsCancelling(true);
 
-                            console.log('작업 취소 시작, taskId:', currentTaskId);
                             if (currentTaskId) {
-                              const response = await statsAPI.cancelAnalysis(currentTaskId);
-                              console.log('취소 API 응답:', response);
+                              await statsAPI.cancelAnalysis(currentTaskId);
                             }
 
                             // API 호출 성공 후 UI 상태 정리
@@ -379,7 +365,6 @@ function App() {
                             setOngoingTask(null);
                             setCurrentTaskId(null);
 
-                            console.log('작업 취소 완료');
                             alert('분석 작업이 취소되었습니다.');
 
                           } catch (error) {
@@ -547,10 +532,10 @@ function App() {
           </div>
         )}
 
-        {state === 'optimized-progress' && currentTaskId && selectedStat && (
+        {state === 'optimized-progress' && currentTaskId && ongoingTask && (
           <RealTimeProgressViewer 
             taskId={currentTaskId}
-            statName={selectedStat.title}
+            statName={ongoingTask.statName}
             onComplete={handleOptimizedComplete}
             onError={handleOptimizedError}
           />
@@ -558,9 +543,9 @@ function App() {
 
 
 
-        {state === 'viewing-advanced-cardnews' && (advancedCardNews || optimizedResult) && (
+        {state === 'viewing-advanced-cardnews' && optimizedResult && (
           <EnhancedBasicStatisticsViewer 
-            analysisData={optimizedResult || advancedCardNews} 
+            analysisData={optimizedResult} 
             onBack={handleBackToList}
             onViewTableAnalysis={handleViewTableAnalysis}
           />

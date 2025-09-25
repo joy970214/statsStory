@@ -14,7 +14,9 @@ import {
   ArrowTopRightOnSquareIcon,
   TableCellsIcon,
   SparklesIcon,
-  EyeIcon
+  EyeIcon,
+  DocumentTextIcon,
+  TagIcon
 } from '@heroicons/react/24/outline';
 
 interface EnhancedBasicStatisticsViewerProps {
@@ -79,13 +81,10 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
         // 백엔드에서 데이터 없음 메시지를 보낸 경우 확인
         if (rawData.message && rawData.suggestion) {
-          console.log('데이터 없음:', rawData.message);
-          console.log('제안:', rawData.suggestion);
-
           // 사용자에게 알리고 수집 필요함을 표시
           alert(`${rawData.message}\n\n${rawData.suggestion}`);
           setLoading(false);
-          return; // 여기서 중단하고 수집 프로세스로 돌아가야 함
+          return;
         }
 
         const processed = processStatisticsData(rawData);
@@ -97,10 +96,8 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
         // Use raw_data_by_table if available (more organized)
         if (rawData.raw_data_by_table) {
           dataByTable = rawData.raw_data_by_table;
-          console.log('raw_data_by_table 사용:', Object.keys(dataByTable));
         } else if (rawData.raw_data && Array.isArray(rawData.raw_data)) {
           // Fallback: group raw_data by table name
-          console.log('raw_data에서 테이블별 그룹화');
           let tableCounter = 1;
 
           rawData.raw_data.forEach((stat: any, statIndex: number) => {
@@ -768,32 +765,43 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
       </motion.div>
 
       {/* 탭 네비게이션 */}
-      <div className="bg-white rounded-lg shadow-sm border mb-6">
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex">
-            <button
+      <motion.div 
+        className="bg-white rounded-xl shadow-lg border border-gray-200 mb-8"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="p-2">
+          <nav className="flex bg-gray-100 rounded-lg p-1">
+            <motion.button
               onClick={() => setActiveTab('overview')}
-              className={`py-4 px-6 text-sm font-medium ${
+              className={`flex-1 py-3 px-6 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
                 activeTab === 'overview'
-                  ? 'border-b-2 border-blue-500 text-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
+                  : 'text-gray-600 hover:text-gray-800 hover:bg-white'
               }`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              📊 전체 요약
-            </button>
-            <button
+              <ChartBarIcon className="w-5 h-5" />
+              전체 요약
+            </motion.button>
+            <motion.button
               onClick={() => setActiveTab('tables')}
-              className={`py-4 px-6 text-sm font-medium ${
+              className={`flex-1 py-3 px-6 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
                 activeTab === 'tables'
-                  ? 'border-b-2 border-blue-500 text-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
+                  : 'text-gray-600 hover:text-gray-800 hover:bg-white'
               }`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              📋 통계표별 분석
-            </button>
+              <TableCellsIcon className="w-5 h-5" />
+              통계표별 분석
+            </motion.button>
           </nav>
         </div>
-      </div>
+      </motion.div>
 
       {/* 분석 내용 - PDF 다운로드 대상 */}
       <div ref={contentRef}>
@@ -801,157 +809,229 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
         {activeTab === 'overview' && (
           <>
             {/* 메타데이터 정보 */}
-            <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">📋 메타데이터 정보</h3>
+            <motion.div 
+              className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+                <DocumentTextIcon className="w-6 h-6 text-primary-600" />
+                메타데이터 정보
+              </h3>
 
               {/* 상세 메타정보 */}
               {(analysisData.metadata?.statistical_info || analysisData.metadata?.major_items ||
                 analysisData.metadata?.meaning_analysis || analysisData.metadata?.terminology) && (
-                <div>
+                <div className="grid grid-cols-1 lg:grid-cols gap-6">
 
                   {/* 통계정보 상세 */}
                   {analysisData.metadata?.statistical_info && Object.keys(analysisData.metadata.statistical_info).length > 0 && (
-                    <div className="mb-6">
-                      <h5 className="text-md font-medium text-gray-800 mb-3 flex items-center">
-                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm mr-2">통계정보상세</span>
-                      </h5>
-                      <div className="bg-blue-50 rounded-lg p-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {Object.entries(analysisData.metadata.statistical_info).map(([key, value], index) => (
-                            <div key={index} className="flex flex-col">
-                              <span className="text-xs font-medium text-blue-700">{key}</span>
-                              <span className="text-sm text-blue-900">{value || '-'}</span>
-                            </div>
-                          ))}
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6">
+                      <div className="flex items-start gap-3 mb-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <ChartBarIcon className="w-5 h-5 text-white" />
                         </div>
+                        <div className="min-w-0 flex-1">
+                          <h5 className="font-semibold text-blue-900 text-left">통계정보 상세</h5>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        {Object.entries(analysisData.metadata.statistical_info).map(([key, value], index) => (
+                          <div key={index} className="bg-white rounded-lg p-3">
+                            <div className="text-left">
+                              <div className="text-sm font-medium text-blue-700 mb-1">{key}</div>
+                              <div className="text-sm text-blue-900">{value || '-'}</div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
 
                   {/* 주요항목 */}
                   {analysisData.metadata?.major_items && Object.keys(analysisData.metadata.major_items).length > 0 && (
-                    <div className="mb-6">
-                      <h5 className="text-md font-medium text-gray-800 mb-3 flex items-center">
-                        <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm mr-2">주요항목</span>
-                      </h5>
-                      <div className="bg-green-50 rounded-lg p-4">
-                        <div className="space-y-2">
-                          {Object.entries(analysisData.metadata.major_items).map(([key, value], index) => (
-                            <div key={index} className="border-b border-green-200 pb-2 last:border-b-0">
-                              <span className="text-sm font-medium text-green-800">{key}:</span>
-                              <span className="text-sm text-green-700 ml-2">{value || '-'}</span>
-                            </div>
-                          ))}
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6">
+                      <div className="flex items-start gap-3 mb-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <SparklesIcon className="w-5 h-5 text-white" />
                         </div>
+                        <div className="min-w-0 flex-1">
+                          <h5 className="font-semibold text-green-900 text-left">주요항목</h5>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        {Object.entries(analysisData.metadata.major_items).map(([key, value], index) => (
+                          <div key={index} className="bg-white rounded-lg p-3">
+                            <div className="text-left">
+                              <div className="text-sm font-medium text-green-700 mb-1">{key}</div>
+                              <div className="text-sm text-green-900">{value || '-'}</div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
 
                   {/* 의미분석 */}
                   {analysisData.metadata?.meaning_analysis && Object.keys(analysisData.metadata.meaning_analysis).length > 0 && (
-                    <div className="mb-6">
-                      <h5 className="text-md font-medium text-gray-800 mb-3 flex items-center">
-                        <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm mr-2">의미분석</span>
-                      </h5>
-                      <div className="bg-purple-50 rounded-lg p-4">
-                        <div className="space-y-2">
-                          {Object.entries(analysisData.metadata.meaning_analysis).map(([key, value], index) => (
-                            <div key={index} className="border-b border-purple-200 pb-2 last:border-b-0">
-                              <span className="text-sm font-medium text-purple-800">{key}:</span>
-                              <span className="text-sm text-purple-700 ml-2">{value || '-'}</span>
-                            </div>
-                          ))}
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6">
+                      <div className="flex items-start gap-3 mb-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <SparklesIcon className="w-5 h-5 text-white" />
                         </div>
+                        <div className="min-w-0 flex-1">
+                          <h5 className="font-semibold text-purple-900 text-left">의미분석</h5>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        {Object.entries(analysisData.metadata.meaning_analysis).map(([key, value], index) => (
+                          <div key={index} className="bg-white rounded-lg p-3">
+                            <div className="text-left">
+                              <div className="text-sm font-medium text-purple-700 mb-1">{key}</div>
+                              <div className="text-sm text-purple-900">{value || '-'}</div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
 
                   {/* 용어정의 */}
                   {analysisData.metadata?.terminology && Object.keys(analysisData.metadata.terminology).length > 0 && (
-                    <div className="mb-6">
-                      <h5 className="text-md font-medium text-gray-800 mb-3 flex items-center">
-                        <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded text-sm mr-2">용어정의</span>
-                      </h5>
-                      <div className="bg-orange-50 rounded-lg p-4">
-                        <div className="space-y-2">
-                          {Object.entries(analysisData.metadata.terminology).map(([key, value], index) => (
-                            <div key={index} className="border-b border-orange-200 pb-2 last:border-b-0">
-                              <span className="text-sm font-medium text-orange-800">{key}:</span>
-                              <span className="text-sm text-orange-700 ml-2">{value || '-'}</span>
-                            </div>
-                          ))}
+                    <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-6">
+                      <div className="flex items-start gap-3 mb-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <DocumentTextIcon className="w-5 h-5 text-white" />
                         </div>
+                        <div className="min-w-0 flex-1">
+                          <h5 className="font-semibold text-amber-900 text-left">용어정의</h5>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        {Object.entries(analysisData.metadata.terminology).map(([key, value], index) => (
+                          <div key={index} className="bg-white rounded-lg p-3">
+                            <div className="text-left">
+                              <div className="text-sm font-medium text-amber-700 mb-1">{key}</div>
+                              <div className="text-sm text-amber-900">{value || '-'}</div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
 
                   {/* 관련용어 */}
                   {analysisData.metadata?.related_terms && Object.keys(analysisData.metadata.related_terms).length > 0 && (
-                    <div className="mb-6">
-                      <h5 className="text-md font-medium text-gray-800 mb-3 flex items-center">
-                        <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm mr-2">관련용어</span>
-                      </h5>
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <div className="space-y-2">
-                          {Object.entries(analysisData.metadata.related_terms).map(([key, value], index) => (
-                            <div key={index} className="border-b border-gray-200 pb-2 last:border-b-0">
-                              <span className="text-sm font-medium text-gray-800">{key}:</span>
-                              <span className="text-sm text-gray-700 ml-2">{value || '-'}</span>
-                            </div>
-                          ))}
+                    <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
+                      <div className="flex items-start gap-3 mb-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <TagIcon className="w-5 h-5 text-white" />
                         </div>
+                        <div className="min-w-0 flex-1">
+                          <h5 className="font-semibold text-gray-900 text-left">관련용어</h5>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        {Object.entries(analysisData.metadata.related_terms).map(([key, value], index) => (
+                          <div key={index} className="bg-white rounded-lg p-3">
+                            <div className="text-left">
+                              <div className="text-sm font-medium text-gray-700 mb-1">{key}</div>
+                              <div className="text-sm text-gray-900">{value || '-'}</div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
                 </div>
               )}
-            </div>
+            </motion.div>
 
             {/* 통계표 선택 */}
-            <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                📋 통계표 선택
-                <span className="ml-3 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+            <motion.div 
+              className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+                <TableCellsIcon className="w-6 h-6 text-primary-600" />
+                통계표 선택
+                <span className="ml-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
                   {processedStats.data_structure.table_count}개 수집됨
                 </span>
               </h3>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-medium text-gray-900 mb-3">수집된 통계표 목록 (클릭하여 선택)</h4>
-                <div className="flex flex-wrap gap-2">
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 shadow-lg">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+                    <TableCellsIcon className="w-5 h-5 text-white" />
+                  </div>
+                  <h4 className="font-semibold text-gray-900">수집된 통계표 목록 (클릭하여 선택)</h4>
+                </div>
+                <div className="flex flex-wrap gap-3">
                   {processedStats.data_structure.collected_tables.map((table, index) => (
-                    <button
+                    <motion.button
                       key={index}
                       onClick={() => setSelectedTableName(table)}
-                      className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                      className={`px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
                         selectedTableName === table
-                          ? 'bg-blue-600 text-white shadow-md'
-                          : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                          ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
+                          : 'bg-white text-gray-700 hover:bg-primary-50 border border-gray-200 hover:border-primary-300'
                       }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
+                      <TableCellsIcon className="w-4 h-4" />
                       {table}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
                 {selectedTableName && (
-                  <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <span className="text-sm font-medium text-blue-900">현재 선택된 통계표:</span>
-                    <span className="text-sm font-bold text-blue-700 ml-2">{selectedTableName}</span>
-                  </div>
+                  <motion.div 
+                    className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border border-blue-200 shadow-lg"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                        <SparklesIcon className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-sm font-semibold text-blue-900">현재 선택된 통계표:</span>
+                      <span className="text-sm font-bold text-blue-700 bg-white px-3 py-1 rounded-lg">{selectedTableName}</span>
+                    </div>
+                  </motion.div>
                 )}
               </div>
-            </div>
+            </motion.div>
 
             {/* 선택된 통계표 상세 정보 */}
-            <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                🔍 선택된 통계표 상세 정보
+            <motion.div 
+              className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+                <EyeIcon className="w-6 h-6 text-primary-600" />
+                선택된 통계표 상세 정보
                 {selectedTableName && (
-                  <span className="text-lg text-blue-600 ml-2">- {selectedTableName}</span>
+                  <span className="text-lg text-blue-600 ml-2 bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1 rounded-lg">
+                    {selectedTableName}
+                  </span>
                 )}
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-blue-50 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-blue-700">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <motion.div 
+                  className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 text-center"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <DocumentTextIcon className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="text-3xl font-bold text-blue-700 mb-1">
                     {(() => {
                       // 선택된 테이블의 필드 수 계산
                       if (!selectedTableName || !rawDataByTable[selectedTableName]) {
@@ -965,10 +1045,17 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                       return totalFields;
                     })()}
                   </div>
-                  <div className="text-sm text-blue-600">총 데이터 필드</div>
-                </div>
-                <div className="bg-purple-50 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-purple-700">
+                  <div className="text-sm font-medium text-blue-600">총 데이터 필드</div>
+                </motion.div>
+                <motion.div 
+                  className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 text-center"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <ChartBarIcon className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="text-3xl font-bold text-purple-700 mb-1">
                     {(() => {
                       // 선택된 테이블의 숫자 데이터 수 계산
                       if (!selectedTableName || !rawDataByTable[selectedTableName]) {
@@ -993,10 +1080,17 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                       return numericFields;
                     })()}
                   </div>
-                  <div className="text-sm text-purple-600">숫자 데이터</div>
-                </div>
-                <div className="bg-orange-50 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-orange-700">
+                  <div className="text-sm font-medium text-purple-600">숫자 데이터</div>
+                </motion.div>
+                <motion.div 
+                  className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-6 text-center"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <DocumentTextIcon className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="text-3xl font-bold text-amber-700 mb-1">
                     {(() => {
                       // 선택된 테이블의 텍스트 데이터 수 계산
                       if (!selectedTableName || !rawDataByTable[selectedTableName]) {
@@ -1021,17 +1115,25 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                       return textFields;
                     })()}
                   </div>
-                  <div className="text-sm text-orange-600">텍스트 데이터</div>
-                </div>
+                  <div className="text-sm font-medium text-amber-600">텍스트 데이터</div>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
 
         {/* 동적 데이터 분석 */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-6">
-            📊 데이터 특성 분석
+        <motion.div 
+          className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+            <ChartBarIcon className="w-6 h-6 text-primary-600" />
+            데이터 특성 분석
             {selectedTableName && (
-              <span className="text-lg text-blue-600 ml-2">- {selectedTableName}</span>
+              <span className="text-lg text-blue-600 ml-2 bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1 rounded-lg">
+                {selectedTableName}
+              </span>
             )}
           </h3>
 
@@ -1047,33 +1149,64 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
             if (isEmpty) {
               return (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="text-2xl">⚠️</span>
-                    <h4 className="text-lg font-semibold text-yellow-800">데이터 없음</h4>
+                <motion.div 
+                  className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-8 border border-amber-200"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-yellow-500 rounded-xl flex items-center justify-center">
+                      <SparklesIcon className="w-6 h-6 text-white" />
+                    </div>
+                    <h4 className="text-xl font-semibold text-amber-800">데이터 없음</h4>
                   </div>
-                  <p className="text-yellow-700 mb-4">
-                    선택된 통계표 "{selectedTableName || '알 수 없음'}"에는 분석 가능한 데이터가 없습니다.
+                  <p className="text-amber-700 mb-6 text-lg">
+                    선택된 통계표 <span className="font-bold">"{selectedTableName || '알 수 없음'}"</span>에는 분석 가능한 데이터가 없습니다.
                   </p>
-                  <div className="bg-yellow-100 rounded-lg p-4">
-                    <p className="text-sm text-yellow-800">
-                      • 데이터가 수집되지 않았거나<br/>
-                      • 해당 기간에 대한 정보가 없거나<br/>
-                      • 조회 조건에 맞는 결과가 없을 수 있습니다.
-                    </p>
+                  <div className="bg-gradient-to-r from-amber-100 to-yellow-100 rounded-xl p-6">
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 bg-gradient-to-br from-amber-600 to-yellow-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                        <span className="text-white text-xs font-bold">!</span>
+                      </div>
+                      <div className="text-sm text-amber-800 leading-relaxed">
+                        <p className="mb-2"><strong>가능한 원인:</strong></p>
+                        <ul className="space-y-1 ml-4">
+                          <li>• 데이터가 수집되지 않았거나</li>
+                          <li>• 해당 기간에 대한 정보가 없거나</li>
+                          <li>• 조회 조건에 맞는 결과가 없을 수 있습니다.</li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </motion.div>
               );
             }
 
             return (
               <div className="space-y-6">
                 {/* 데이터 분류 및 특성 */}
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4">
-                  <div className="flex items-center gap-4 flex-wrap">
-                    <div className="flex items-center gap-2">
-                      <span className="text-blue-800 font-medium">📈 데이터 유형:</span>
-                      <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                <motion.div 
+                  className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-6 shadow-lg"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.1 }}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                      <ChartBarIcon className="w-5 h-5 text-white" />
+                    </div>
+                    <h4 className="font-semibold text-blue-900">데이터 분류 및 특성</h4>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                          <ChartBarIcon className="w-3 h-3 text-white" />
+                        </div>
+                        <span className="text-blue-800 font-medium text-sm">데이터 유형</span>
+                      </div>
+                      <span className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
                         {patterns.dataClassification === 'temporal-geographic' && '시계열-지역별'}
                         {patterns.dataClassification === 'geographic' && '지역별 통계'}
                         {patterns.dataClassification === 'temporal' && '시계열 통계'}
@@ -1083,24 +1216,34 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                     </div>
 
                     {patterns.mainCategory && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-blue-800 font-medium">🏷️ 분야:</span>
-                        <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                      <div className="bg-white rounded-lg p-4 shadow-sm">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                            <TagIcon className="w-3 h-3 text-white" />
+                          </div>
+                          <span className="text-green-800 font-medium text-sm">분야</span>
+                        </div>
+                        <span className="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
                           {patterns.mainCategory}
                         </span>
                       </div>
                     )}
 
                     {patterns.timePeriod && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-blue-800 font-medium">⏰ 기간:</span>
-                        <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+                      <div className="bg-white rounded-lg p-4 shadow-sm">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <SparklesIcon className="w-3 h-3 text-white" />
+                          </div>
+                          <span className="text-purple-800 font-medium text-sm">기간</span>
+                        </div>
+                        <span className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
                           {patterns.timePeriod}
                         </span>
                       </div>
                     )}
                   </div>
-                </div>
+                </motion.div>
 
                 {/* 범용적 기초통계 지표 */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -1175,14 +1318,22 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               </div>
             );
           })()}
-        </div>
+        </motion.div>
 
         {/* 원본 테이블 재구성 */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
-            📊 원본 테이블 재구성
+        <motion.div 
+          className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+            <TableCellsIcon className="w-6 h-6 text-primary-600" />
+            원본 테이블 재구성
             {selectedTableName && (
-              <span className="text-lg text-blue-600 ml-2">- {selectedTableName}</span>
+              <span className="text-lg text-blue-600 ml-2 bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1 rounded-lg">
+                {selectedTableName}
+              </span>
             )}
           </h3>
 
@@ -1220,11 +1371,21 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
             if (!reconstructedTables || Object.keys(reconstructedTables).length === 0) {
               return (
-                <div className="bg-gray-50 rounded-lg p-8 text-center">
-                  <div className="text-gray-500 mb-4">
-                    <div className="text-4xl mb-2">📊</div>
-                    <p>선택된 통계표에서 테이블 형태로 재구성할 수 있는 데이터가 없습니다.</p>
-                    <p className="text-sm mt-2">IBSheet 데이터가 포함된 통계표를 선택해 주세요.</p>
+                <motion.div 
+                  className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8 text-center"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="flex flex-col items-center gap-4 mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center">
+                      <TableCellsIcon className="w-8 h-8 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-700 mb-2">테이블 재구성 불가</h4>
+                      <p className="text-gray-600 mb-2">선택된 통계표에서 테이블 형태로 재구성할 수 있는 데이터가 없습니다.</p>
+                      <p className="text-sm text-gray-500">IBSheet 데이터가 포함된 통계표를 선택해 주세요.</p>
+                    </div>
                   </div>
 
                   {/* 원본 데이터 샘플 표시 (fallback) */}
@@ -1257,7 +1418,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                       </table>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               );
             }
 
@@ -1393,121 +1554,285 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                 );
               })}
 
-                <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                  <h4 className="font-medium text-green-900 mb-2 flex items-center">
-                    <span className="mr-2">✅</span>
-                    테이블 재구성 완료
-                  </h4>
-                  <div className="text-sm text-green-800 space-y-1">
-                    <p>• 총 {Object.keys(reconstructedTables).length}개의 테이블이 원본 형태로 재구성되었습니다.</p>
-                    <p>• 국토교통부 통계 특성을 반영하여 6-10열 구조로 최적화되었습니다.</p>
-                    <p>• 숫자 데이터는 천 단위 구분 기호가 적용되어 가독성이 향상되었습니다.</p>
-                    <p>• 첫 번째 행은 헤더로 인식하여 강조 표시됩니다.</p>
+                <motion.div 
+                  className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200 shadow-lg"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <SparklesIcon className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-green-900 mb-3 flex items-center gap-2">
+                        테이블 재구성 완료
+                      </h4>
+                      <div className="text-sm text-green-800 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 bg-green-600 rounded-full"></div>
+                          <span>총 <strong>{Object.keys(reconstructedTables).length}개</strong>의 테이블이 원본 형태로 재구성되었습니다.</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 bg-green-600 rounded-full"></div>
+                          <span>국토교통부 통계 특성을 반영하여 <strong>6-10열 구조</strong>로 최적화되었습니다.</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 bg-green-600 rounded-full"></div>
+                          <span>숫자 데이터는 <strong>천 단위 구분 기호</strong>가 적용되어 가독성이 향상되었습니다.</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 bg-green-600 rounded-full"></div>
+                          <span><strong>첫 번째 행</strong>은 헤더로 인식하여 강조 표시됩니다.</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </motion.div>
               </div>
             );
           })()}
-        </div>
+        </motion.div>
 
         {/* 데이터 분포 특성 */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">📊 데이터 분포 특성</h3>
-          <div className="space-y-4">
-            <div className="bg-blue-50 rounded-lg p-4">
-              <h4 className="font-medium text-blue-900 mb-2">중심경향 분석</h4>
-              <div className="text-sm text-blue-800">
-                <p>• 평균값: {formatNumber(processedStats.numeric_stats.mean)}</p>
-                <p>• 중위수: {formatNumber(processedStats.numeric_stats.median)}</p>
-                <p>• 평균과 중위수 차이: {formatNumber(Math.abs(processedStats.numeric_stats.mean - processedStats.numeric_stats.median))}</p>
-                <p>• 표준편차: {formatNumber(processedStats.numeric_stats.std_dev)}</p>
+        <motion.div 
+          className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+            <ChartBarIcon className="w-6 h-6 text-primary-600" />
+            데이터 분포 특성
+          </h3>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                  <ChartBarIcon className="w-5 h-5 text-white" />
+                </div>
+                <h4 className="font-semibold text-blue-900">중심경향 분석</h4>
+              </div>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-blue-700">평균값</span>
+                  <span className="font-bold text-blue-900">{formatNumber(processedStats.numeric_stats.mean)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-blue-700">중위수</span>
+                  <span className="font-bold text-blue-900">{formatNumber(processedStats.numeric_stats.median)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-blue-700">평균-중위수 차이</span>
+                  <span className="font-bold text-blue-900">{formatNumber(Math.abs(processedStats.numeric_stats.mean - processedStats.numeric_stats.median))}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-blue-700">표준편차</span>
+                  <span className="font-bold text-blue-900">{formatNumber(processedStats.numeric_stats.std_dev)}</span>
+                </div>
               </div>
             </div>
 
-            <div className="bg-green-50 rounded-lg p-4">
-              <h4 className="font-medium text-green-900 mb-2">변동성 분석</h4>
-              <div className="text-sm text-green-800">
-                <p>• 최댓값: {formatNumber(processedStats.numeric_stats.max)}</p>
-                <p>• 최솟값: {formatNumber(processedStats.numeric_stats.min)}</p>
-                <p>• 범위(Range): {formatNumber(processedStats.numeric_stats.max - processedStats.numeric_stats.min)}</p>
-                <p>• 변동계수: {processedStats.numeric_stats.count > 0 
-                  ? formatNumber((processedStats.numeric_stats.std_dev / processedStats.numeric_stats.mean) * 100)
-                  : '0'
-                }%</p>
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                  <SparklesIcon className="w-5 h-5 text-white" />
+                </div>
+                <h4 className="font-semibold text-green-900">변동성 분석</h4>
+              </div>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-green-700">최댓값</span>
+                  <span className="font-bold text-green-900">{formatNumber(processedStats.numeric_stats.max)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-green-700">최솟값</span>
+                  <span className="font-bold text-green-900">{formatNumber(processedStats.numeric_stats.min)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-green-700">범위</span>
+                  <span className="font-bold text-green-900">{formatNumber(processedStats.numeric_stats.max - processedStats.numeric_stats.min)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-green-700">변동계수</span>
+                  <span className="font-bold text-green-900">
+                    {processedStats.numeric_stats.count > 0 
+                      ? formatNumber((processedStats.numeric_stats.std_dev / processedStats.numeric_stats.mean) * 100) + '%'
+                      : '0%'
+                    }
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="bg-purple-50 rounded-lg p-4">
-              <h4 className="font-medium text-purple-900 mb-2">데이터 구성 분석</h4>
-              <div className="text-sm text-purple-800">
-                <p>• 수집된 통계표: {processedStats.data_structure.table_count}개</p>
-                <p>• 총 데이터 필드: {processedStats.data_structure.total_fields}개</p>
-                <p>• 숫자 데이터: {processedStats.data_structure.numeric_fields}개 ({((processedStats.data_structure.numeric_fields / processedStats.data_structure.total_fields) * 100).toFixed(1)}%)</p>
-                <p>• 텍스트 데이터: {processedStats.data_structure.text_fields}개 ({((processedStats.data_structure.text_fields / processedStats.data_structure.total_fields) * 100).toFixed(1)}%)</p>
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                  <TableCellsIcon className="w-5 h-5 text-white" />
+                </div>
+                <h4 className="font-semibold text-purple-900">데이터 구성</h4>
+              </div>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-purple-700">수집된 통계표</span>
+                  <span className="font-bold text-purple-900">{processedStats.data_structure.table_count}개</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-purple-700">총 데이터 필드</span>
+                  <span className="font-bold text-purple-900">{processedStats.data_structure.total_fields}개</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-purple-700">숫자 데이터</span>
+                  <span className="font-bold text-purple-900">
+                    {processedStats.data_structure.numeric_fields}개 ({((processedStats.data_structure.numeric_fields / processedStats.data_structure.total_fields) * 100).toFixed(1)}%)
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-purple-700">텍스트 데이터</span>
+                  <span className="font-bold text-purple-900">
+                    {processedStats.data_structure.text_fields}개 ({((processedStats.data_structure.text_fields / processedStats.data_structure.total_fields) * 100).toFixed(1)}%)
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* 객관적 현황 요약 */}
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">💡 객관적 현황 요약</h3>
-          <div className="bg-gray-50 rounded-lg p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-3">🎯 핵심 통계</h4>
-                <ul className="space-y-2 text-sm text-gray-700">
-                  <li>• 가장 높은 수치: <span className="font-medium text-red-600">{formatNumber(processedStats.numeric_stats.max)}</span></li>
-                  <li>• 가장 낮은 수치: <span className="font-medium text-blue-600">{formatNumber(processedStats.numeric_stats.min)}</span></li>
-                  <li>• 전체 평균: <span className="font-medium text-green-600">{formatNumber(processedStats.numeric_stats.mean)}</span></li>
-                  <li>• 중앙값: <span className="font-medium text-purple-600">{formatNumber(processedStats.numeric_stats.median)}</span></li>
-                </ul>
+        <motion.div 
+          className="bg-white rounded-xl shadow-lg border border-gray-200 p-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+            <SparklesIcon className="w-6 h-6 text-primary-600" />
+            객관적 현황 요약
+          </h3>
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="bg-white rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+                    <ChartBarIcon className="w-5 h-5 text-white" />
+                  </div>
+                  <h4 className="font-semibold text-gray-900">핵심 통계</h4>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
+                    <span className="text-red-700 font-medium">가장 높은 수치</span>
+                    <span className="font-bold text-red-900 text-lg">{formatNumber(processedStats.numeric_stats.max)}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                    <span className="text-blue-700 font-medium">가장 낮은 수치</span>
+                    <span className="font-bold text-blue-900 text-lg">{formatNumber(processedStats.numeric_stats.min)}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                    <span className="text-green-700 font-medium">전체 평균</span>
+                    <span className="font-bold text-green-900 text-lg">{formatNumber(processedStats.numeric_stats.mean)}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                    <span className="text-purple-700 font-medium">중앙값</span>
+                    <span className="font-bold text-purple-900 text-lg">{formatNumber(processedStats.numeric_stats.median)}</span>
+                  </div>
+                </div>
               </div>
               
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-3">📈 수집 현황</h4>
-                <ul className="space-y-2 text-sm text-gray-700">
-                  <li>• 분석 일시: <span className="font-medium">{new Date(analysisData.analysis_date).toLocaleString('ko-KR')}</span></li>
-                  <li>• 수집된 통계표: <span className="font-medium">{processedStats.data_structure.table_count}개</span></li>
-                  <li>• 숫자 데이터: <span className="font-medium">{processedStats.numeric_stats.count}개</span></li>
-                  <li>• 전체 규모: <span className="font-medium">{formatNumber(processedStats.numeric_stats.total)}</span></li>
-                </ul>
+              <div className="bg-white rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center">
+                    <TableCellsIcon className="w-5 h-5 text-white" />
+                  </div>
+                  <h4 className="font-semibold text-gray-900">수집 현황</h4>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span className="text-gray-700 font-medium">분석 일시</span>
+                    <span className="font-bold text-gray-900">{new Date(analysisData.analysis_date).toLocaleString('ko-KR')}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                    <span className="text-blue-700 font-medium">수집된 통계표</span>
+                    <span className="font-bold text-blue-900">{processedStats.data_structure.table_count}개</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                    <span className="text-green-700 font-medium">숫자 데이터</span>
+                    <span className="font-bold text-green-900">{processedStats.numeric_stats.count}개</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                    <span className="text-purple-700 font-medium">전체 규모</span>
+                    <span className="font-bold text-purple-900">{formatNumber(processedStats.numeric_stats.total)}</span>
+                  </div>
+                </div>
               </div>
             </div>
             
-            <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-200">
-              <p className="text-sm text-green-800">
-                <span className="font-medium">✅ 실제 수집 데이터 기반 분석:</span> 
-                이 분석은 실제로 수집된 {processedStats.data_structure.table_count}개 통계표의 {processedStats.data_structure.total_fields}개 데이터 필드를 기반으로 작성되었습니다.
-                숫자 데이터 {processedStats.numeric_stats.count}개에 대한 객관적 기술통계 분석 결과입니다.
-              </p>
-            </div>
+            <motion.div 
+              className="mt-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200 shadow-lg"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <SparklesIcon className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h5 className="font-semibold text-green-900 mb-2">실제 수집 데이터 기반 분석</h5>
+                  <p className="text-sm text-green-800 leading-relaxed">
+                    이 분석은 실제로 수집된 <span className="font-bold">{processedStats.data_structure.table_count}개 통계표</span>의{' '}
+                    <span className="font-bold">{processedStats.data_structure.total_fields}개 데이터 필드</span>를 기반으로 작성되었습니다.
+                    숫자 데이터 <span className="font-bold">{processedStats.numeric_stats.count}개</span>에 대한 객관적 기술통계 분석 결과입니다.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
           </>
         )}
 
         {/* 통계표별 분석 탭 */}
         {activeTab === 'tables' && (
-          <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">📋 통계표별 상세 분석</h3>
+          <motion.div 
+            className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+              <TableCellsIcon className="w-6 h-6 text-primary-600" />
+              통계표별 상세 분석
+            </h3>
 
             {/* 통계표 선택 */}
-            <div className="bg-gray-50 rounded-lg p-4 mb-6">
-              <h4 className="font-medium text-gray-900 mb-3">수집된 통계표 선택</h4>
-              <div className="flex flex-wrap gap-2 mb-4">
+            <motion.div 
+              className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 mb-8 shadow-lg"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+                  <TableCellsIcon className="w-5 h-5 text-white" />
+                </div>
+                <h4 className="font-semibold text-gray-900">수집된 통계표 선택</h4>
+              </div>
+              <div className="flex flex-wrap gap-3 mb-4">
                 {Object.keys(rawDataByTable).map((tableName, index) => (
-                  <button
+                  <motion.button
                     key={index}
                     onClick={() => setSelectedTableName(tableName)}
-                    className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                    className={`px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
                       selectedTableName === tableName
-                        ? 'bg-blue-600 text-white shadow-md'
-                        : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                        ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
+                        : 'bg-white text-gray-700 hover:bg-primary-50 border border-gray-200 hover:border-primary-300'
                     }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
+                    <TableCellsIcon className="w-4 h-4" />
                     {tableName}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
               {selectedTableName && (
@@ -1515,39 +1840,75 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                   선택된 통계표: <span className="font-medium text-blue-600">{selectedTableName}</span>
                 </div>
               )}
-            </div>
+            </motion.div>
 
             {/* 선택된 통계표 상세 정보 */}
             {selectedTableName && rawDataByTable[selectedTableName] && (
-              <div className="space-y-6">
+              <motion.div 
+                className="space-y-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
                 {/* 기본 정보 */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-blue-50 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-blue-700">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <motion.div 
+                    className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 text-center"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                      <TableCellsIcon className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-3xl font-bold text-blue-700 mb-1">
                       {rawDataByTable[selectedTableName].length}
                     </div>
-                    <div className="text-sm text-blue-600">레코드 수</div>
-                  </div>
-                  <div className="bg-green-50 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-green-700">
+                    <div className="text-sm font-medium text-blue-600">레코드 수</div>
+                  </motion.div>
+                  <motion.div 
+                    className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 text-center shadow-lg"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                      <DocumentTextIcon className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-3xl font-bold text-green-700 mb-1">
                       {Object.keys(rawDataByTable[selectedTableName][0]?.data || {}).length}
                     </div>
-                    <div className="text-sm text-green-600">데이터 필드</div>
-                  </div>
-                  <div className="bg-purple-50 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-purple-700">
+                    <div className="text-sm font-medium text-green-600">데이터 필드</div>
+                  </motion.div>
+                  <motion.div 
+                    className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 text-center"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                      <ChartBarIcon className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-3xl font-bold text-purple-700 mb-1">
                       {getSelectedTableStats()?.count || 0}
                     </div>
-                    <div className="text-sm text-purple-600">숫자 데이터</div>
-                  </div>
+                    <div className="text-sm font-medium text-purple-600">숫자 데이터</div>
+                  </motion.div>
                 </div>
 
 
                 {/* 샘플 데이터 */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-medium text-gray-900 mb-3">샘플 데이터 미리보기</h4>
+                <motion.div 
+                  className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 shadow-lg"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: 0.4 }}
+                >
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center">
+                      <EyeIcon className="w-5 h-5 text-white" />
+                    </div>
+                    <h4 className="font-semibold text-gray-900">샘플 데이터 미리보기</h4>
+                  </div>
                   <div className="overflow-x-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {Object.entries(rawDataByTable[selectedTableName][0]?.data || {}).slice(0, 9).map(([field, value], idx) => {
                         let parsedValue;
                         try {
@@ -1559,34 +1920,41 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                         }
 
                         return (
-                          <div key={idx} className="bg-white p-3 rounded border">
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-sm font-medium text-gray-700 truncate" title={field}>
+                          <motion.div 
+                            key={idx} 
+                            className="bg-white p-4 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-200"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: idx * 0.1 }}
+                            whileHover={{ scale: 1.02 }}
+                          >
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="text-sm font-semibold text-gray-700 truncate" title={field}>
                                 {field}
                               </span>
-                              <span className={`text-xs px-1.5 py-0.5 rounded ${
+                              <span className={`text-xs px-3 py-1 rounded-full font-medium ${
                                 parsedValue.unit === 'number'
-                                  ? 'bg-green-100 text-green-700'
-                                  : 'bg-blue-100 text-blue-700'
+                                  ? 'bg-gradient-to-r from-green-500 to-green-600 text-white'
+                                  : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
                               }`}>
                                 {parsedValue.unit}
                               </span>
                             </div>
-                            <p className="text-sm text-gray-900 font-mono break-all">
+                            <p className="text-sm text-gray-900 font-mono break-all bg-gray-50 rounded-lg p-3">
                               {String(parsedValue.value).length > 50
                                 ? String(parsedValue.value).substring(0, 50) + '...'
                                 : String(parsedValue.value)
                               }
                             </p>
-                          </div>
+                          </motion.div>
                         );
                       })}
                     </div>
                   </div>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             )}
-          </div>
+          </motion.div>
         )}
 
 

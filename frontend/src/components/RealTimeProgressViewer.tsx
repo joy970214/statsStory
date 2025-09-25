@@ -45,7 +45,6 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
   }, []);
 
   useEffect(() => {
-    console.log(`[RealTimeProgressViewer] useEffect 시작 - taskId: ${taskId}`);
 
     // 초기 진행률 설정 (연결 시도 표시)
     setProgress({
@@ -68,7 +67,6 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
         const result = await statsAPI.getAnalysisResult(taskId);
         onComplete(result);
       } catch (error) {
-        console.error('결과 조회 오류:', error);
         onError('분석 결과를 가져오는데 실패했습니다.');
       } finally {
         if (sse) {
@@ -79,7 +77,6 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
 
     // 브라우저 종료 시 EventSource 정리를 위한 이벤트 리스너
     const handleBeforeUnload = () => {
-      console.log('[RealTimeProgressViewer] 브라우저 종료/새로고침 감지 - SSE 연결 정리');
       if (sse) {
         sse.close();
       }
@@ -87,11 +84,7 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
 
     // 페이지 가시성 변경 시 처리 (탭 전환 등)
     const handleVisibilityChange = () => {
-      if (document.hidden) {
-        console.log('[RealTimeProgressViewer] 페이지가 숨겨짐 - SSE 연결 상태 확인');
-      } else {
-        console.log('[RealTimeProgressViewer] 페이지가 다시 보임 - SSE 연결 상태 확인');
-      }
+      // 페이지 가시성 변경 처리
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -99,39 +92,30 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
 
     // SSE 연결 시작 (약간의 지연 후)
     const timeoutId = setTimeout(() => {
-      console.log(`[RealTimeProgressViewer] 지연 후 SSE 연결 실행 - taskId: ${taskId}`);
       sse = statsAPI.subscribeToProgress(taskId, (data: any) => {
-        console.log('[RealTimeProgressViewer] 진행률 업데이트 수신:', data);
-
         if (data.type === 'connection') {
-          console.log('[RealTimeProgressViewer] 연결 확인 메시지 수신');
           setIsConnected(true);
           return;
         }
 
         if (data.type === 'heartbeat') {
-          console.log('[RealTimeProgressViewer] 하트비트 수신');
           return; // 하트비트는 무시
         }
 
-        console.log('[RealTimeProgressViewer] 진행률 상태 업데이트:', data);
         setProgress(data);
         setIsConnected(true);
 
         // 완료 시 결과 가져오기
         if (data.progress >= 100) {
-          console.log('[RealTimeProgressViewer] 분석 완료, 결과 조회 시작');
           handleCompletion();
         }
       });
 
       sse.onopen = () => {
-        console.log('[RealTimeProgressViewer] SSE 연결 성공');
         setIsConnected(true);
       };
 
       sse.onerror = (error) => {
-        console.error('[RealTimeProgressViewer] SSE 연결 오류:', error);
         setIsConnected(false);
         // 재연결 시도는 브라우저가 자동으로 처리
       };
@@ -150,8 +134,6 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
     }, 500); // 500ms 지연
 
     return () => {
-      console.log('[RealTimeProgressViewer] 컴포넌트 언마운트 - 정리 시작');
-
       // 타이머 정리
       clearTimeout(timeoutId);
       if (connectionTimeout) {
@@ -160,15 +142,12 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
 
       // EventSource 정리
       if (sse) {
-        console.log('[RealTimeProgressViewer] SSE 연결 정리');
         sse.close();
       }
 
       // 이벤트 리스너 제거
       window.removeEventListener('beforeunload', handleBeforeUnload);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-
-      console.log('[RealTimeProgressViewer] 정리 완료');
     };
   }, [taskId]);
 

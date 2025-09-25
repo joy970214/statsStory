@@ -72,15 +72,12 @@ export const StatDetailViewer: React.FC<Props> = ({
     try {
       setLoading(true);
       setError(null);
-      console.log(`통계표 상세 정보 API 호출: ${statName}`);
-
       const response = await fetch(`/api/stats-detail/${encodeURIComponent(statName)}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
-      console.log('통계표 상세 정보 응답:', data);
       setDetailData(data);
 
       // 첫 번째 테이블을 기본 선택
@@ -89,7 +86,6 @@ export const StatDetailViewer: React.FC<Props> = ({
         setSelectedTable(tableNames[0]);
       }
     } catch (err) {
-      console.error('통계표 상세 정보 로드 오류:', err);
       setError(`상세 정보를 불러오는데 실패했습니다: ${err instanceof Error ? err.message : '알 수 없는 오류'}`);
     } finally {
       setLoading(false);
