@@ -106,9 +106,14 @@ export const TableAnalysisViewer: React.FC<TableAnalysisViewerProps> = ({ statNa
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-3 text-gray-600">통계표별 분석 데이터를 로드하는 중...</span>
+      <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
+        <div className="bg-white/90 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-white/20 max-w-md w-full mx-4">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary-200 border-t-primary-600 mx-auto mb-6"></div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">통계표별 분석 로딩</h3>
+            <p className="text-gray-600">'{statName}' 데이터를 분석하는 중...</p>
+          </div>
+        </div>
       </div>
     );
   }

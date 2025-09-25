@@ -962,7 +962,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                   {processedStats.data_structure.table_count}개 수집됨
                 </span>
               </h3>
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 shadow-lg">
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
                     <TableCellsIcon className="w-5 h-5 text-white" />

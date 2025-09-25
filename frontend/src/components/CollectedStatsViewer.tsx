@@ -112,47 +112,50 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
 
   if (loading) {
     return (
-      <motion.div 
-        className="min-h-screen flex items-center justify-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="text-center">
-          <div className="relative mx-auto w-16 h-16 mb-4">
-            <motion.div 
-              className="w-16 h-16 rounded-full border-4 border-primary-200"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            />
-            <motion.div 
-              className="absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-transparent border-t-primary-600"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            />
-            <motion.div 
-              className="absolute inset-0 flex items-center justify-center"
-              animate={{ 
-                scale: [1, 1.1, 1],
-              }}
-              transition={{ 
-                duration: 1.5, 
-                repeat: Infinity, 
-                ease: "easeInOut" 
-              }}
+      <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
+        <motion.div 
+          className="bg-white/90 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-white/20 max-w-md w-full mx-4"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="text-center">
+            <div className="relative mx-auto w-16 h-16 mb-6">
+              <motion.div 
+                className="w-16 h-16 rounded-full border-4 border-primary-200"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              />
+              <motion.div 
+                className="absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-transparent border-t-primary-600"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              />
+              <motion.div 
+                className="absolute inset-0 flex items-center justify-center"
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{ 
+                  duration: 1.5, 
+                  repeat: Infinity, 
+                  ease: "easeInOut" 
+                }}
+              >
+                <SparklesIcon className="w-6 h-6 text-primary-600" />
+              </motion.div>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">수집된 통계표 로딩</h3>
+            <motion.p 
+              className="text-gray-600"
+              animate={{ opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 2, repeat: Infinity }}
             >
-              <SparklesIcon className="w-6 h-6 text-primary-600" />
-            </motion.div>
+              데이터를 불러오는 중입니다...
+            </motion.p>
           </div>
-          <motion.p 
-            className="text-gray-700 font-medium text-lg"
-            animate={{ opacity: [0.7, 1, 0.7] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            수집된 통계표 목록을 불러오는 중...
-          </motion.p>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     );
   }
 

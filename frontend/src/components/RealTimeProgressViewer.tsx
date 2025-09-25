@@ -339,7 +339,7 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
       </motion.div>
 
       {/* 처리 단계 표시 */}
-      <motion.div 
+      <motion.div
         className="bg-white border border-gray-200 rounded-xl p-6 shadow-lg"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -351,16 +351,15 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
         </h3>
         <div className="space-y-4">
           {[
-            { name: '초기화', key: 'init', description: '최적화된 크롤러 초기화 및 설정' },
-            { name: '메타데이터', key: 'metadata', description: '통계정보 및 관련용어 수집' },
-            { name: '통계표목록', key: 'tables', description: '사용 가능한 통계표 목록 조회' },
-            { name: '데이터수집', key: 'data', description: '병렬 통계표 데이터 수집' },
-            { name: '분석', key: 'analysis', description: '분석 인사이트 생성' },
-            { name: '완료', key: 'complete', description: '분석 결과 정리 및 완료' }
+            { name: '초기화', key: 'init', description: '최적화된 크롤러 초기화 및 설정', threshold: 0 },
+            { name: '통계표목록', key: 'tables', description: '사용 가능한 통계표 목록 조회', threshold: 15 },
+            { name: '데이터수집', key: 'data', description: '통계표별 메타데이터 및 데이터 수집', threshold: 90 },
+            { name: '분석', key: 'analysis', description: '분석 인사이트 생성', threshold: 95 },
+            { name: '완료', key: 'complete', description: '분석 결과 정리 및 완료', threshold: 100 }
           ].map((step, index) => {
-            const isActive = progress.stage.toLowerCase().includes(step.key) || 
+            const isActive = progress.stage.toLowerCase().includes(step.key) ||
                            step.name === progress.stage;
-            const isCompleted = progress.progress > (index * 16.67);
+            const isCompleted = progress.progress >= step.threshold;
             
             return (
               <motion.div 
