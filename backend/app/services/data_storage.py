@@ -208,18 +208,24 @@ class DataStorageService:
         import os
         from datetime import datetime, timedelta
 
-        print(f"[CACHE] '{stat_name}' 통계의 기존 데이터를 검색 중...")
+        print(f"[CACHE DEBUG] '{stat_name}' 통계의 기존 데이터를 검색 중...")
+        print(f"[CACHE DEBUG] 정규화된 검색어: '{self._normalize_stat_name(stat_name)}'")
 
         # 모든 메타데이터 파일 스캔
         metadata_pattern = os.path.join(self.metadata_dir, "*_metadata.json")
         metadata_files = glob.glob(metadata_pattern)
+        print(f"[CACHE DEBUG] 발견된 메타데이터 파일 수: {len(metadata_files)}")
 
         max_age = datetime.now() - timedelta(hours=max_age_hours)
 
-        for metadata_file in metadata_files:
+        for idx, metadata_file in enumerate(metadata_files, 1):
             try:
+                print(f"[CACHE DEBUG] {idx}. 파일 확인 중: {os.path.basename(metadata_file)}")
+
                 # 파일 수정 시간 체크
-                if os.path.getmtime(metadata_file) < max_age.timestamp():
+                file_mtime = os.path.getmtime(metadata_file)
+                if file_mtime < max_age.timestamp():
+                    print(f"[CACHE DEBUG]   → 만료된 파일 (수정시간: {datetime.fromtimestamp(file_mtime)})")
                     continue
 
                 # 메타데이터 로드해서 제목 비교
@@ -227,10 +233,16 @@ class DataStorageService:
                     data = json.load(f)
 
                 metadata_title = data.get('metadata', {}).get('title', '')
+                normalized_title = self._normalize_stat_name(metadata_title)
+                normalized_search = self._normalize_stat_name(stat_name)
+
+                print(f"[CACHE DEBUG]   → 제목: '{metadata_title}'")
+                print(f"[CACHE DEBUG]   → 정규화된 제목: '{normalized_title}'")
+                print(f"[CACHE DEBUG]   → 매칭 여부: {normalized_title == normalized_search}")
 
                 # 통계명 매칭 (대소문자 무시, 공백 정리)
-                if self._normalize_stat_name(metadata_title) == self._normalize_stat_name(stat_name):
-                    print(f"[CACHE] 매칭된 캐시 발견: {metadata_title}")
+                if normalized_title == normalized_search:
+                    print(f"[CACHE SUCCESS] 매칭된 캐시 발견: {metadata_title}")
 
                     # 해당하는 통계 데이터도 로드
                     cache_key = data.get('cache_key')
@@ -249,16 +261,21 @@ class DataStorageService:
                                 elif 'data' in stats_data:
                                     stat_data_list = [StatData(**item) for item in stats_data['data']]
                                 else:
-                                    print(f"알 수 없는 데이터 구조: {list(stats_data.keys())}")
+                                    print(f"[CACHE DEBUG] 알 수 없는 데이터 구조: {list(stats_data.keys())}")
                                     return None, None
 
+                            print(f"[CACHE SUCCESS] 캐시된 데이터 로드 완료: {len(stat_data_list)}개 항목")
                             return metadata_obj, stat_data_list
+                        else:
+                            print(f"[CACHE DEBUG] 통계 데이터 파일 없음: {stats_file}")
+                    else:
+                        print(f"[CACHE DEBUG] cache_key 없음")
 
             except Exception as e:
-                print(f"캐시 파일 읽기 오류 ({metadata_file}): {e}")
+                print(f"[CACHE ERROR] 캐시 파일 읽기 오류 ({metadata_file}): {e}")
                 continue
 
-        print(f"[CACHE] '{stat_name}' 통계의 기존 데이터를 찾을 수 없음")
+        print(f"[CACHE FAIL] '{stat_name}' 통계의 기존 데이터를 찾을 수 없음")
         return None, None
 
     def _normalize_stat_name(self, name: str) -> str:

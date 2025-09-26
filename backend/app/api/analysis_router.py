@@ -17,11 +17,6 @@ from app.services.mcp_client import mcp_client
 from app.services.mcp_analysis_service import mcp_analysis_service
 from app.services.progress_service import progress_tracker, stream_progress, ProgressCallback
 from app.services.stat_name_storage import stat_name_storage
-try:
-    from app.crawlers.optimized_molit_crawler import OptimizedMolitCrawler
-except ImportError as e:
-    print(f"OptimizedMolitCrawler import 실패: {e}")
-    OptimizedMolitCrawler = None
 import asyncio
 import time
 import uuid
@@ -210,8 +205,8 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
                 return True
             return False
 
-        # 진행률 업데이트
-        progress_tracker.update_progress(task_id, "데이터 수집 준비", 10, "분석을 시작합니다")
+        # 🚀 더 자세한 진행률 업데이트 (사용자 체감 개선)
+        progress_tracker.update_progress(task_id, "작업 준비 완료", 12, "데이터 수집을 시작합니다")
 
         # 취소 체크
         if check_cancellation():
@@ -220,7 +215,7 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
         stat_url = request.stat_url or "https://stat.molit.go.kr/portal/cate/statView.do"
 
         # 캐시된 데이터 확인
-        progress_tracker.update_progress(task_id, "캐시 확인", 20, "기존 데이터를 확인합니다")
+        progress_tracker.update_progress(task_id, "캐시 확인", 18, "기존 수집된 데이터를 확인합니다")
 
         # 취소 체크
         if check_cancellation():
@@ -471,8 +466,11 @@ async def start_optimized_analysis(request: GenerateStoryRequest, background_tas
         # 작업 ID 생성
         task_id = progress_tracker.create_task(f"기본통계현황분석: {request.stat_name}")
 
+        # 🚀 즉시 초기 진행률 업데이트 (더 빠른 피드백)
+        progress_tracker.update_progress(task_id, "요청 처리", 2, "분석 요청을 처리하고 있습니다...")
+
         # 즉시 시작 상태로 업데이트
-        progress_tracker.update_progress(task_id, "시작", 5, "분석 작업을 초기화합니다")
+        progress_tracker.update_progress(task_id, "초기화", 8, "분석 작업을 준비합니다")
 
         # 백그라운드에서 분석 실행
         background_tasks.add_task(run_optimized_analysis, task_id, request)
@@ -757,6 +755,8 @@ async def inspect_enhanced_data(stat_name: str):
 
         # API 기반 재수집 및 구조화
         try:
+            # 지연 로딩: 필요할 때만 OptimizedMolitCrawler import
+            from app.crawlers.legacy.optimized_molit_crawler import OptimizedMolitCrawler
             crawler = OptimizedMolitCrawler(pool_size=1)
 
             # URL에서 FormId 추출

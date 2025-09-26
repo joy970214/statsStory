@@ -148,6 +148,10 @@ function App() {
 
   const handleStatSelect = async (stat: StatItem) => {
     try {
+      // 🚀 즉시 로딩 화면 표시 (API 호출 전)
+      setState('optimized-progress');
+      setError(null);
+
       // 진행 중인 작업이 있으면 취소 확인
       if (ongoingTask && currentTaskId) {
         const confirmed = window.confirm(
@@ -157,7 +161,8 @@ function App() {
         );
 
         if (!confirmed) {
-          return; // 사용자가 취소하면 아무것도 하지 않음
+          setState('stats-list'); // 취소 시 원래 화면으로 복귀
+          return;
         }
 
         // 기존 작업 취소
@@ -175,16 +180,13 @@ function App() {
         }
       }
 
-      setError(null);
-
       const request = {
         stat_name: stat.title,
         stat_url: stat.url || '',
         period: '5years'
       };
 
-      // 모든 분석을 최적화된 버전으로 실행 (실시간 진행률 표시)
-      setState('optimized-progress');
+      // API 호출
       const startResponse = await statsAPI.startOptimizedAnalysis(request);
       setCurrentTaskId(startResponse.task_id);
 

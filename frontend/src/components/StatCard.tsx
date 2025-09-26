@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StatItem } from '../services/api';
-import { 
-  MagnifyingGlassIcon, 
-  ChartBarIcon, 
+import {
+  MagnifyingGlassIcon,
+  ChartBarIcon,
   CalendarIcon,
   TagIcon
 } from '@heroicons/react/24/outline';
@@ -14,6 +14,17 @@ interface StatCardProps {
 }
 
 export const StatCard: React.FC<StatCardProps> = ({ stat, onSelect, disabled = false }) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleAnalysisClick = () => {
+    if (disabled || isProcessing) return;
+
+    // 🚀 즉시 버튼 비활성화
+    setIsProcessing(true);
+    onSelect(stat);
+  };
+
+  const isButtonDisabled = disabled || isProcessing;
 
   return (
     <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-primary-200 group">
@@ -38,15 +49,15 @@ export const StatCard: React.FC<StatCardProps> = ({ stat, onSelect, disabled = f
         <div className="flex gap-3 mt-6">
           <button
             className={`flex-1 py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 font-medium ${
-              disabled
+              isButtonDisabled
                 ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
                 : 'bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
             }`}
-            onClick={() => !disabled && onSelect(stat)}
-            disabled={disabled}
+            onClick={handleAnalysisClick}
+            disabled={isButtonDisabled}
           >
             <MagnifyingGlassIcon className="w-4 h-4" />
-            {disabled ? '취소 중...' : '분석하기'}
+            {disabled ? '취소 중...' : isProcessing ? '처리 중...' : '분석하기'}
           </button>
 
           {stat.url && (
