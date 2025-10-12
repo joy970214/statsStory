@@ -1,6 +1,10 @@
 import aiohttp
 import asyncio
 import re
+import os
+import glob
+import pandas as pd
+from pathlib import Path
 from datetime import datetime
 from bs4 import BeautifulSoup
 from typing import List, Dict, Any, Tuple, Optional, Callable
@@ -106,7 +110,7 @@ class BrowserPool:
         self.total_browsers = 0
         self.lock = threading.Lock()
         
-    def _create_browser(self) -> webdriver.Chrome:
+    def _create_browser(self, download_dir: Optional[str] = None) -> webdriver.Chrome:
         """브라우저 인스턴스 생성"""
         chrome_options = Options()
         chrome_options.add_argument('--headless')
@@ -115,7 +119,7 @@ class BrowserPool:
         chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument('--window-size=1920,1080')
         chrome_options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
-        
+
         # 안정성 개선 옵션
         chrome_options.add_argument('--disable-plugins')
         chrome_options.add_argument('--disable-extensions')
@@ -126,22 +130,51 @@ class BrowserPool:
         chrome_options.add_argument('--disable-ipc-flooding-protection')
         chrome_options.add_argument('--memory-pressure-off')
         chrome_options.add_argument('--max_old_space_size=4096')
-        
+
+        # 다운로드 디렉토리 설정
+        if download_dir:
+            # 절대 경로로 변환
+            download_dir = os.path.abspath(download_dir)
+            print(f"[다운로드 경로 설정] {download_dir}")
+
+            prefs = {
+                "download.default_directory": download_dir,
+                "download.prompt_for_download": False,
+                "download.directory_upgrade": True,
+                "safebrowsing.enabled": False,  # 안전 브라우징 비활성화
+                "profile.default_content_settings.popups": 0,
+                "profile.content_settings.exceptions.automatic_downloads.*.setting": 1
+            }
+            chrome_options.add_experimental_option("prefs", prefs)
+
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=chrome_options)
         driver.set_page_load_timeout(30)  # 타임아웃 증가
         driver.implicitly_wait(10)  # 암시적 대기 추가
-        
+
+        # headless 모드에서 다운로드 활성화 (Chrome DevTools Protocol 사용)
+        if download_dir:
+            params = {
+                'behavior': 'allow',
+                'downloadPath': download_dir
+            }
+            driver.execute_cdp_cmd('Page.setDownloadBehavior', params)
+            print(f"[CDP 다운로드 설정 완료] {download_dir}")
+
         return driver
     
-    def get_browser(self) -> webdriver.Chrome:
+    def get_browser(self, download_dir: Optional[str] = None) -> webdriver.Chrome:
         """브라우저 인스턴스 가져오기"""
         try:
             return self.available_browsers.get_nowait()
         except queue.Empty:
             with self.lock:
                 if self.total_browsers < self.pool_size:
-                    driver = self._create_browser()
+                    # 다운로드 경로 설정 (기본값: 프로젝트 루트/downloads)
+                    if not download_dir:
+                        project_root = Path(__file__).parent.parent.parent.parent
+                        download_dir = str(project_root / "downloads")
+                    driver = self._create_browser(download_dir=download_dir)
                     self.total_browsers += 1
                     return driver
                 else:
@@ -1760,31 +1793,97 @@ class OptimizedMolitCrawler:
                 except Exception as e:
                     print(f"API 수집 중 오류: {e}, 기존 방식으로 fallback")
             
-            # IBSheet 기반 데이터 수집 (메인 방식)
-            print(f"IBSheet 데이터 수집 시작: {table_info['name']}")
+            # 파일 다운로드 기반 데이터 수집 (신규 메인 방식)
+            print(f"파일 다운로드 방식 데이터 수집 시작: {table_info['name']}")
 
-            # IBSheet 수집 시작 전 취소 체크
+            # 다운로드 수집 시작 전 취소 체크
             check_cancellation()
 
-            if table_info['is_regional'] or '시·군·구별' in table_info['name']:
-                print(f"지역별 데이터 수집: {table_info['name']}")
+            # 날짜 범위가 필요한 경우 먼저 설정
+            if table_info['is_yearly'] or await self._should_use_date_range(driver):
+                print(f"연도별/날짜범위 설정: {table_info['name']}")
+                check_cancellation()
+                # 날짜 범위 설정 (다운로드 전에 수행)
+                await self._set_date_range_for_download(driver, date_format)
+            elif not (table_info['is_regional'] or '시·군·구별' in table_info['name']):
+                # 지역별이 아닌 경우 조회 버튼 클릭
+                print(f"조회 버튼 클릭: {table_info['name']}")
                 await self._click_search_button(driver)
-                check_cancellation()  # 검색 버튼 클릭 후 취소 체크
+                check_cancellation()
+
+            # 파일 다운로드 방식으로 데이터 수집
+            download_result = await self._collect_table_data_via_download(driver, table_info['name'], file_type="excel")
+
+            if download_result and len(download_result) > 0:
+                print(f"파일 다운로드 방식 수집 성공: {len(download_result)}개 데이터")
+                return download_result
+
+            # 다운로드 실패 시 기존 IBSheet 방식으로 fallback
+            print(f"파일 다운로드 실패, IBSheet 방식으로 fallback: {table_info['name']}")
+
+            if table_info['is_regional'] or '시·군·구별' in table_info['name']:
+                print(f"지역별 데이터 수집 (IBSheet): {table_info['name']}")
+                await self._click_search_button(driver)
+                check_cancellation()
                 return await self._extract_current_data(driver, table_info['name'])
 
             elif table_info['is_yearly'] or await self._should_use_date_range(driver):
-                print(f"연도별/날짜범위 데이터 수집: {table_info['name']}")
-                check_cancellation()  # 날짜 범위 수집 전 취소 체크
+                print(f"연도별/날짜범위 데이터 수집 (IBSheet): {table_info['name']}")
+                check_cancellation()
                 return await self._collect_data_with_date_range(driver, table_info['name'], date_format)
 
             else:
-                print(f"[Fallback] 기본 데이터 수집: {table_info['name']}")
+                print(f"[Fallback] 기본 데이터 수집 (IBSheet): {table_info['name']}")
                 await self._click_search_button(driver)
-                check_cancellation()  # 검색 버튼 클릭 후 취소 체크
+                check_cancellation()
                 return await self._extract_current_data(driver, table_info['name'])
                 
         finally:
             self.browser_pool.return_browser(driver)
+
+    async def _set_date_range_for_download(self, driver, date_format: str = "YYYYMM"):
+        """다운로드 전 날짜 범위 설정 (5년치)"""
+        try:
+            from datetime import datetime, timedelta
+
+            # 5년치 날짜 계산
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=365*5)
+
+            # 날짜 형식에 따른 포맷 설정
+            if date_format == "YYYY":
+                start_value = start_date.strftime('%Y')
+                end_value = end_date.strftime('%Y')
+            elif date_format == "YYYY-MM":
+                start_value = start_date.strftime('%Y-%m').replace('-0', '-')  # 01 -> 1
+                end_value = end_date.strftime('%Y-%m').replace('-0', '-')
+            elif date_format == "YYYYMM":
+                start_value = start_date.strftime('%Y%m')
+                end_value = end_date.strftime('%Y%m')
+            else:
+                start_value = start_date.strftime('%Y%m')  # 기본값
+                end_value = end_date.strftime('%Y%m')
+
+            print(f"날짜 범위 설정 ({date_format}): {start_value} ~ {end_value}")
+
+            # #sStart와 #sEnd 설정
+            try:
+                start_element = driver.find_element(By.ID, "sStart")
+                start_element.clear()
+                start_element.send_keys(start_value)
+
+                end_element = driver.find_element(By.ID, "sEnd")
+                end_element.clear()
+                end_element.send_keys(end_value)
+
+                # 조회 버튼 클릭
+                await self._click_search_button(driver)
+
+            except Exception as e:
+                print(f"날짜 범위 설정 실패: {e}")
+
+        except Exception as e:
+            print(f"날짜 범위 설정 오류: {e}")
 
     async def _should_use_date_range(self, driver) -> bool:
         """날짜 범위 설정이 필요한지 판단"""
@@ -1898,6 +1997,208 @@ class OptimizedMolitCrawler:
             
         except Exception as e:
             print(f"현재 데이터 추출 오류: {e}")
+            return []
+
+    async def _download_table_file(self, driver, table_name: str, file_type: str = "excel") -> Optional[str]:
+        """
+        통계표를 파일로 다운로드
+
+        Args:
+            driver: Selenium WebDriver
+            table_name: 통계표명
+            file_type: 파일 형식 ("excel" 또는 "txt")
+
+        Returns:
+            다운로드된 파일 경로 (실패 시 None)
+        """
+        try:
+            print(f"파일 다운로드 시작: {table_name} ({file_type})")
+
+            # 1. 다운로드 버튼 클릭하여 모달 열기
+            try:
+                download_btn = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.ID, "fileDownBtn"))
+                )
+                download_btn.click()
+                await asyncio.sleep(1)
+                print("다운로드 모달 열림")
+            except Exception as e:
+                print(f"다운로드 버튼 클릭 실패: {e}")
+                return None
+
+            # 2. 파일 형식 선택 (Excel 또는 TXT)
+            try:
+                if file_type.lower() == "excel":
+                    # Excel 옵션 선택
+                    excel_option = WebDriverWait(driver, 5).until(
+                        EC.element_to_be_clickable((By.XPATH, "//label[contains(text(), 'EXCEL')]"))
+                    )
+                    excel_option.click()
+                    print("Excel 형식 선택")
+                else:
+                    # TXT 옵션 선택
+                    txt_option = WebDriverWait(driver, 5).until(
+                        EC.element_to_be_clickable((By.XPATH, "//label[contains(text(), 'TXT')]"))
+                    )
+                    txt_option.click()
+                    print("TXT 형식 선택")
+
+                await asyncio.sleep(0.5)
+            except Exception as e:
+                print(f"파일 형식 선택 실패: {e}")
+
+            # 3. download() 함수 실행
+            try:
+                # downloads 폴더 경로 설정 (프로젝트 루트/downloads)
+                project_root = Path(__file__).parent.parent.parent.parent  # backend의 부모
+                download_path = project_root / "downloads"
+                download_path.mkdir(exist_ok=True)
+
+                print(f"[다운로드 경로] {download_path}")
+
+                # 다운로드 전 기존 파일 개수 확인
+                file_pattern = "*.xls*" if file_type.lower() == "excel" else "*.txt"
+                files_before = list(download_path.glob(file_pattern))
+                print(f"[다운로드 전] {len(files_before)}개 파일 존재")
+
+                driver.execute_script("if (typeof download === 'function') download();")
+                print("download() 함수 실행")
+
+                # 다운로드 완료 대기 (최대 10초)
+                max_wait = 10
+                for i in range(max_wait):
+                    await asyncio.sleep(1)
+                    files_after = list(download_path.glob(file_pattern))
+                    if len(files_after) > len(files_before):
+                        print(f"[다운로드 감지] {i+1}초 후 새 파일 발견")
+                        break
+                    print(f"[대기 중] {i+1}/{max_wait}초...")
+
+            except Exception as e:
+                print(f"download() 실행 실패: {e}")
+                return None
+
+            # 4. 다운로드된 파일 찾기
+            file_pattern = "*.xls*" if file_type.lower() == "excel" else "*.txt"
+            files = list(download_path.glob(file_pattern))
+            print(f"[다운로드 후] {len(files)}개 파일 발견")
+
+            if files:
+                # 가장 최근 파일 선택
+                latest_file = max(files, key=lambda p: p.stat().st_ctime)
+                print(f"다운로드 완료: {latest_file}")
+                return str(latest_file)
+            else:
+                print(f"다운로드된 파일을 찾을 수 없음: {file_pattern} in {download_path}")
+                return None
+
+        except Exception as e:
+            print(f"파일 다운로드 오류: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
+
+    async def _parse_downloaded_file(self, file_path: str, table_name: str) -> List[StatData]:
+        """
+        다운로드된 파일을 파싱하여 StatData로 변환
+
+        Args:
+            file_path: 다운로드된 파일 경로
+            table_name: 통계표명
+
+        Returns:
+            StatData 리스트
+        """
+        try:
+            print(f"파일 파싱 시작: {file_path}")
+
+            # 파일 확장자 확인
+            file_ext = Path(file_path).suffix.lower()
+
+            # Excel 파일 파싱
+            if file_ext in ['.xls', '.xlsx']:
+                df = pd.read_excel(file_path)
+            # TXT/CSV 파일 파싱
+            elif file_ext in ['.txt', '.csv']:
+                # 탭 구분자로 시도
+                try:
+                    df = pd.read_csv(file_path, sep='\t', encoding='cp949')
+                except:
+                    # 쉼표 구분자로 재시도
+                    df = pd.read_csv(file_path, sep=',', encoding='cp949')
+            else:
+                print(f"지원하지 않는 파일 형식: {file_ext}")
+                return []
+
+            print(f"파일 로드 성공: {len(df)} 행, {len(df.columns)} 열")
+
+            # DataFrame을 StatData로 변환
+            stat_data_list = []
+            current_year = datetime.now().year
+
+            # 각 행을 개별 StatData로 변환
+            for idx, row in df.iterrows():
+                # NaN 값 제거 및 문자열 변환
+                data_dict = {}
+                for col in df.columns:
+                    value = row[col]
+                    if pd.notna(value):
+                        data_dict[str(col)] = str(value)
+
+                if data_dict:  # 빈 행 제외
+                    stat_data = StatData(
+                        year=current_year,
+                        data=data_dict,
+                        table_name=table_name,
+                        period_text=f"{datetime.now().strftime('%Y-%m')}",
+                        raw_data_count=len(data_dict)
+                    )
+                    stat_data_list.append(stat_data)
+
+            print(f"파싱 완료: {len(stat_data_list)}개 데이터")
+
+            # 파싱 완료 후 파일 삭제 (선택적)
+            try:
+                os.remove(file_path)
+                print(f"임시 파일 삭제: {file_path}")
+            except:
+                pass
+
+            return stat_data_list
+
+        except Exception as e:
+            print(f"파일 파싱 오류: {e}")
+            import traceback
+            traceback.print_exc()
+            return []
+
+    async def _collect_table_data_via_download(self, driver, table_name: str, file_type: str = "excel") -> List[StatData]:
+        """
+        파일 다운로드 방식으로 통계표 데이터 수집
+
+        Args:
+            driver: Selenium WebDriver
+            table_name: 통계표명
+            file_type: 다운로드 파일 형식 ("excel" 또는 "txt")
+
+        Returns:
+            StatData 리스트
+        """
+        try:
+            # 1. 파일 다운로드
+            file_path = await self._download_table_file(driver, table_name, file_type)
+
+            if not file_path:
+                print(f"파일 다운로드 실패: {table_name}")
+                return []
+
+            # 2. 다운로드된 파일 파싱
+            stat_data_list = await self._parse_downloaded_file(file_path, table_name)
+
+            return stat_data_list
+
+        except Exception as e:
+            print(f"다운로드 방식 데이터 수집 오류: {e}")
             return []
 
     async def _collect_tables_with_conditions_parallel(
