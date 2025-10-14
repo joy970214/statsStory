@@ -268,20 +268,42 @@ const TableDetailView: React.FC<TableDetailViewProps> = ({ tableData }) => {
             </div>
           </div>
           <button
-            onClick={(e) => {
+            onClick={async (e) => {
               e.preventDefault();
               e.stopPropagation();
               console.log('다운로드 버튼 클릭:', tableData.downloaded_file);
               const downloadUrl = `/api/download-file?file_path=${encodeURIComponent(tableData.downloaded_file!.path)}`;
               console.log('다운로드 URL:', downloadUrl);
 
-              // a 태그를 생성하여 다운로드 트리거
-              const link = document.createElement('a');
-              link.href = downloadUrl;
-              link.download = tableData.downloaded_file!.filename;
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
+              try {
+                // fetch로 파일 다운로드
+                const response = await fetch(downloadUrl);
+                if (!response.ok) {
+                  throw new Error(`다운로드 실패: ${response.status}`);
+                }
+
+                // Blob으로 변환
+                const blob = await response.blob();
+
+                // Blob URL 생성
+                const blobUrl = window.URL.createObjectURL(blob);
+
+                // a 태그로 다운로드 트리거
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = tableData.downloaded_file!.filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Blob URL 해제
+                window.URL.revokeObjectURL(blobUrl);
+
+                console.log('다운로드 완료');
+              } catch (error) {
+                console.error('다운로드 오류:', error);
+                alert('파일 다운로드에 실패했습니다.');
+              }
             }}
             className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center space-x-2"
           >
