@@ -778,10 +778,18 @@ async def download_original_file(file_path: str):
         if not file_path_obj.exists():
             raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
 
+        from urllib.parse import quote
+
+        # 파일명을 URL 인코딩하여 Content-Disposition 헤더에 사용
+        encoded_filename = quote(file_path_obj.name)
+
         return FileResponse(
             path=str(file_path_obj),
             filename=file_path_obj.name,
-            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={
+                "Content-Disposition": f"attachment; filename*=UTF-8''{encoded_filename}"
+            }
         )
 
     except HTTPException:
