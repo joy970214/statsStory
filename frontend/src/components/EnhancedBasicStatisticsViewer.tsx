@@ -16,7 +16,9 @@ import {
   SparklesIcon,
   EyeIcon,
   DocumentTextIcon,
-  TagIcon
+  TagIcon,
+  ChevronDownIcon,
+  ChevronUpIcon
 } from '@heroicons/react/24/outline';
 import { TableAnalysisViewer } from './TableAnalysisViewer';
 
@@ -51,17 +53,18 @@ interface ProcessedStatistics {
   }>;
 }
 
-export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsViewerProps> = ({ 
-  analysisData, 
+export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsViewerProps> = ({
+  analysisData,
   onBack,
-  onViewTableAnalysis 
+  onViewTableAnalysis
 }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [processedStats, setProcessedStats] = useState<ProcessedStatistics | null>(null);
   const [selectedTableName, setSelectedTableName] = useState<string | null>(null);
   const [rawDataByTable, setRawDataByTable] = useState<Record<string, any[]>>({});
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'tables'>('overview');
+  const [isFileDownloadOpen, setIsFileDownloadOpen] = useState(false);
+  const [isMetadataOpen, setIsMetadataOpen] = useState(false);
 
   useEffect(() => {
     processRealData();
@@ -765,65 +768,81 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
         </div>
       </motion.div>
 
-      {/* 탭 네비게이션 */}
-      <motion.div 
-        className="bg-white rounded-xl shadow-lg border border-gray-200 mb-8"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <div className="p-2">
-          <nav className="flex bg-gray-100 rounded-lg p-1">
-            <motion.button
-              onClick={() => setActiveTab('overview')}
-              className={`flex-1 py-3 px-6 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
-                activeTab === 'overview'
-                  ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-white'
-              }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <ChartBarIcon className="w-5 h-5" />
-              전체 요약
-            </motion.button>
-            <motion.button
-              onClick={() => setActiveTab('tables')}
-              className={`flex-1 py-3 px-6 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
-                activeTab === 'tables'
-                  ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-white'
-              }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <TableCellsIcon className="w-5 h-5" />
-              원본 파일 다운로드
-            </motion.button>
-          </nav>
-        </div>
-      </motion.div>
-
       {/* 분석 내용 - PDF 다운로드 대상 */}
       <div ref={contentRef}>
-        {/* 전체 요약 탭 */}
-        {activeTab === 'overview' && (
-          <>
-            {/* 메타데이터 정보 */}
-            <motion.div 
-              className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
+            {/* 원본 파일 다운로드 섹션 - 아코디언 */}
+            <motion.div
+              className="bg-white rounded-xl shadow-lg border border-gray-200 mb-8 overflow-hidden"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-                <DocumentTextIcon className="w-6 h-6 text-primary-600" />
-                메타데이터 정보
-              </h3>
+              <button
+                onClick={() => setIsFileDownloadOpen(!isFileDownloadOpen)}
+                className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors duration-200"
+              >
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent flex items-center gap-3">
+                  <DocumentArrowDownIcon className="w-6 h-6 text-primary-600" />
+                  원본 파일 다운로드
+                </h3>
+                {isFileDownloadOpen ? (
+                  <ChevronUpIcon className="w-6 h-6 text-gray-600" />
+                ) : (
+                  <ChevronDownIcon className="w-6 h-6 text-gray-600" />
+                )}
+              </button>
 
-              {/* 상세 메타정보 */}
-              {(analysisData.metadata?.statistical_info || analysisData.metadata?.major_items ||
+              {isFileDownloadOpen && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="border-t border-gray-200"
+                >
+                  <div className="p-6">
+                    <TableAnalysisViewer
+                      statName={analysisData.stat_name}
+                      onBack={() => {}}
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
+
+            {/* 메타데이터 정보 - 아코디언 */}
+            <motion.div
+              className="bg-white rounded-xl shadow-lg border border-gray-200 mb-8 overflow-hidden"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <button
+                onClick={() => setIsMetadataOpen(!isMetadataOpen)}
+                className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors duration-200"
+              >
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent flex items-center gap-3">
+                  <DocumentTextIcon className="w-6 h-6 text-primary-600" />
+                  메타데이터 정보
+                </h3>
+                {isMetadataOpen ? (
+                  <ChevronUpIcon className="w-6 h-6 text-gray-600" />
+                ) : (
+                  <ChevronDownIcon className="w-6 h-6 text-gray-600" />
+                )}
+              </button>
+
+              {isMetadataOpen && (analysisData.metadata?.statistical_info || analysisData.metadata?.major_items ||
                 analysisData.metadata?.meaning_analysis || analysisData.metadata?.terminology) && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="border-t border-gray-200"
+                >
+                  <div className="p-8">
+                    {/* 상세 메타정보 */}
                 <div className="grid grid-cols-1 lg:grid-cols gap-6">
 
                   {/* 통계정보 상세 */}
@@ -946,24 +965,28 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                     </div>
                   )}
                 </div>
+                  </div>
+                </motion.div>
               )}
             </motion.div>
 
-            {/* 통계표 선택 */}
-            <motion.div 
+            {/* 통계표별 상세 분석 - 전체를 하나의 카드로 묶음 */}
+            <motion.div
               className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-                <TableCellsIcon className="w-6 h-6 text-primary-600" />
-                통계표 선택
-                <span className="ml-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                  {processedStats.data_structure.table_count}개 수집됨
-                </span>
-              </h3>
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
+              {/* 통계표 선택 헤더 */}
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+                  <TableCellsIcon className="w-6 h-6 text-primary-600" />
+                  통계표별 상세 분석
+                  <span className="ml-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                    {processedStats.data_structure.table_count}개 수집됨
+                  </span>
+                </h3>
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
                     <TableCellsIcon className="w-5 h-5 text-white" />
@@ -988,41 +1011,23 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                     </motion.button>
                   ))}
                 </div>
-                {selectedTableName && (
-                  <motion.div 
-                    className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border border-blue-200 shadow-lg"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                        <SparklesIcon className="w-4 h-4 text-white" />
-                      </div>
-                      <span className="text-sm font-semibold text-blue-900">현재 선택된 통계표:</span>
-                      <span className="text-sm font-bold text-blue-700 bg-white px-3 py-1 rounded-lg">{selectedTableName}</span>
-                    </div>
-                  </motion.div>
-                )}
               </div>
-            </motion.div>
+              </div>
 
-            {/* 선택된 통계표 상세 정보 */}
-            <motion.div 
-              className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-                <EyeIcon className="w-6 h-6 text-primary-600" />
-                선택된 통계표 상세 정보
+              {/* 구분선 */}
+              <div className="border-t border-gray-200 my-8"></div>
+
+              {/* 선택된 통계표 상세 정보 */}
+              <div className="mb-8">
+                <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+                  <EyeIcon className="w-6 h-6 text-primary-600" />
+                  선택된 통계표 상세 정보
                 {selectedTableName && (
                   <span className="text-lg text-blue-600 ml-2 bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1 rounded-lg">
                     {selectedTableName}
                   </span>
                 )}
-              </h3>
+              </h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <motion.div 
                   className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 text-center"
@@ -1119,24 +1124,22 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                   <div className="text-sm font-medium text-amber-600">텍스트 데이터</div>
                 </motion.div>
               </div>
-            </motion.div>
+              </div>
 
-        {/* 동적 데이터 분석 */}
-        <motion.div 
-          className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-            <ChartBarIcon className="w-6 h-6 text-primary-600" />
-            데이터 특성 분석
+              {/* 구분선 */}
+              <div className="border-t border-gray-200 my-8"></div>
+
+              {/* 데이터 특성 분석 */}
+              <div className="mb-8">
+                <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+                  <ChartBarIcon className="w-6 h-6 text-primary-600" />
+                  데이터 특성 분석
             {selectedTableName && (
               <span className="text-lg text-blue-600 ml-2 bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1 rounded-lg">
                 {selectedTableName}
               </span>
             )}
-          </h3>
+          </h4>
 
           {(() => {
             const patterns = analyzeDataPatterns(processedStats?.sample_data || []);
@@ -1319,24 +1322,22 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               </div>
             );
           })()}
-        </motion.div>
+              </div>
 
-        {/* 원본 테이블 재구성 */}
-        <motion.div 
-          className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-            <TableCellsIcon className="w-6 h-6 text-primary-600" />
-            원본 테이블 재구성
+              {/* 구분선 */}
+              <div className="border-t border-gray-200 my-8"></div>
+
+              {/* 원본 테이블 재구성 */}
+              <div className="mb-8">
+                <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+                  <TableCellsIcon className="w-6 h-6 text-primary-600" />
+                  원본 테이블 재구성
             {selectedTableName && (
               <span className="text-lg text-blue-600 ml-2 bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1 rounded-lg">
                 {selectedTableName}
               </span>
             )}
-          </h3>
+          </h4>
 
           {(() => {
             const patterns = analyzeDataPatterns(processedStats?.sample_data || []);
@@ -1593,19 +1594,17 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               </div>
             );
           })()}
-        </motion.div>
+              </div>
 
-        {/* 데이터 분포 특성 */}
-        <motion.div 
-          className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-            <ChartBarIcon className="w-6 h-6 text-primary-600" />
-            데이터 분포 특성
-          </h3>
+              {/* 구분선 */}
+              <div className="border-t border-gray-200 my-8"></div>
+
+              {/* 데이터 분포 특성 */}
+              <div className="mb-8">
+                <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+                  <ChartBarIcon className="w-6 h-6 text-primary-600" />
+                  데이터 분포 특성
+                </h4>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
@@ -1697,20 +1696,40 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               </div>
             </div>
           </div>
-        </motion.div>
+              </div>
 
-        {/* 객관적 현황 요약 */}
-        <motion.div 
-          className="bg-white rounded-xl shadow-lg border border-gray-200 p-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-            <SparklesIcon className="w-6 h-6 text-primary-600" />
-            객관적 현황 요약
-          </h3>
+              {/* 구분선 */}
+              <div className="border-t border-gray-200 my-8"></div>
+
+              {/* 객관적 현황 요약 */}
+              <div>
+                <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+                  <SparklesIcon className="w-6 h-6 text-primary-600" />
+                  객관적 현황 요약
+                </h4>
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8">
+            
+            
+            <motion.div 
+              className="mb-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200 shadow-lg"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <SparklesIcon className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h5 className="font-semibold text-green-900 mb-2">실제 수집 데이터 기반 분석</h5>
+                  <p className="text-sm text-green-800 leading-relaxed">
+                    이 분석은 실제로 수집된 <span className="font-bold">{processedStats.data_structure.table_count}개 통계표</span>의{' '}
+                    <span className="font-bold">{processedStats.data_structure.total_fields}개 데이터 필드</span>를 기반으로 작성되었습니다.
+                    숫자 데이터 <span className="font-bold">{processedStats.numeric_stats.count}개</span>에 대한 객관적 기술통계 분석 결과입니다.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="bg-white rounded-xl p-6">
                 <div className="flex items-center gap-3 mb-4">
@@ -1766,42 +1785,9 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                 </div>
               </div>
             </div>
-            
-            <motion.div 
-              className="mt-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200 shadow-lg"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <SparklesIcon className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h5 className="font-semibold text-green-900 mb-2">실제 수집 데이터 기반 분석</h5>
-                  <p className="text-sm text-green-800 leading-relaxed">
-                    이 분석은 실제로 수집된 <span className="font-bold">{processedStats.data_structure.table_count}개 통계표</span>의{' '}
-                    <span className="font-bold">{processedStats.data_structure.total_fields}개 데이터 필드</span>를 기반으로 작성되었습니다.
-                    숫자 데이터 <span className="font-bold">{processedStats.numeric_stats.count}개</span>에 대한 객관적 기술통계 분석 결과입니다.
-                  </p>
-                </div>
+          </div>
               </div>
             </motion.div>
-          </div>
-        </motion.div>
-          </>
-        )}
-
-
-        {/* 원본 파일 다운로드 탭 */}
-        {activeTab === 'tables' && (
-          <TableAnalysisViewer
-            statName={analysisData.stat_name}
-            onBack={() => setActiveTab('overview')}
-          />
-        )}
-
-
 
       </div>
     </div>
