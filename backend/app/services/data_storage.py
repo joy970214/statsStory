@@ -105,6 +105,8 @@ class DataStorageService:
                 stat_dict['collection_status'] = stat.collection_status
             if hasattr(stat, 'data_quality_score') and stat.data_quality_score:
                 stat_dict['data_quality_score'] = stat.data_quality_score
+            if hasattr(stat, 'downloaded_file_path') and stat.downloaded_file_path:
+                stat_dict['downloaded_file_path'] = stat.downloaded_file_path
 
             data['statistics'].append(stat_dict)
         
@@ -186,7 +188,8 @@ class DataStorageService:
                     period_type=stat_dict.get('period_type'),
                     raw_data_count=stat_dict.get('raw_data_count'),
                     collection_status=stat_dict.get('collection_status', 'success'),
-                    data_quality_score=stat_dict.get('data_quality_score')
+                    data_quality_score=stat_dict.get('data_quality_score'),
+                    downloaded_file_path=stat_dict.get('downloaded_file_path')
                 ))
             
             print(f"통계 데이터 캐시 로드 성공: {cache_key} -> {len(stat_data)}년치")
@@ -281,10 +284,14 @@ class DataStorageService:
     def _normalize_stat_name(self, name: str) -> str:
         """통계명 정규화 (비교용)"""
         import re
-        # 괄호 안의 영문 제거, 공백/특수문자 정리
+        # 1. "-" 뒤의 통계표명 제거 (통계명만 남김)
+        if '-' in name:
+            name = name.split('-')[0].strip()
+        # 2. 괄호 안의 영문 제거
         normalized = re.sub(r'\([^)]*\)', '', name)
+        # 3. 공백/특수문자 정리
         normalized = re.sub(r'[^\w가-힣]', '', normalized)
-        # 추가 정리: 대소문자 통일, 공백 제거
+        # 4. 추가 정리: 대소문자 통일, 공백 제거
         normalized = normalized.lower().strip().replace(' ', '')
         print(f"[NORMALIZE] '{name}' -> '{normalized}'")
         return normalized

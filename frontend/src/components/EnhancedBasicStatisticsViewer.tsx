@@ -7,7 +7,7 @@ import {
   generateBasicStatisticsMarkdown
 } from '../utils/downloadUtils';
 import { motion } from 'framer-motion';
-import { 
+import {
   ArrowLeftIcon,
   ChartBarIcon,
   DocumentArrowDownIcon,
@@ -18,6 +18,7 @@ import {
   DocumentTextIcon,
   TagIcon
 } from '@heroicons/react/24/outline';
+import { TableAnalysisViewer } from './TableAnalysisViewer';
 
 interface EnhancedBasicStatisticsViewerProps {
   analysisData: AdvancedCardNewsResponse;
@@ -797,7 +798,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               whileTap={{ scale: 0.98 }}
             >
               <TableCellsIcon className="w-5 h-5" />
-              통계표별 분석
+              원본 파일 다운로드
             </motion.button>
           </nav>
         </div>
@@ -1791,170 +1792,13 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
           </>
         )}
 
-        {/* 통계표별 분석 탭 */}
+
+        {/* 원본 파일 다운로드 탭 */}
         {activeTab === 'tables' && (
-          <motion.div 
-            className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-              <TableCellsIcon className="w-6 h-6 text-primary-600" />
-              통계표별 상세 분석
-            </h3>
-
-            {/* 통계표 선택 */}
-            <motion.div 
-              className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 mb-8 shadow-lg"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
-                  <TableCellsIcon className="w-5 h-5 text-white" />
-                </div>
-                <h4 className="font-semibold text-gray-900">수집된 통계표 선택</h4>
-              </div>
-              <div className="flex flex-wrap gap-3 mb-4">
-                {Object.keys(rawDataByTable).map((tableName, index) => (
-                  <motion.button
-                    key={index}
-                    onClick={() => setSelectedTableName(tableName)}
-                    className={`px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
-                      selectedTableName === tableName
-                        ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
-                        : 'bg-white text-gray-700 hover:bg-primary-50 border border-gray-200 hover:border-primary-300'
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <TableCellsIcon className="w-4 h-4" />
-                    {tableName}
-                  </motion.button>
-                ))}
-              </div>
-              {selectedTableName && (
-                <div className="text-sm text-gray-600">
-                  선택된 통계표: <span className="font-medium text-blue-600">{selectedTableName}</span>
-                </div>
-              )}
-            </motion.div>
-
-            {/* 선택된 통계표 상세 정보 */}
-            {selectedTableName && rawDataByTable[selectedTableName] && (
-              <motion.div 
-                className="space-y-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                {/* 기본 정보 */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <motion.div 
-                    className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 text-center"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3">
-                      <TableCellsIcon className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="text-3xl font-bold text-blue-700 mb-1">
-                      {rawDataByTable[selectedTableName].length}
-                    </div>
-                    <div className="text-sm font-medium text-blue-600">레코드 수</div>
-                  </motion.div>
-                  <motion.div 
-                    className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 text-center shadow-lg"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-3">
-                      <DocumentTextIcon className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="text-3xl font-bold text-green-700 mb-1">
-                      {Object.keys(rawDataByTable[selectedTableName][0]?.data || {}).length}
-                    </div>
-                    <div className="text-sm font-medium text-green-600">데이터 필드</div>
-                  </motion.div>
-                  <motion.div 
-                    className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 text-center"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
-                      <ChartBarIcon className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="text-3xl font-bold text-purple-700 mb-1">
-                      {getSelectedTableStats()?.count || 0}
-                    </div>
-                    <div className="text-sm font-medium text-purple-600">숫자 데이터</div>
-                  </motion.div>
-                </div>
-
-
-                {/* 샘플 데이터 */}
-                <motion.div 
-                  className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 shadow-lg"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3, delay: 0.4 }}
-                >
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center">
-                      <EyeIcon className="w-5 h-5 text-white" />
-                    </div>
-                    <h4 className="font-semibold text-gray-900">샘플 데이터 미리보기</h4>
-                  </div>
-                  <div className="overflow-x-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {Object.entries(rawDataByTable[selectedTableName][0]?.data || {}).slice(0, 9).map(([field, value], idx) => {
-                        let parsedValue;
-                        try {
-                          parsedValue = typeof value === 'string' && value.includes("'value'")
-                            ? JSON.parse(value.replace(/'/g, '"'))
-                            : { value, unit: 'text' };
-                        } catch {
-                          parsedValue = { value: String(value), unit: 'text' };
-                        }
-
-                        return (
-                          <motion.div 
-                            key={idx} 
-                            className="bg-white p-4 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-200"
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: idx * 0.1 }}
-                            whileHover={{ scale: 1.02 }}
-                          >
-                            <div className="flex items-center justify-between mb-3">
-                              <span className="text-sm font-semibold text-gray-700 truncate" title={field}>
-                                {field}
-                              </span>
-                              <span className={`text-xs px-3 py-1 rounded-full font-medium ${
-                                parsedValue.unit === 'number'
-                                  ? 'bg-gradient-to-r from-green-500 to-green-600 text-white'
-                                  : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
-                              }`}>
-                                {parsedValue.unit}
-                              </span>
-                            </div>
-                            <p className="text-sm text-gray-900 font-mono break-all bg-gray-50 rounded-lg p-3">
-                              {String(parsedValue.value).length > 50
-                                ? String(parsedValue.value).substring(0, 50) + '...'
-                                : String(parsedValue.value)
-                              }
-                            </p>
-                          </motion.div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </motion.div>
+          <TableAnalysisViewer
+            statName={analysisData.stat_name}
+            onBack={() => setActiveTab('overview')}
+          />
         )}
 
 
