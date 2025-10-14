@@ -274,7 +274,14 @@ const TableDetailView: React.FC<TableDetailViewProps> = ({ tableData }) => {
               console.log('다운로드 버튼 클릭:', tableData.downloaded_file);
               const downloadUrl = `/api/download-file?file_path=${encodeURIComponent(tableData.downloaded_file!.path)}`;
               console.log('다운로드 URL:', downloadUrl);
-              window.open(downloadUrl, '_blank');
+
+              // a 태그를 생성하여 다운로드 트리거
+              const link = document.createElement('a');
+              link.href = downloadUrl;
+              link.download = tableData.downloaded_file!.filename;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
             }}
             className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center space-x-2"
           >
