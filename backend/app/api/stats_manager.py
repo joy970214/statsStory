@@ -662,16 +662,38 @@ async def get_available_stats():
 
 @router.delete("/stats/{cache_key}", summary="수집된 통계표 삭제")
 async def delete_collected_stat(cache_key: str):
-    """수집된 통계표 삭제 - 메타데이터, 통계 데이터, Excel 파일 모두 삭제"""
+    """수집된 통계표 삭제 - 메타데이터, 통계 데이터, Excel 파일, 다운로드된 원본 파일 모두 삭제"""
     try:
         print(f"통계표 삭제 시작: {cache_key}")
 
-        # 삭제할 파일들 목록
+        # 기본 파일들 목록
         files_to_delete = [
             Path(f"data/metadata/{cache_key}_metadata.json"),
             Path(f"data/statistics/{cache_key}_stats.json"),
             Path(f"data/excel/{cache_key}_data.xlsx")
         ]
+
+        # stat_data에서 downloaded_file_path 정보 확인하여 원본 파일도 삭제 목록에 추가
+        download_files_set = set()  # 중복 제거를 위한 set
+        try:
+            stats_file = Path(f"data/statistics/{cache_key}_stats.json")
+            if stats_file.exists():
+                with open(stats_file, 'r', encoding='utf-8') as f:
+                    stats_data = json.load(f)
+
+                # 통계 데이터에서 downloaded_file_path 추출
+                if 'statistics' in stats_data:
+                    for stat_item in stats_data['statistics']:
+                        downloaded_path = stat_item.get('downloaded_file_path')
+                        if downloaded_path:
+                            # 상대 경로를 절대 경로로 변환
+                            full_path = Path(downloaded_path)
+                            if full_path.exists() and str(full_path) not in download_files_set:
+                                download_files_set.add(str(full_path))
+                                files_to_delete.append(full_path)
+                                print(f"다운로드 파일 삭제 대상 추가: {full_path}")
+        except Exception as e:
+            print(f"다운로드 파일 경로 확인 중 오류 (무시하고 계속): {e}")
 
         deleted_files = []
         errors = []
@@ -694,7 +716,7 @@ async def delete_collected_stat(cache_key: str):
         if deleted_files and not errors:
             result = {
                 "success": True,
-                "message": f"통계표 '{cache_key}'가 성공적으로 삭제되었습니다.",
+                "message": f"통계표 '{cache_key}'가 성공적으로 삭제되었습니다 (원본 파일 포함).",
                 "deleted_files": deleted_files,
                 "cache_key": cache_key
             }
