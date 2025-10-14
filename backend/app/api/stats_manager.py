@@ -129,8 +129,26 @@ async def get_collected_stats_list():
                                 except:
                                     text_fields += 1
 
+                # title에서 통계명만 추출 (최신목록 형식과 동일하게)
+                full_title = metadata_dict.get('title', 'Unknown')
+                stat_name_display = full_title
+
+                # "-" 앞부분만 사용 (테이블명 제거)
+                if '-' in full_title:
+                    stat_name_display = full_title.split('-')[0].strip()
+
+                # 괄호 안의 영문만 제거 (한글은 유지 - 준공, 착공 등 구분용)
+                import re
+                # 영문, 공백, 특수문자만 포함된 괄호를 반복적으로 제거
+                while True:
+                    new_display = re.sub(r'\([A-Za-z\s\.,\-\/]+\)', '', stat_name_display).strip()
+                    if new_display == stat_name_display:
+                        break
+                    stat_name_display = new_display
+
                 stat_info = {
-                    "stat_name": metadata_dict.get('title', 'Unknown'),
+                    "stat_name": stat_name_display,
+                    "full_title": full_title,  # 원본 title도 저장 (필요시 사용)
                     "cache_key": cache_key,
                     "stat_url": stat_url,
                     "department": metadata_dict.get('department', ''),
