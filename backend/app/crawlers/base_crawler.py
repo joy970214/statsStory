@@ -26,7 +26,7 @@ class BaseCrawler:
         # ChromeDriver 자동 설치 및 서비스 설정
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=chrome_options)
-        driver.set_page_load_timeout(30)
+        driver.set_page_load_timeout(60)  # 타임아웃 30초 → 60초로 증가
 
         return driver
 

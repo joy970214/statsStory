@@ -166,21 +166,46 @@ class BrowserPool:
     
     def get_browser(self, download_dir: Optional[str] = None) -> webdriver.Chrome:
         """브라우저 인스턴스 가져오기"""
+        # 다운로드 경로 기본값 설정
+        if not download_dir:
+            project_root = Path(__file__).parent.parent.parent.parent
+            download_dir = str(project_root / "downloads")
+        download_dir = os.path.abspath(download_dir)
+
         try:
-            return self.available_browsers.get_nowait()
+            # 재사용되는 브라우저 가져오기
+            driver = self.available_browsers.get_nowait()
+            # 재사용되는 브라우저에도 다운로드 경로 재설정
+            try:
+                params = {
+                    'behavior': 'allow',
+                    'downloadPath': download_dir
+                }
+                driver.execute_cdp_cmd('Page.setDownloadBehavior', params)
+                print(f"[재사용 브라우저 다운로드 경로 재설정] {download_dir}")
+            except Exception as e:
+                print(f"다운로드 경로 재설정 실패: {e}")
+            return driver
         except queue.Empty:
             with self.lock:
                 if self.total_browsers < self.pool_size:
-                    # 다운로드 경로 설정 (기본값: 프로젝트 루트/downloads)
-                    if not download_dir:
-                        project_root = Path(__file__).parent.parent.parent.parent
-                        download_dir = str(project_root / "downloads")
                     driver = self._create_browser(download_dir=download_dir)
                     self.total_browsers += 1
                     return driver
                 else:
                     # 풀이 가득 찬 경우 대기
-                    return self.available_browsers.get()
+                    driver = self.available_browsers.get()
+                    # 대기 후 가져온 브라우저에도 다운로드 경로 재설정
+                    try:
+                        params = {
+                            'behavior': 'allow',
+                            'downloadPath': download_dir
+                        }
+                        driver.execute_cdp_cmd('Page.setDownloadBehavior', params)
+                        print(f"[대기 후 브라우저 다운로드 경로 재설정] {download_dir}")
+                    except Exception as e:
+                        print(f"다운로드 경로 재설정 실패: {e}")
+                    return driver
     
     def return_browser(self, driver: webdriver.Chrome):
         """브라우저 인스턴스 반환"""
@@ -1714,7 +1739,11 @@ class OptimizedMolitCrawler:
                 print(f"[CANCELLATION] 데이터 수집 중 취소 감지: {table_info.get('name', 'Unknown')}")
                 raise Exception("작업이 사용자에 의해 취소되었습니다")
 
-        driver = self.browser_pool.get_browser()
+        # 다운로드 경로 설정
+        project_root = Path(__file__).parent.parent.parent.parent
+        download_dir = str(project_root / "downloads")
+
+        driver = self.browser_pool.get_browser(download_dir=download_dir)
         try:
             # 초기 취소 체크
             check_cancellation()
@@ -2030,36 +2059,47 @@ class OptimizedMolitCrawler:
                     EC.element_to_be_clickable((By.ID, "fileDownBtn"))
                 )
                 download_btn.click()
-                await asyncio.sleep(1)
-                print("다운로드 모달 열림")
+                print("다운로드 버튼 클릭")
+
+                # 모달 애니메이션 완료 대기
+                await asyncio.sleep(2)
+
+                # 모달이 실제로 표시되었는지 확인
+                modal = WebDriverWait(driver, 5).until(
+                    EC.visibility_of_element_located((By.ID, "file-download-modal"))
+                )
+                print("다운로드 모달 열림 확인")
             except Exception as e:
-                print(f"다운로드 버튼 클릭 실패: {e}")
+                print(f"다운로드 모달 열기 실패: {e}")
                 return None
 
             # 2. 파일 형식 선택 (Excel 또는 TXT)
             try:
                 if file_type.lower() == "excel":
-                    # Excel 옵션 선택
-                    excel_option = WebDriverWait(driver, 5).until(
-                        EC.element_to_be_clickable((By.XPATH, "//label[contains(text(), 'EXCEL')]"))
+                    # Excel 옵션 선택 - settingRadio의 xlsx 값 선택
+                    # 라디오 버튼이 DOM에 존재하고 클릭 가능할 때까지 대기
+                    excel_option = WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, "input[name='settingRadio'][value='xlsx']"))
                     )
-                    excel_option.click()
-                    print("Excel 형식 선택")
+
+                    # JavaScript로 클릭 (visibility 문제 우회)
+                    driver.execute_script("arguments[0].click();", excel_option)
+                    print("Excel 형식 선택 (xlsx)")
                 else:
                     # TXT 옵션 선택
-                    txt_option = WebDriverWait(driver, 5).until(
-                        EC.element_to_be_clickable((By.XPATH, "//label[contains(text(), 'TXT')]"))
+                    txt_option = WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, "input[name='settingRadio'][value='txt']"))
                     )
-                    txt_option.click()
+                    driver.execute_script("arguments[0].click();", txt_option)
                     print("TXT 형식 선택")
 
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(1)  # 선택 후 대기
             except Exception as e:
                 print(f"파일 형식 선택 실패: {e}")
                 print("파일 형식을 선택할 수 없어 다운로드를 중단합니다.")
                 return None
 
-            # 3. download() 함수 실행
+            # 3. 다운로드 버튼 클릭
             try:
                 # downloads 폴더 경로 설정 (프로젝트 루트/downloads)
                 project_root = Path(__file__).parent.parent.parent.parent  # backend의 부모
@@ -2073,8 +2113,12 @@ class OptimizedMolitCrawler:
                 files_before = list(download_path.glob(file_pattern))
                 print(f"[다운로드 전] {len(files_before)}개 파일 존재")
 
-                driver.execute_script("if (typeof download === 'function') download();")
-                print("download() 함수 실행")
+                # 모달 내 다운로드 버튼 찾기 및 클릭
+                download_confirm_btn = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, "#file-download-modal .mu-btn-primary"))
+                )
+                download_confirm_btn.click()
+                print("모달 다운로드 버튼 클릭")
 
                 # 다운로드 완료 대기 (최대 30초)
                 max_wait = 30

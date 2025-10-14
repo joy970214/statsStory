@@ -31,9 +31,21 @@ class RecentStatsCrawler(BaseCrawler):
             # Selenium 드라이버 설정
             driver = self._setup_selenium_driver()
 
-            # 페이지 로드
-            driver.get(self.recent_stats_url)
-            print("페이지 로드 완료")
+            # 페이지 로드 (재시도 로직 포함)
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    print(f"페이지 로드 시도 {attempt + 1}/{max_retries}")
+                    driver.get(self.recent_stats_url)
+                    print("페이지 로드 완료")
+                    break
+                except TimeoutException as e:
+                    if attempt < max_retries - 1:
+                        print(f"페이지 로드 타임아웃 (시도 {attempt + 1}/{max_retries}), 재시도 중...")
+                        await self._safe_sleep(3)
+                    else:
+                        print(f"페이지 로드 최종 실패 ({max_retries}번 시도)")
+                        raise
 
             # AJAX 로딩 대기
             wait = WebDriverWait(driver, 20)
