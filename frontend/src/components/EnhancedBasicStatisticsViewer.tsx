@@ -861,7 +861,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                           <div key={index} className="bg-white rounded-lg p-3">
                             <div className="text-left">
                               <div className="text-sm font-medium text-blue-700 mb-1">{key}</div>
-                              <div className="text-sm text-blue-900">{value || '-'}</div>
+                              <div className="text-sm text-blue-900 whitespace-pre-line">{value || '-'}</div>
                             </div>
                           </div>
                         ))}
@@ -885,7 +885,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                           <div key={index} className="bg-white rounded-lg p-3">
                             <div className="text-left">
                               <div className="text-sm font-medium text-green-700 mb-1">{key}</div>
-                              <div className="text-sm text-green-900">{value || '-'}</div>
+                              <div className="text-sm text-green-900 whitespace-pre-line">{value || '-'}</div>
                             </div>
                           </div>
                         ))}
@@ -909,7 +909,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                           <div key={index} className="bg-white rounded-lg p-3">
                             <div className="text-left">
                               <div className="text-sm font-medium text-purple-700 mb-1">{key}</div>
-                              <div className="text-sm text-purple-900">{value || '-'}</div>
+                              <div className="text-sm text-purple-900 whitespace-pre-line">{value || '-'}</div>
                             </div>
                           </div>
                         ))}
@@ -933,7 +933,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                           <div key={index} className="bg-white rounded-lg p-3">
                             <div className="text-left">
                               <div className="text-sm font-medium text-amber-700 mb-1">{key}</div>
-                              <div className="text-sm text-amber-900">{value || '-'}</div>
+                              <div className="text-sm text-amber-900 whitespace-pre-line">{value || '-'}</div>
                             </div>
                           </div>
                         ))}
@@ -957,7 +957,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                           <div key={index} className="bg-white rounded-lg p-3">
                             <div className="text-left">
                               <div className="text-sm font-medium text-gray-700 mb-1">{key}</div>
-                              <div className="text-sm text-gray-900">{value || '-'}</div>
+                              <div className="text-sm text-gray-900 whitespace-pre-line">{value || '-'}</div>
                             </div>
                           </div>
                         ))}

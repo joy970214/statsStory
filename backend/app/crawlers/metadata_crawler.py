@@ -120,7 +120,8 @@ class MetadataCrawler(BaseCrawler):
 
                 if len(ths) == 1 and len(tds) == 1:
                     key = ths[0].get_text(strip=True)
-                    value = tds[0].get_text(strip=True)
+                    # 줄바꿈 유지: separator='\n'으로 <br>, <p> 등의 줄바꿈 보존
+                    value = tds[0].get_text(separator='\n', strip=True)
 
                     if '검색분야' in key or '통계분야' in key:
                         metadata['search_field'] = value
@@ -173,7 +174,8 @@ class MetadataCrawler(BaseCrawler):
 
                     if len(ths) == 1 and len(tds) == 1:
                         key = ths[0].get_text(strip=True)
-                        value = tds[0].get_text(strip=True)
+                        # 줄바꿈 유지: separator='\n'으로 <br>, <p> 등의 줄바꿈 보존
+                        value = tds[0].get_text(separator='\n', strip=True)
 
                         if '주요항목' in key:
                             metadata['related_terms']['주요항목'] = value
