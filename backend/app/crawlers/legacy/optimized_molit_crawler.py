@@ -1423,7 +1423,7 @@ class OptimizedMolitCrawler:
                         except:
                             print("goMetaView() 함수 호출 실패")
 
-                    await asyncio.sleep(2)  # 탭 로딩 대기
+                    await asyncio.sleep(1)  # 탭 로딩 대기 (2초 → 1초로 단축)
 
                     # 통계정보 수집 (최대 10개 항목, 길이 제한 완화)
                     collected_count = 0
@@ -1511,7 +1511,7 @@ class OptimizedMolitCrawler:
                         except:
                             print("goAnalsView() 함수 호출 실패")
 
-                    await asyncio.sleep(2)  # 탭 로딩 대기
+                    await asyncio.sleep(1)  # 탭 로딩 대기 (2초 → 1초로 단축)
 
                 print("관련용어 탭 수집 시작")
 
@@ -1703,7 +1703,7 @@ class OptimizedMolitCrawler:
                             'name': option_text,
                             'value': option_value,
                             'form_id': option_value,
-                            'is_regional': '시도별' in option_text or '지역별' in option_text,
+                            'is_regional': '시도별' in option_text or '지역별' in option_text or '시·군·구별' in option_text,
                             'is_yearly': '연도별' in option_text or '년별' in option_text,
                             'requires_date_range': False  # 기본값
                         }
@@ -1774,7 +1774,20 @@ class OptimizedMolitCrawler:
                 )
                 select = Select(select_element)
                 select.select_by_value(table_info['form_id'])
-                await asyncio.sleep(1)
+                print(f"통계표 선택: FormID={table_info['form_id']}, 이름={table_info['name']}")
+
+                # 통계표 선택이 실제로 적용될 때까지 대기
+                max_wait = 5
+                for i in range(max_wait):
+                    await asyncio.sleep(1)
+                    current_value = select.first_selected_option.get_attribute('value')
+                    if current_value == table_info['form_id']:
+                        print(f"통계표 선택 확인 완료: {current_value}")
+                        break
+                    else:
+                        print(f"통계표 선택 대기 중... ({i+1}/{max_wait}초)")
+
+                await asyncio.sleep(2)  # 추가 안정화 대기 (데이터 갱신 대기)
 
                 # 통계표 선택 후 취소 체크
                 check_cancellation()
@@ -1844,8 +1857,8 @@ class OptimizedMolitCrawler:
                 check_cancellation()
                 # 날짜 범위 설정 (다운로드 전에 수행)
                 await self._set_date_range_for_download(driver, date_format)
-            elif not (table_info['is_regional'] or '시·군·구별' in table_info['name']):
-                # 지역별이 아닌 경우 조회 버튼 클릭
+            else:
+                # 통계표 선택 후 항상 조회 버튼 클릭 (데이터 갱신을 위해 필수)
                 print(f"조회 버튼 클릭: {table_info['name']}")
                 await self._click_search_button(driver)
                 check_cancellation()
@@ -1882,70 +1895,67 @@ class OptimizedMolitCrawler:
 
     async def _set_date_range_for_download(self, driver, date_format: str = "YYYYMM"):
         """다운로드 전 날짜 범위 설정 (5년치)"""
+        from datetime import datetime, timedelta
+
+        # 5년치 날짜 계산
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=365*5)
+
+        # 날짜 형식에 따른 포맷 설정
+        if date_format == "YYYY":
+            start_value = start_date.strftime('%Y')
+            end_value = end_date.strftime('%Y')
+        elif date_format == "YYYY-MM":
+            start_value = start_date.strftime('%Y-%m').replace('-0', '-')  # 01 -> 1
+            end_value = end_date.strftime('%Y-%m').replace('-0', '-')
+        elif date_format == "YYYYMM":
+            start_value = start_date.strftime('%Y%m')
+            end_value = end_date.strftime('%Y%m')
+        else:
+            start_value = start_date.strftime('%Y%m')  # 기본값
+            end_value = end_date.strftime('%Y%m')
+
+        print(f"날짜 범위 설정 ({date_format}): {start_value} ~ {end_value}")
+
+        # #sStart와 #sEnd 설정
         try:
-            from datetime import datetime, timedelta
+            start_element = driver.find_element(By.ID, "sStart")
+            start_element.clear()
+            start_element.send_keys(start_value)
 
-            # 5년치 날짜 계산
-            end_date = datetime.now()
-            start_date = end_date - timedelta(days=365*5)
+            end_element = driver.find_element(By.ID, "sEnd")
+            end_element.clear()
+            end_element.send_keys(end_value)
 
-            # 날짜 형식에 따른 포맷 설정
-            if date_format == "YYYY":
-                start_value = start_date.strftime('%Y')
-                end_value = end_date.strftime('%Y')
-            elif date_format == "YYYY-MM":
-                start_value = start_date.strftime('%Y-%m').replace('-0', '-')  # 01 -> 1
-                end_value = end_date.strftime('%Y-%m').replace('-0', '-')
-            elif date_format == "YYYYMM":
-                start_value = start_date.strftime('%Y%m')
-                end_value = end_date.strftime('%Y%m')
-            else:
-                start_value = start_date.strftime('%Y%m')  # 기본값
-                end_value = end_date.strftime('%Y%m')
-
-            print(f"날짜 범위 설정 ({date_format}): {start_value} ~ {end_value}")
-
-            # #sStart와 #sEnd 설정
-            try:
-                start_element = driver.find_element(By.ID, "sStart")
-                start_element.clear()
-                start_element.send_keys(start_value)
-
-                end_element = driver.find_element(By.ID, "sEnd")
-                end_element.clear()
-                end_element.send_keys(end_value)
-
-                # 조회 버튼 클릭
-                await self._click_search_button(driver)
-
-            except Exception as e:
-                print(f"날짜 범위 설정 실패: {e}")
+            print("날짜 범위 입력 완료")
 
         except Exception as e:
-            print(f"날짜 범위 설정 오류: {e}")
+            print(f"날짜 범위 입력 실패: {e}")
+            # 날짜 설정 실패해도 계속 진행
+
+        # 날짜 설정 성공/실패 여부와 무관하게 조회 버튼 클릭 (데이터 갱신 필수)
+        print(f"조회 버튼 클릭 시작...")
+        await self._click_search_button(driver)
+        print(f"조회 버튼 클릭 완료")
 
     async def _should_use_date_range(self, driver) -> bool:
-        """날짜 범위 설정이 필요한지 판단"""
+        """날짜 범위 설정이 필요한지 판단 (최적화: 날짜 필드 존재 여부만 확인)"""
         try:
-            # 현재 IBSheet 데이터 확인
-            data_dict = await self._extract_ibsheet_data(driver)
-            
-            # 행열 데이터가 17개 이하인지 확인
-            if len(data_dict) > 17:
+            # #sStart, #sEnd 필드가 있는지만 확인 (IBSheet 데이터 추출 제거)
+            try:
+                start_element = driver.find_element(By.ID, "sStart")
+                end_element = driver.find_element(By.ID, "sEnd")
+
+                # 두 필드가 모두 존재하고 표시되어 있으면 True
+                if start_element.is_displayed() and end_element.is_displayed():
+                    print("날짜 범위 필드 발견 (sStart, sEnd)")
+                    return True
+                else:
+                    return False
+            except:
+                # 필드가 없으면 날짜 범위 불필요
                 return False
-            
-            # 년도 형식이 있는지 확인 (YYYY 형식)
-            for value in data_dict.values():
-                if isinstance(value, str):
-                    # 4자리 숫자가 년도인지 확인 (1900-2100 범위)
-                    import re
-                    year_pattern = r'\b(19\d\d|20\d\d|21\d\d)\b'
-                    if re.search(year_pattern, value):
-                        print(f"년도 형식 발견: {value}")
-                        return True
-                        
-            return False
-            
+
         except Exception as e:
             print(f"날짜 범위 판단 오류: {e}")
             return False
@@ -2157,18 +2167,52 @@ class OptimizedMolitCrawler:
                 # .crdownload 파일이 아닌지 최종 확인
                 if downloaded_file.suffix.lower() == '.crdownload':
                     print(f"[오류] 불완전한 다운로드 파일: {downloaded_file}")
+                    # 모달 닫기
+                    try:
+                        close_btn = driver.find_element(By.CSS_SELECTOR, "#file-download-modal .mu-btn-close")
+                        close_btn.click()
+                        await asyncio.sleep(0.5)
+                        print("다운로드 모달 닫기")
+                    except:
+                        pass
                     return None
 
                 print(f"다운로드 완료: {downloaded_file}")
+
+                # 다운로드 성공 후 모달 닫기 (중요!)
+                try:
+                    close_btn = driver.find_element(By.CSS_SELECTOR, "#file-download-modal .mu-btn-close")
+                    close_btn.click()
+                    await asyncio.sleep(0.5)
+                    print("다운로드 모달 닫기")
+                except Exception as e:
+                    print(f"모달 닫기 실패 (무시): {e}")
+
                 return str(downloaded_file)
             else:
                 print(f"다운로드된 파일을 찾을 수 없음")
+                # 모달 닫기
+                try:
+                    close_btn = driver.find_element(By.CSS_SELECTOR, "#file-download-modal .mu-btn-close")
+                    close_btn.click()
+                    await asyncio.sleep(0.5)
+                    print("다운로드 모달 닫기")
+                except:
+                    pass
                 return None
 
         except Exception as e:
             print(f"파일 다운로드 오류: {e}")
             import traceback
             traceback.print_exc()
+            # 오류 발생 시에도 모달 닫기 시도
+            try:
+                close_btn = driver.find_element(By.CSS_SELECTOR, "#file-download-modal .mu-btn-close")
+                close_btn.click()
+                await asyncio.sleep(0.5)
+                print("다운로드 모달 닫기 (오류 처리)")
+            except:
+                pass
             return None
 
     async def _parse_downloaded_file(self, file_path: str, table_name: str) -> List[StatData]:
@@ -2495,9 +2539,35 @@ class OptimizedMolitCrawler:
             return "YYYYMM"  # 기본값
 
     async def _click_search_button(self, driver):
-        """조회/검색 버튼 클릭"""
+        """조회/검색 버튼 클릭 및 데이터 갱신 대기 (최적화)"""
         try:
-            # 다양한 조회 버튼 패턴 시도
+            # JavaScript doSearch() 함수 실행 (더 확실한 방법)
+            try:
+                driver.execute_script("if (typeof doSearch === 'function') doSearch();")
+                print("JavaScript doSearch() 호출")
+
+                # 데이터 갱신 대기 - 단축 (10초 → 5초, 1초 → 0.5초)
+                max_wait = 5  # 10초 → 5초로 단축
+                for i in range(max_wait):
+                    await asyncio.sleep(0.5)  # 1초 → 0.5초로 단축
+                    try:
+                        # 테이블이 갱신되었는지 확인
+                        driver.find_element(By.CSS_SELECTOR, "table")
+                        print(f"데이터 갱신 완료 ({(i+1)*0.5}초 대기)")
+                        break
+                    except:
+                        if i < max_wait - 1:
+                            print(f"데이터 갱신 대기 중... {(i+1)*0.5}/{max_wait*0.5}초")
+                            continue
+                        else:
+                            print("데이터 갱신 타임아웃")
+
+                await asyncio.sleep(1)  # 추가 안정화 대기 (2초 → 1초로 단축)
+                return
+            except Exception as e:
+                print(f"doSearch() 호출 실패: {e}, 버튼 클릭 시도")
+
+            # Fallback: 버튼 클릭 방식
             button_selectors = [
                 "//input[@value='조회']",
                 "//input[@value='검색']",
@@ -2505,7 +2575,7 @@ class OptimizedMolitCrawler:
                 "//button[contains(text(), '검색')]",
                 "//a[contains(@onclick, 'doSearch')]"
             ]
-            
+
             for selector in button_selectors:
                 try:
                     search_button = WebDriverWait(driver, 2).until(
@@ -2513,7 +2583,7 @@ class OptimizedMolitCrawler:
                     )
                     search_button.click()
                     print(f"조회 버튼 클릭 성공: {selector}")
-                    await asyncio.sleep(2)  # 데이터 로딩 대기
+                    await asyncio.sleep(3)  # 데이터 로딩 대기 (2초 → 3초)
                     return
                 except:
                     continue
@@ -2962,7 +3032,7 @@ class OptimizedMolitCrawler:
                     tab_element = driver.find_element(By.XPATH, selector)
                     if tab_element and tab_element.is_displayed():
                         driver.execute_script("arguments[0].click();", tab_element)
-                        await asyncio.sleep(2)  # 탭 로딩 대기
+                        await asyncio.sleep(1)  # 탭 로딩 대기 (2초 → 1초로 단축)
                         tab_clicked = True
                         print("통계정보 탭 클릭 성공")
                         break
@@ -2995,7 +3065,7 @@ class OptimizedMolitCrawler:
                     tab_element = driver.find_element(By.XPATH, selector)
                     if tab_element and tab_element.is_displayed():
                         driver.execute_script("arguments[0].click();", tab_element)
-                        await asyncio.sleep(2)  # 탭 로딩 대기
+                        await asyncio.sleep(1)  # 탭 로딩 대기 (2초 → 1초로 단축)
                         tab_clicked = True
                         print("관련용어 탭 클릭 성공")
                         break

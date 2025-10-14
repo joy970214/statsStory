@@ -26,6 +26,7 @@ class DataStorageService:
     
     def _get_cache_key(self, stat_url: str) -> str:
         """URL을 기반으로 고유한 캐시 키 생성"""
+        # URL을 그대로 해시화 (기존 방식 유지)
         return hashlib.md5(stat_url.encode()).hexdigest()[:12]
     
     def _get_metadata_path(self, cache_key: str) -> str:
@@ -533,95 +534,39 @@ class DataStorageService:
             return None, None
     
     def find_data_by_name(self, stat_name: str, max_age_hours: int = 24) -> Tuple[Optional[StatMetadata], Optional[List[StatData]], Optional[str]]:
-        """통계명으로 캐시된 데이터를 찾기"""
+        """통계명으로 캐시된 데이터를 찾기 - 정확한 매칭만 사용"""
         try:
             # 모든 메타데이터 파일을 확인
             if not os.path.exists(self.metadata_dir):
                 return None, None, None
-                
+
+            print(f"[FIND] '{stat_name}' 통계 검색 중...")
+            normalized_search = self._normalize_stat_name(stat_name)
+            print(f"[FIND] 정규화된 검색어: '{normalized_search}'")
+
             for filename in os.listdir(self.metadata_dir):
                 if not filename.endswith('_metadata.json'):
                     continue
-                    
+
                 file_path = os.path.join(self.metadata_dir, filename)
                 try:
                     with open(file_path, 'r', encoding='utf-8') as f:
                         data = json.load(f)
-                    
+
                     # 저장 시간 확인
                     saved_at = datetime.fromisoformat(data['saved_at'])
                     if datetime.now() - saved_at > timedelta(hours=max_age_hours):
                         continue
-                    
+
                     # stat_name이 제목에 포함되어 있는지 확인
                     metadata_dict = data['metadata']
                     title = metadata_dict.get('title', '')
-                    
-                    # 더 유연한 매칭 (키워드 매칭)
-                    stat_name_lower = stat_name.lower()
-                    title_lower = title.lower()
-                    
-                    # URL에서 키워드 추출해서 매칭
-                    url = data['stat_url']
-                    url_keywords = []
-                    if 'hRsId=' in url:
-                        url_keywords.append(f"hRsId={url.split('hRsId=')[1].split('&')[0]}")
-                    if 'hFormId=' in url:
-                        url_keywords.append(f"hFormId={url.split('hFormId=')[1].split('&')[0]}")
-                    
-                    # 부서 정보 확인
-                    department = metadata_dict.get('department', '').lower()
-                    
-                    # 더 정확한 매칭 조건 (인허가/착공/준공 구분)
-                    match_conditions = [
-                        stat_name_lower in title_lower,  # 기본 매칭
-                        title_lower in stat_name_lower,  # 반대 매칭
-                    ]
 
-                    # 주택건설실적통계 세부 구분 매칭
-                    if '주택건설실적통계' in stat_name_lower:
-                        if '인허가' in stat_name_lower:
-                            # 인허가 데이터 매칭
-                            match_conditions.extend([
-                                ('인허가' in title_lower),
-                                ('건축허가' in title_lower),
-                                ('hFormId=5' in url and 'hRsId=471' in url),  # 인허가 특정 URL
-                            ])
-                        elif '착공' in stat_name_lower:
-                            # 착공 데이터 매칭
-                            match_conditions.extend([
-                                ('착공' in title_lower),
-                                ('건설착공' in title_lower),
-                                ('hFormId=5386' in url or 'hFormId=6' in url),  # 착공 특정 URL
-                            ])
-                        elif '준공' in stat_name_lower:
-                            # 준공 데이터 매칭 (기존 데이터)
-                            match_conditions.extend([
-                                ('준공' in title_lower),
-                                ('건설준공' in title_lower),
-                                ('hFormId=5387' in url or 'hFormId=7' in url),  # 준공 특정 URL
-                            ])
-                        else:
-                            # 일반 주택건설실적통계 (준공이 기본)
-                            match_conditions.extend([
-                                ('주택' in title_lower and '건설' in title_lower),
-                                ('주택건설실적' in title_lower),
-                            ])
-                    else:
-                        # 기타 일반 매칭 조건
-                        match_conditions.extend([
-                            # 키워드 매칭
-                            ('주택' in stat_name_lower and '주택' in title_lower),
-                            ('건설' in stat_name_lower and '건설' in title_lower),
-                            # 부서 기반 매칭
-                            ('주택' in stat_name_lower and '주택' in department),
-                            ('건설' in stat_name_lower and '주택' in department),
-                            # URL 키워드 매칭
-                            any(keyword in stat_name for keyword in url_keywords)
-                        ])
-                    
-                    if any(match_conditions):
-                        # 매칭되는 데이터를 찾았음
+                    # 정규화된 이름으로 정확한 매칭만 사용
+                    normalized_title = self._normalize_stat_name(title)
+
+                    # 정규화된 이름이 정확히 일치하면 반환
+                    if normalized_search == normalized_title:
                         stat_url = data['stat_url']
                         metadata = StatMetadata(
                             id=metadata_dict.get('id', ''),
@@ -633,20 +578,17 @@ class DataStorageService:
                             keywords=metadata_dict.get('keywords', []),
                             related_terms=metadata_dict.get('related_terms', {})
                         )
-                        
-                        # 해당 URL의 통계 데이터도 로드
                         stat_data = self.load_statistics(stat_url, max_age_hours)
-                        
-                        print(f"통계명으로 데이터 발견: '{stat_name}' -> {title} ({data['cache_key']})")
+                        print(f"[FIND SUCCESS] '{stat_name}' -> {title} ({data['cache_key']})")
                         return metadata, stat_data, stat_url
-                        
+
                 except Exception as e:
-                    print(f"메타데이터 파일 읽기 오류: {filename} -> {e}")
+                    print(f"[FIND ERROR] 메타데이터 파일 읽기 오류: {filename} -> {e}")
                     continue
-            
-            print(f"통계명 '{stat_name}'에 해당하는 캐시 데이터를 찾을 수 없습니다")
+
+            print(f"[FIND FAIL] '{stat_name}' 통계를 찾을 수 없습니다")
             return None, None, None
-            
+
         except Exception as e:
-            print(f"stat_name으로 데이터 찾기 오류: {e}")
+            print(f"[FIND ERROR] 데이터 찾기 오류: {e}")
             return None, None, None

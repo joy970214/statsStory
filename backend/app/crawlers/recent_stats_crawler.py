@@ -200,8 +200,9 @@ class RecentStatsCrawler(BaseCrawler):
 
                     print(f"데이터 수집: {title} | {category} | {publish_date}")
 
-                    # 고유한 ID 생성 (페이지 번호 + 인덱스)
-                    unique_id = f'page{page_num}_item{len(page_stats) + 1}'
+                    # 고유한 ID 생성 (URL 기반 해시 - 수집된 데이터와 매칭 위해)
+                    import hashlib
+                    unique_id = hashlib.md5(stat_url.encode()).hexdigest()[:12] if stat_url else f'page{page_num}_item{len(page_stats) + 1}'
 
                     page_stats.append({
                         'id': unique_id,
