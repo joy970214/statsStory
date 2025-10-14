@@ -271,7 +271,7 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
             </div>
             <p className="text-3xl font-bold text-purple-600">
               {statsData.stats.length > 0
-                ? Math.round(statsData.stats.reduce((sum, stat) => sum + stat.data_fields_info.total_fields, 0) / statsData.stats.length)
+                ? Math.round(statsData.stats.reduce((sum, stat) => sum + stat.data_fields_info.total_fields, 0) / statsData.stats.length).toLocaleString()
                 : 0
               }
             </p>
@@ -290,7 +290,7 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
             <p className="text-sm font-medium text-amber-600">
               {statsData.stats.length > 0
                 ? formatDate(statsData.stats[0].saved_at)
-                : 'N/A'
+                : '수집데이터 없음'
               }
             </p>
           </motion.div>

@@ -2056,6 +2056,8 @@ class OptimizedMolitCrawler:
                 await asyncio.sleep(0.5)
             except Exception as e:
                 print(f"파일 형식 선택 실패: {e}")
+                print("파일 형식을 선택할 수 없어 다운로드를 중단합니다.")
+                return None
 
             # 3. download() 함수 실행
             try:
@@ -2074,32 +2076,49 @@ class OptimizedMolitCrawler:
                 driver.execute_script("if (typeof download === 'function') download();")
                 print("download() 함수 실행")
 
-                # 다운로드 완료 대기 (최대 10초)
-                max_wait = 10
+                # 다운로드 완료 대기 (최대 30초)
+                max_wait = 30
+                downloaded_file = None
+
                 for i in range(max_wait):
                     await asyncio.sleep(1)
+
+                    # .crdownload 파일 확인 (다운로드 진행 중)
+                    crdownload_files = list(download_path.glob("*.crdownload"))
+                    if crdownload_files:
+                        print(f"[다운로드 진행 중] {i+1}/{max_wait}초... (.crdownload 파일 감지)")
+                        continue
+
+                    # 완성된 파일 확인
                     files_after = list(download_path.glob(file_pattern))
-                    if len(files_after) > len(files_before):
-                        print(f"[다운로드 감지] {i+1}초 후 새 파일 발견")
+                    new_files = [f for f in files_after if f not in files_before]
+
+                    if new_files:
+                        downloaded_file = max(new_files, key=lambda p: p.stat().st_ctime)
+                        print(f"[다운로드 완료] {i+1}초 후 파일 생성: {downloaded_file.name}")
                         break
+
                     print(f"[대기 중] {i+1}/{max_wait}초...")
+
+                if not downloaded_file:
+                    print(f"[타임아웃] {max_wait}초 동안 다운로드가 완료되지 않음")
+                    return None
 
             except Exception as e:
                 print(f"download() 실행 실패: {e}")
                 return None
 
-            # 4. 다운로드된 파일 찾기
-            file_pattern = "*.xls*" if file_type.lower() == "excel" else "*.txt"
-            files = list(download_path.glob(file_pattern))
-            print(f"[다운로드 후] {len(files)}개 파일 발견")
+            # 4. 다운로드된 파일 검증
+            if downloaded_file and downloaded_file.exists():
+                # .crdownload 파일이 아닌지 최종 확인
+                if downloaded_file.suffix.lower() == '.crdownload':
+                    print(f"[오류] 불완전한 다운로드 파일: {downloaded_file}")
+                    return None
 
-            if files:
-                # 가장 최근 파일 선택
-                latest_file = max(files, key=lambda p: p.stat().st_ctime)
-                print(f"다운로드 완료: {latest_file}")
-                return str(latest_file)
+                print(f"다운로드 완료: {downloaded_file}")
+                return str(downloaded_file)
             else:
-                print(f"다운로드된 파일을 찾을 수 없음: {file_pattern} in {download_path}")
+                print(f"다운로드된 파일을 찾을 수 없음")
                 return None
 
         except Exception as e:
