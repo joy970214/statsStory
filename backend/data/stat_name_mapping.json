@@ -5,5 +5,7 @@
   "79": "항공교통관제업무통계",
   "건축허가·착공·준공통계": "https://stat.molit.go.kr/portal/cate/statView.do?hRsId=466&hFormId=7061&hDivEng=&month_yn=",
   "자동차관리사업자업체현황분기": "https://stat.molit.go.kr/portal/cate/statView.do?hRsId=437&hFormId=4392&hDivEng=&month_yn=",
-  "437": "자동차관리사업자업체현황분기"
+  "437": "자동차관리사업자업체현황분기",
+  "468": "주택건설실적통계(준공)",
+  "419": "공동주택 현황"
 }

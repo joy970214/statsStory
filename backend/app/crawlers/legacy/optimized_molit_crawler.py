@@ -149,7 +149,8 @@ class BrowserPool:
 
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=chrome_options)
-        driver.set_page_load_timeout(30)  # 타임아웃 증가
+        driver.set_page_load_timeout(60)  # 타임아웃 증가 (30 -> 60초)
+        driver.set_script_timeout(60)  # 스크립트 타임아웃 추가
         driver.implicitly_wait(10)  # 암시적 대기 추가
 
         # headless 모드에서 다운로드 활성화 (Chrome DevTools Protocol 사용)
@@ -183,19 +184,23 @@ class BrowserPool:
     
     def return_browser(self, driver: webdriver.Chrome):
         """브라우저 인스턴스 반환"""
+        if driver is None:
+            return
+
         try:
             # 브라우저 상태 초기화
             driver.delete_all_cookies()
             self.available_browsers.put(driver)
         except Exception as e:
             print(f"브라우저 반환 중 오류: {e}")
-            # 문제가 있는 브라우저는 종료하고 새로 생성
+            # 문제가 있는 브라우저는 종료하고 카운트 감소
             try:
                 driver.quit()
             except:
                 pass
             with self.lock:
                 self.total_browsers -= 1
+            print(f"문제있는 브라우저 제거. 남은 브라우저: {self.total_browsers}/{self.pool_size}")
     
     def cleanup(self):
         """모든 브라우저 인스턴스 정리"""
@@ -246,7 +251,12 @@ class ProgressCallback:
 class OptimizedMolitCrawler:
     """최적화된 국토교통부 통계포털 크롤러 - 브라우저 풀링 및 병렬 처리"""
     
-    def __init__(self, pool_size: int = 3, max_concurrent_tables: int = 3):
+    def __init__(self, pool_size: int = 1, max_concurrent_tables: int = 1):
+        """
+        Args:
+            pool_size: 브라우저 풀 크기 (기본값 1로 줄임 - 안정성 우선)
+            max_concurrent_tables: 동시 처리 테이블 수 (기본값 1로 줄임)
+        """
         self.base_url = "https://stat.molit.go.kr"
         self.browser_pool = BrowserPool(pool_size)
         self.max_concurrent_tables = max_concurrent_tables
@@ -2151,18 +2161,15 @@ class OptimizedMolitCrawler:
                         data=data_dict,
                         table_name=table_name,
                         period_text=f"{datetime.now().strftime('%Y-%m')}",
-                        raw_data_count=len(data_dict)
+                        raw_data_count=len(data_dict),
+                        downloaded_file_path=file_path  # 다운로드된 파일 경로 저장
                     )
                     stat_data_list.append(stat_data)
 
             print(f"파싱 완료: {len(stat_data_list)}개 데이터")
 
-            # 파싱 완료 후 파일 삭제 (선택적)
-            try:
-                os.remove(file_path)
-                print(f"임시 파일 삭제: {file_path}")
-            except:
-                pass
+            # 원본 파일 보관 (삭제하지 않음)
+            print(f"원본 파일 보관됨: {file_path}")
 
             return stat_data_list
 

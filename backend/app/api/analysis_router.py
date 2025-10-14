@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query, BackgroundTasks, Request
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 from typing import List, Optional, Dict, Any
 from pathlib import Path
 from app.models.stat_models import (
@@ -715,9 +715,25 @@ async def get_table_analysis(stat_name: str):
                 table_groups[table_name] = []
             table_groups[table_name].append(data_item)
 
-        # 각 테이블별 상세 분석
+        # 각 테이블별 상세 분석 및 다운로드 파일 정보 추출
         for table_name, table_data in table_groups.items():
             analysis = _analyze_table_data(table_name, table_data)
+
+            # 다운로드된 파일 경로 찾기 (해당 테이블의 첫 번째 데이터에서)
+            downloaded_file = None
+            if table_data and len(table_data) > 0:
+                first_item = table_data[0]
+                if hasattr(first_item, 'downloaded_file_path') and first_item.downloaded_file_path:
+                    file_path = Path(first_item.downloaded_file_path)
+                    if file_path.exists():
+                        downloaded_file = {
+                            "filename": file_path.name,
+                            "path": str(file_path),
+                            "size": file_path.stat().st_size,
+                            "modified": datetime.fromtimestamp(file_path.stat().st_mtime).isoformat()
+                        }
+
+            analysis["downloaded_file"] = downloaded_file
             tables_analysis[table_name] = analysis
 
         return {
@@ -739,6 +755,39 @@ async def get_table_analysis(stat_name: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"통계표 분석 중 오류: {str(e)}")
+
+@router.get("/download-file", summary="실제 다운로드한 원본 파일 다운로드")
+async def download_original_file(file_path: str):
+    """크롤러가 다운로드한 원본 Excel 파일 다운로드"""
+    try:
+        # 파일 경로 검증 (보안)
+        file_path_obj = Path(file_path)
+
+        # downloads 폴더 내의 파일인지 확인
+        downloads_dir = Path(__file__).parent.parent.parent / "downloads"
+        try:
+            # 절대 경로로 변환하여 downloads 폴더 내에 있는지 확인
+            abs_file_path = file_path_obj.resolve()
+            abs_downloads_dir = downloads_dir.resolve()
+
+            if not str(abs_file_path).startswith(str(abs_downloads_dir)):
+                raise HTTPException(status_code=403, detail="접근 권한이 없습니다")
+        except:
+            raise HTTPException(status_code=403, detail="유효하지 않은 파일 경로입니다")
+
+        if not file_path_obj.exists():
+            raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
+
+        return FileResponse(
+            path=str(file_path_obj),
+            filename=file_path_obj.name,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"파일 다운로드 중 오류: {str(e)}")
 
 @router.get("/inspect-enhanced/{stat_name}", response_model=InspectionResult, summary="향상된 데이터 검사")
 async def inspect_enhanced_data(stat_name: str):
