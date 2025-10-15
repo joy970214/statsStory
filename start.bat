@@ -10,11 +10,11 @@ timeout /t 5 /nobreak >nul
 
 REM Start Frontend Development Server
 echo Starting Frontend Server...
-start "Frontend" cmd /k "cd /d %~dp0frontend && set BROWSER=none && npm start"
+start "Frontend" cmd /k "cd /d %~dp0frontend && npm start"
 
-REM Auto open browser after 10 seconds
-timeout /t 10 /nobreak >nul
-start http://localhost:3006
+REM Browser will be opened automatically by npm start
+REM timeout /t 10 /nobreak >nul
+REM start http://localhost:3006
 
 echo Service Started Successfully!
 echo Backend: http://localhost:8001
