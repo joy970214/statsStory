@@ -766,83 +766,44 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
             <span className="bg-blue-200 px-2 py-1 rounded-full">실제 수집 데이터 분석</span>
           </div>
         </div>
-      </motion.div>
-
-      {/* 분석 내용 - PDF 다운로드 대상 */}
-      <div ref={contentRef}>
-            {/* 원본 파일 다운로드 섹션 - 아코디언 */}
+        <div className="border-t border-gray-200 my-8"></div>
+        <div>          
+          <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+            <DocumentArrowDownIcon className="w-6 h-6 text-primary-600" />
+            원본 파일 다운로드
+          </h4>
+          {isFileDownloadOpen && (
             <motion.div
-              className="bg-white rounded-xl shadow-lg border border-gray-200 mb-8 overflow-hidden"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              <button
-                onClick={() => setIsFileDownloadOpen(!isFileDownloadOpen)}
-                className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors duration-200"
-              >
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent flex items-center gap-3">
-                  <DocumentArrowDownIcon className="w-6 h-6 text-primary-600" />
-                  원본 파일 다운로드
-                </h3>
-                {isFileDownloadOpen ? (
-                  <ChevronUpIcon className="w-6 h-6 text-gray-600" />
-                ) : (
-                  <ChevronDownIcon className="w-6 h-6 text-gray-600" />
-                )}
-              </button>
-
-              {isFileDownloadOpen && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="border-t border-gray-200"
-                >
-                  <div className="p-6">
-                    <TableAnalysisViewer
-                      statName={analysisData.stat_name}
-                      onBack={() => {}}
-                    />
-                  </div>
-                </motion.div>
-              )}
+              <div>
+                <TableAnalysisViewer
+                  statName={analysisData.stat_name}
+                  onBack={() => {}}
+                />
+              </div>
             </motion.div>
-
-            {/* 메타데이터 정보 - 아코디언 */}
+          )}
+        </div>
+        <div className="border-t border-gray-200 my-8"></div>
+        <div>
+          <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+            <DocumentTextIcon className="w-6 h-6 text-primary-600" />
+            메타데이터 정보
+          </h4>
+          {isMetadataOpen && (analysisData.metadata?.statistical_info || analysisData.metadata?.major_items ||
+            analysisData.metadata?.meaning_analysis || analysisData.metadata?.terminology) && (
             <motion.div
-              className="bg-white rounded-xl shadow-lg border border-gray-200 mb-8 overflow-hidden"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              <button
-                onClick={() => setIsMetadataOpen(!isMetadataOpen)}
-                className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors duration-200"
-              >
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent flex items-center gap-3">
-                  <DocumentTextIcon className="w-6 h-6 text-primary-600" />
-                  메타데이터 정보
-                </h3>
-                {isMetadataOpen ? (
-                  <ChevronUpIcon className="w-6 h-6 text-gray-600" />
-                ) : (
-                  <ChevronDownIcon className="w-6 h-6 text-gray-600" />
-                )}
-              </button>
-
-              {isMetadataOpen && (analysisData.metadata?.statistical_info || analysisData.metadata?.major_items ||
-                analysisData.metadata?.meaning_analysis || analysisData.metadata?.terminology) && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="border-t border-gray-200"
-                >
-                  <div className="p-8">
-                    {/* 상세 메타정보 */}
+              <div>
+                {/* 상세 메타정보 */}
                 <div className="grid grid-cols-1 lg:grid-cols gap-6">
 
                   {/* 통계정보 상세 */}
@@ -965,11 +926,14 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                     </div>
                   )}
                 </div>
-                  </div>
-                </motion.div>
-              )}
+              </div>
             </motion.div>
+          )}
+        </div>
+      </motion.div>
 
+      {/* 분석 내용 - PDF 다운로드 대상 */}
+      <div ref={contentRef}>
             {/* 통계표별 상세 분석 - 전체를 하나의 카드로 묶음 */}
             <motion.div
               className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
@@ -1017,18 +981,41 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               {/* 구분선 */}
               <div className="border-t border-gray-200 my-8"></div>
 
-              {/* 선택된 통계표 상세 정보 */}
+              {/* LLM 분석 결과 영역 */}
               <div className="mb-8">
                 <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-                  <EyeIcon className="w-6 h-6 text-primary-600" />
-                  선택된 통계표 상세 정보
+                  <SparklesIcon className="w-6 h-6 text-primary-600" />
+                  AI 분석 결과
                 {selectedTableName && (
                   <span className="text-lg text-blue-600 ml-2 bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1 rounded-lg">
                     {selectedTableName}
                   </span>
                 )}
               </h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+              {/* LLM 분석 결과가 표시될 영역 */}
+              <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-8 border border-purple-200">
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <SparklesIcon className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h5 className="font-semibold text-purple-900 mb-2">오프라인 LLM 분석 준비 중</h5>
+                    <p className="text-sm text-purple-700 leading-relaxed">
+                      선택된 통계표에 대한 AI 기반 심층 분석이 곧 제공됩니다.
+                      각 통계표의 특성과 인사이트를 자동으로 생성합니다.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 여기에 LLM 분석 결과가 표시됩니다 */}
+                <div className="bg-white rounded-lg p-6 text-gray-600 text-center">
+                  <p>LLM 모델 통합 예정</p>
+                </div>
+              </div>
+
+              {/* 임시로 남겨둔 통계 카드 - 삭제 예정 */}
+              <div className="hidden grid-cols-1 md:grid-cols-3 gap-6">
                 <motion.div 
                   className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 text-center"
                   whileHover={{ scale: 1.05 }}
@@ -1126,11 +1113,13 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               </div>
               </div>
 
-              {/* 구분선 */}
-              <div className="border-t border-gray-200 my-8"></div>
+              {/* 이전 데이터 특성 분석 섹션 삭제됨 - LLM 분석으로 대체 */}
 
-              {/* 데이터 특성 분석 */}
-              <div className="mb-8">
+              {/* 구분선 - 삭제 예정 */}
+              <div className="hidden border-t border-gray-200 my-8"></div>
+
+              {/* 데이터 특성 분석 - 삭제됨 */}
+              <div className="hidden mb-8">
                 <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
                   <ChartBarIcon className="w-6 h-6 text-primary-600" />
                   데이터 특성 분석
@@ -1324,11 +1313,11 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
           })()}
               </div>
 
-              {/* 구분선 */}
-              <div className="border-t border-gray-200 my-8"></div>
+              {/* 원본 테이블 재구성 섹션 삭제됨 - LLM 분석으로 대체 */}
+              <div className="hidden border-t border-gray-200 my-8"></div>
 
-              {/* 원본 테이블 재구성 */}
-              <div className="mb-8">
+              {/* 원본 테이블 재구성 - 삭제됨 */}
+              <div className="hidden mb-8">
                 <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
                   <TableCellsIcon className="w-6 h-6 text-primary-600" />
                   원본 테이블 재구성
@@ -1596,11 +1585,11 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
           })()}
               </div>
 
-              {/* 구분선 */}
-              <div className="border-t border-gray-200 my-8"></div>
+              {/* 데이터 분포 특성 섹션 삭제됨 - LLM 분석으로 대체 */}
+              <div className="hidden border-t border-gray-200 my-8"></div>
 
-              {/* 데이터 분포 특성 */}
-              <div className="mb-8">
+              {/* 데이터 분포 특성 - 삭제됨 */}
+              <div className="hidden mb-8">
                 <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
                   <ChartBarIcon className="w-6 h-6 text-primary-600" />
                   데이터 분포 특성
@@ -1698,11 +1687,11 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
           </div>
               </div>
 
-              {/* 구분선 */}
-              <div className="border-t border-gray-200 my-8"></div>
+              {/* 객관적 현황 요약 섹션 삭제됨 - LLM 분석으로 대체 */}
+              <div className="hidden border-t border-gray-200 my-8"></div>
 
-              {/* 객관적 현황 요약 */}
-              <div>
+              {/* 객관적 현황 요약 - 삭제됨 */}
+              <div className="hidden">
                 <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
                   <SparklesIcon className="w-6 h-6 text-primary-600" />
                   객관적 현황 요약
