@@ -319,7 +319,7 @@ class OptimizedMolitCrawler:
                 return self._create_empty_analysis(stat_url, basic_metadata)
 
             # 2단계: 통계표별 메타데이터 + 데이터 수집 (15% -> 90%)
-            progress_callback.update("데이터수집", 15, f"통계표별 메타데이터 및 데이터 수집 시작")
+            progress_callback.update("데이터수집", 15, f"통계 별 메타데이터 및 통계표 별 데이터 수집 시작")
 
             data_by_table, metadata_by_table, collection_summary = await self._collect_tables_with_individual_metadata_parallel(
                 stat_url, stat_tables_with_conditions, progress_callback
@@ -1877,6 +1877,11 @@ class OptimizedMolitCrawler:
             "errors": []
         }
 
+        # 통계 레벨에서 메타데이터 한 번만 수집
+        print(f"[메타데이터] 통계 레벨 메타데이터 수집 시작")
+        base_metadata = await self._get_metadata_fast(stat_url)
+        print(f"[메타데이터] 수집 완료: {base_metadata.title}")
+
         # 각 통계표를 개별적으로 처리
         for i, table_info in enumerate(stat_tables_with_conditions):
             table_name = table_info['name']
@@ -1892,13 +1897,13 @@ class OptimizedMolitCrawler:
                 progress_callback.update(
                     "데이터수집",
                     progress,
-                    f"'{table_name}' 메타데이터 및 데이터 수집 중 ({i+1}/{len(stat_tables_with_conditions)})"
+                    f"'{table_name}' 데이터 수집 중 ({i+1}/{len(stat_tables_with_conditions)})"
                 )
 
                 print(f"통계표별 수집 시작: {table_name}")
 
-                # 1. 해당 통계표의 개별 메타데이터 수집
-                table_metadata = await self._get_metadata_for_specific_table(stat_url, table_info)
+                # 1. 이미 수집된 base_metadata에 테이블명만 추가하여 메타데이터 생성
+                table_metadata = self._create_table_metadata_from_base(base_metadata, table_name, stat_url)
 
                 # 2. 통계표 데이터 수집
                 table_data = await self._collect_table_data_with_conditions(stat_url, table_info, progress_callback)
@@ -1924,11 +1929,10 @@ class OptimizedMolitCrawler:
                 collection_summary["failed_tables"] += 1
                 collection_summary["errors"].append(error_msg)
 
-                # 오류 발생시에도 기본 메타데이터라도 저장
+                # 오류 발생시에도 기본 메타데이터라도 저장 (이미 수집된 base_metadata 사용)
                 try:
-                    basic_metadata = await self._get_metadata_fast(stat_url)
-                    basic_metadata.title = f"{basic_metadata.title} - {table_name}"
-                    metadata_by_table[table_name] = basic_metadata
+                    table_metadata = self._create_table_metadata_from_base(base_metadata, table_name, stat_url)
+                    metadata_by_table[table_name] = table_metadata
                 except:
                     pass
 
@@ -1936,6 +1940,32 @@ class OptimizedMolitCrawler:
             f"통계표별 수집 완료 ({collection_summary['collected_tables']}개 성공, {collection_summary['failed_tables']}개 실패)")
 
         return data_by_table, metadata_by_table, collection_summary
+
+    def _create_table_metadata_from_base(self, base_metadata: StatMetadata, table_name: str, stat_url: str) -> StatMetadata:
+        """이미 수집된 base_metadata에 테이블명만 추가하여 메타데이터 생성 (추가 수집 없음)"""
+
+        # 통계표명을 제목에 포함
+        enhanced_title = f"{base_metadata.title} - {table_name}"
+
+        # 통계표별 특화된 메타데이터 생성
+        table_metadata = StatMetadata(
+            id=base_metadata.id,
+            title=enhanced_title,
+            purpose=base_metadata.purpose,
+            frequency=base_metadata.frequency,
+            department=base_metadata.department,
+            contact=base_metadata.contact,
+            search_field=base_metadata.search_field,
+            responsible_department=base_metadata.responsible_department,
+            keywords=base_metadata.keywords + [table_name] if base_metadata.keywords else [table_name],
+            related_terms=base_metadata.related_terms,
+            major_items=base_metadata.major_items,
+            meaning_analysis=base_metadata.meaning_analysis,
+            terminology=base_metadata.terminology,
+            url=stat_url
+        )
+
+        return table_metadata
 
     async def _get_metadata_for_specific_table(self, stat_url: str, table_info: Dict[str, Any]) -> StatMetadata:
         """특정 통계표에 대한 개별 메타데이터 수집"""
