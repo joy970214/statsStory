@@ -11,7 +11,7 @@ from datetime import datetime
 class OllamaService:
     """Ollama LLM 서비스 - 기술통계 분석 특화"""
 
-    def __init__(self, base_url: str = "http://localhost:11434", model: str = "llama3.1"):
+    def __init__(self, base_url: str = "http://localhost:11434", model: str = "llama3.1:8b-instruct-q4_K_M"):
         self.base_url = base_url
         self.model = model
         self.timeout = 600  # 10분 타임아웃 (10개 인사이트 생성)
@@ -45,15 +45,25 @@ class OllamaService:
             구조화된 10개 카테고리 인사이트
         """
         try:
+            import time
+
             # 프롬프트 구성
+            start_prompt = time.time()
             prompt = self._build_descriptive_stats_prompt(
                 metadata, data_summary, table_names, raw_data_sample
             )
+            prompt_time = time.time() - start_prompt
 
             print(f"[Ollama] 기술통계 인사이트 생성 시작...")
             print(f"[Ollama] 모델: {self.model}")
+            print(f"[Ollama] 프롬프트 생성 시간: {prompt_time:.2f}초")
+            print(f"[Ollama] 프롬프트 길이: {len(prompt):,}자 ({len(prompt.encode('utf-8')):,} bytes)")
+            print(f"[Ollama] 데이터 샘플 개수: {len(raw_data_sample) if raw_data_sample else 0}개")
 
             # Ollama API 호출
+            print(f"[Ollama] API 요청 전송 중...")
+            start_api = time.time()
+
             response = requests.post(
                 f"{self.base_url}/api/generate",
                 json={
@@ -63,11 +73,14 @@ class OllamaService:
                     "options": {
                         "temperature": 0.3,  # 낮은 temperature로 객관적 분석
                         "top_p": 0.9,
-                        "num_predict": 2000  # 10개 인사이트를 위해 늘림
+                        "num_predict": 1000  # 10개 인사이트를 위해 늘림
                     }
                 },
                 timeout=self.timeout
             )
+
+            api_time = time.time() - start_api
+            print(f"[Ollama] API 응답 수신 완료: {api_time:.2f}초 소요")
 
             if response.status_code != 200:
                 raise Exception(f"Ollama API 오류: {response.status_code}")
@@ -75,7 +88,8 @@ class OllamaService:
             result = response.json()
             generated_text = result.get('response', '')
 
-            print(f"[Ollama] 인사이트 생성 완료 (길이: {len(generated_text)}자)")
+            print(f"[Ollama] 인사이트 생성 완료 (응답 길이: {len(generated_text)}자)")
+            print(f"[Ollama] 총 소요 시간: {prompt_time + api_time:.2f}초")
 
             # 생성된 텍스트를 10개 카테고리로 구조화
             insights = self._parse_descriptive_insights(generated_text)
@@ -180,30 +194,41 @@ class OllamaService:
 - 데이터 수: {data_summary.get('count', 0):,}개
 """
 
-        # ChromaDB 데이터 샘플 추가
+        # JSON 데이터 샘플 추가
         if raw_data_sample and len(raw_data_sample) > 0:
             prompt += f"""
 ## 실제 데이터 샘플 ({len(raw_data_sample)}개)
 **아래는 실제 수집된 통계 데이터입니다. 이 데이터를 기반으로 분석해주세요:**
 
 """
-            # 처음 20개만 프롬프트에 포함 (토큰 제한)
-            for idx, sample in enumerate(raw_data_sample[:20], 1):
-                doc = sample.get('document', '')
+            # JSON 데이터를 프롬프트에 포함
+            for idx, sample in enumerate(raw_data_sample, 1):
                 year = sample.get('year', '')
                 table_name = sample.get('table_name', '')
+                data = sample.get('data', {})
 
+                # 데이터 구조를 읽기 쉬운 형태로 변환
                 sample_text = f"{idx}. "
                 if year:
                     sample_text += f"[{year}년] "
                 if table_name:
                     sample_text += f"({table_name}) "
-                sample_text += doc
+
+                # data 딕셔너리를 key: value 형태로 변환
+                if data:
+                    data_parts = []
+                    for key, value in data.items():
+                        # 특수 키나 너무 긴 키는 건너뛰기
+                        if key.startswith('_') or len(str(key)) > 100:
+                            continue
+                        # 의미있는 데이터만 포함
+                        if value and str(value).strip() and str(value) != ' ':
+                            data_parts.append(f"{key}={value}")
+
+                    if data_parts:
+                        sample_text += ", ".join(data_parts[:10])  # 최대 10개 항목만
 
                 prompt += f"{sample_text}\n"
-
-            if len(raw_data_sample) > 20:
-                prompt += f"\n(외 {len(raw_data_sample) - 20}개 데이터 존재)\n"
 
         prompt += """
 ## 분석 요청사항

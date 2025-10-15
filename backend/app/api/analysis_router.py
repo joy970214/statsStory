@@ -312,17 +312,21 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
         if check_cancellation():
             return
 
-        # ChromaDB에 저장
+        # ChromaDB에 저장 (별도 스레드에서 실행)
         stored_count = 0
         try:
             from app.services.vector_db_service import vector_db_service
 
-            # ChromaDB에 통계 데이터 저장
-            stored_count = vector_db_service.store_stat_data(
-                cache_key=cache_key,
-                stat_name=request.stat_name,
-                stat_data=stat_data,
-                metadata=metadata
+            # ChromaDB에 통계 데이터 저장 (동기 함수를 별도 스레드에서)
+            loop = asyncio.get_event_loop()
+            stored_count = await loop.run_in_executor(
+                None,
+                lambda: vector_db_service.store_stat_data(
+                    cache_key=cache_key,
+                    stat_name=request.stat_name,
+                    stat_data=stat_data,
+                    metadata=metadata
+                )
             )
             print(f"[VectorDB] {stored_count}개 데이터 저장 완료 (cache_key: {cache_key})")
         except Exception as vector_error:
@@ -360,25 +364,46 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
                         if hasattr(item, 'table_name')
                     ]))
 
-                    # ChromaDB에서 데이터 샘플 가져오기 (최대 100개)
-                    progress_tracker.update_progress(task_id, "AI분석", 89, "벡터 데이터베이스에서 관련 데이터를 검색 중...")
+                    # JSON 파일에서 직접 데이터 로드 (VectorDB 대신)
+                    progress_tracker.update_progress(task_id, "AI분석", 89, "통계 데이터를 로드하고 있습니다...")
                     await asyncio.sleep(0.1)  # SSE 전송을 위한 이벤트 루프 양보
 
-                    chroma_data_samples = vector_db_service.get_all_data_for_analysis(
-                        cache_key=cache_key,
-                        limit=100
-                    )
-                    print(f"[AI] ChromaDB에서 {len(chroma_data_samples)}개 데이터 샘플 추출 (cache_key: {cache_key})")
+                    # JSON 파일 경로
+                    json_file_path = Path(__file__).parent.parent.parent / "data" / "statistics" / f"{cache_key}_stats.json"
 
-                    # AI 인사이트 생성 (ChromaDB 데이터 전달)
+                    # JSON 직접 로드 (별도 스레드에서)
+                    def load_json_data():
+                        try:
+                            if json_file_path.exists():
+                                with open(json_file_path, 'r', encoding='utf-8') as f:
+                                    json_data = json.load(f)
+                                    # statistics 배열에서 데이터 추출
+                                    return json_data.get('statistics', [])
+                            else:
+                                print(f"[AI] JSON 파일 없음: {json_file_path}")
+                                return []
+                        except Exception as e:
+                            print(f"[AI] JSON 로드 오류: {e}")
+                            return []
+
+                    loop = asyncio.get_event_loop()
+                    json_data_samples = await loop.run_in_executor(None, load_json_data)
+                    print(f"[AI] JSON에서 {len(json_data_samples)}개 데이터 샘플 로드 완료 (cache_key: {cache_key})")
+
+                    # AI 인사이트 생성 (JSON 데이터 직접 전달)
                     progress_tracker.update_progress(task_id, "AI분석", 90, "Ollama AI 모델이 인사이트를 생성하고 있습니다 (최대 10분 소요)...")
                     await asyncio.sleep(0.1)  # SSE 전송을 위한 이벤트 루프 양보
 
-                    ai_insights = ollama_service.generate_statistical_insights(
-                        metadata=metadata.dict() if metadata else {},
-                        data_summary=basic_stats_result,
-                        table_names=table_names,
-                        raw_data_sample=chroma_data_samples  # ChromaDB 데이터 전달
+                    # 동기 함수를 별도 스레드에서 실행 (이벤트 루프 블로킹 방지)
+                    loop = asyncio.get_event_loop()
+                    ai_insights = await loop.run_in_executor(
+                        None,  # ThreadPoolExecutor 사용
+                        lambda: ollama_service.generate_statistical_insights(
+                            metadata=metadata.dict() if metadata else {},
+                            data_summary=basic_stats_result,
+                            table_names=table_names,
+                            raw_data_sample=json_data_samples  # JSON 데이터 직접 전달
+                        )
                     )
 
                     print(f"[AI] 인사이트 생성 완료: {ai_insights.get('insights_count', 0)}개")
@@ -388,8 +413,12 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
                     # 메타데이터에 AI 인사이트 추가
                     if metadata:
                         metadata.ai_insights = ai_insights
-                        # 메타데이터 재저장
-                        storage_service.save_complete_data(stat_url, metadata, stat_data)
+                        # 메타데이터 재저장 (별도 스레드에서)
+                        loop = asyncio.get_event_loop()
+                        await loop.run_in_executor(
+                            None,
+                            lambda: storage_service.save_complete_data(stat_url, metadata, stat_data)
+                        )
                         print(f"[AI] 메타데이터에 인사이트 저장 완료")
                 else:
                     if not ollama_service.is_available():

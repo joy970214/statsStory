@@ -242,17 +242,104 @@ class VectorDBService:
 
     def delete_collection(self, cache_key: str):
         """
-        컬렉션 삭제
+        컬렉션 삭제 (실제 파일도 삭제)
 
         Args:
             cache_key: 캐시 키
         """
+        import shutil
+        import os
+
         collection_name = self._normalize_collection_name(cache_key)
         try:
-            self.client.delete_collection(name=collection_name)
-            print(f"[VectorDB] 컬렉션 삭제: {collection_name} (cache_key: {cache_key})")
+            # persist_dir 경로 확인
+            if hasattr(self.client, '_settings'):
+                persist_dir = self.client._settings.persist_directory
+            elif hasattr(self.client, 'settings'):
+                persist_dir = self.client.settings.persist_directory
+            else:
+                base_dir = Path(__file__).parent.parent.parent / "data" / "vector_db"
+                persist_dir = str(base_dir)
+
+            vector_db_path = Path(persist_dir)
+
+            # 1. 먼저 컬렉션이 존재하는지 확인
+            collection_exists = False
+            collection_uuid = None
+            try:
+                collection = self.client.get_collection(name=collection_name)
+                collection_uuid = str(collection.id)
+                collection_exists = True
+                print(f"[VectorDB] 컬렉션 존재 확인: {collection_name}, UUID: {collection_uuid}")
+            except Exception as e:
+                print(f"[VectorDB] 컬렉션이 존재하지 않음 또는 이미 삭제됨: {collection_name}")
+                collection_exists = False
+
+            # 2. ChromaDB에서 컬렉션 메타데이터 삭제 먼저 (파일 핸들 해제)
+            try:
+                if collection_exists:
+                    self.client.delete_collection(name=collection_name)
+                    print(f"[VectorDB] 컬렉션 메타데이터 삭제 완료: {collection_name} (cache_key: {cache_key})")
+
+                    # 파일 핸들 해제를 위해 잠시 대기
+                    import time
+                    time.sleep(0.5)  # 500ms 대기
+                else:
+                    print(f"[VectorDB] 컬렉션이 존재하지 않아 메타데이터 삭제 건너뜀")
+            except Exception as delete_error:
+                print(f"[VectorDB] 컬렉션 메타데이터 삭제 실패 (무시하고 계속): {delete_error}")
+
+            # 3. UUID 폴더 삭제 (파일 핸들 해제 후)
+            deleted_folders = []
+            try:
+                # 모든 UUID 폴더 확인
+                for item in os.listdir(vector_db_path):
+                    item_path = vector_db_path / item
+                    # UUID 형식의 폴더인지 확인
+                    if item_path.is_dir() and len(item) == 36 and item.count('-') == 4:
+                        try:
+                            # 케이스 1: 컬렉션이 존재했고 UUID 매칭
+                            if collection_exists and collection_uuid == item:
+                                print(f"[VectorDB] 컬렉션 UUID 매칭: {item}")
+                                shutil.rmtree(item_path)
+                                deleted_folders.append(str(item_path))
+                                print(f"[VectorDB] 벡터 데이터 폴더 삭제 완료: {item_path}")
+                                break
+                            # 케이스 2: 컬렉션이 없었으면 모든 고아 폴더를 확인
+                            else:
+                                # SQLite DB에서 이 UUID가 존재하는지 확인
+                                is_orphan = True
+                                try:
+                                    # 모든 컬렉션 목록 가져오기
+                                    all_collections = self.client.list_collections()
+                                    for col in all_collections:
+                                        if str(col.id) == item:
+                                            is_orphan = False
+                                            break
+                                except:
+                                    pass
+
+                                # 고아 폴더면 삭제
+                                if is_orphan:
+                                    print(f"[VectorDB] 고아 폴더 발견: {item}")
+                                    shutil.rmtree(item_path)
+                                    deleted_folders.append(str(item_path))
+                                    print(f"[VectorDB] 고아 폴더 삭제 완료: {item_path}")
+                        except Exception as folder_error:
+                            print(f"[VectorDB] 폴더 삭제 중 오류 ({item}): {folder_error}")
+            except Exception as scan_error:
+                print(f"[VectorDB] 폴더 스캔 중 오류: {scan_error}")
+
+            # 3. 삭제 결과 로깅
+            if deleted_folders:
+                print(f"[VectorDB] 총 {len(deleted_folders)}개 폴더 삭제됨")
+            else:
+                print(f"[VectorDB] 삭제된 폴더 없음 (이미 삭제됨 or 존재하지 않음)")
+
         except Exception as e:
             print(f"[VectorDB] 컬렉션 삭제 실패: {e}")
+            import traceback
+            traceback.print_exc()
 
     def get_collection_stats(self, cache_key: str) -> Dict[str, Any]:
         """
@@ -281,13 +368,13 @@ class VectorDBService:
                 "error": str(e)
             }
 
-    def get_all_data_for_analysis(self, cache_key: str, limit: int = 100) -> List[Dict[str, Any]]:
+    def get_all_data_for_analysis(self, cache_key: str, limit: int = None) -> List[Dict[str, Any]]:
         """
         AI 분석을 위해 ChromaDB에서 데이터 샘플 가져오기
 
         Args:
             cache_key: 캐시 키
-            limit: 최대 반환 개수
+            limit: 최대 반환 개수 (None이면 전체)
 
         Returns:
             데이터 샘플 리스트 (document, year, table_name, metadata 포함)
@@ -295,11 +382,20 @@ class VectorDBService:
         try:
             collection = self.create_or_get_collection(cache_key)
 
-            # 전체 데이터 가져오기 (limit만큼)
-            results = collection.get(
-                limit=limit,
-                include=['documents', 'metadatas']
-            )
+            # 전체 데이터 가져오기
+            if limit is None:
+                # limit 없이 모든 데이터 가져오기
+                total_count = collection.count()
+                results = collection.get(
+                    limit=total_count if total_count > 0 else 1,
+                    include=['documents', 'metadatas']
+                )
+            else:
+                # limit 지정된 경우
+                results = collection.get(
+                    limit=limit,
+                    include=['documents', 'metadatas']
+                )
 
             if not results or not results.get('documents'):
                 print(f"[VectorDB] 데이터 없음: {cache_key}")
