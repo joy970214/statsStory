@@ -231,7 +231,7 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          기본통계현황분석
+          통계현황분석
         </motion.h2>
         <motion.p 
           className="text-gray-700 font-medium text-lg mb-4"
@@ -360,12 +360,18 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
           {[
             { name: '초기화', key: 'init', description: '최적화된 크롤러 초기화 및 설정', threshold: 0 },
             { name: '통계표목록', key: 'tables', description: '사용 가능한 통계표 목록 조회', threshold: 15 },
-            { name: '데이터수집', key: 'data', description: '통계표별 메타데이터 및 데이터 수집', threshold: 90 },
-            { name: '분석', key: 'analysis', description: '분석 인사이트 생성', threshold: 95 },
+            { name: '데이터수집', key: 'data', description: '통계표별 메타데이터 및 데이터 수집', threshold: 30 },
+            { name: '데이터분석', key: 'stats', description: '기본 통계량 계산', threshold: 80 },
+            { name: '벡터DB저장', key: 'vector', description: 'ChromaDB에 데이터 저장 (채팅용)', threshold: 82 },
+            { name: 'AI분석', key: 'ai', description: 'Ollama AI 인사이트 생성', threshold: 88 },
             { name: '완료', key: 'complete', description: '분석 결과 정리 및 완료', threshold: 100 }
           ].map((step, index) => {
             const isActive = progress.stage.toLowerCase().includes(step.key) ||
-                           step.name === progress.stage;
+                           step.name === progress.stage ||
+                           (step.key === 'data' && progress.stage.includes('데이터')) ||
+                           (step.key === 'stats' && progress.stage.includes('분석') && progress.progress >= 80 && progress.progress < 82) ||
+                           (step.key === 'vector' && (progress.stage.includes('벡터') || progress.stage.includes('DB'))) ||
+                           (step.key === 'ai' && (progress.stage.includes('AI') || progress.message.includes('Ollama') || progress.message.includes('인사이트')));
             const isCompleted = progress.progress >= step.threshold;
             
             return (

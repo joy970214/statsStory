@@ -38,6 +38,20 @@ export interface StatMetadata {
   major_items?: Record<string, string>;
   meaning_analysis?: Record<string, string>;
   terminology?: Record<string, string>;
+  ai_insights?: {
+    insights_count: number;
+    insight_1?: { category: string; content: string; visualization: string };
+    insight_2?: { category: string; content: string; visualization: string };
+    insight_3?: { category: string; content: string; visualization: string };
+    insight_4?: { category: string; content: string; visualization: string };
+    insight_5?: { category: string; content: string; visualization: string };
+    insight_6?: { category: string; content: string; visualization: string };
+    insight_7?: { category: string; content: string; visualization: string };
+    insight_8?: { category: string; content: string; visualization: string };
+    insight_9?: { category: string; content: string; visualization: string };
+    insight_10?: { category: string; content: string; visualization: string };
+    [key: string]: any;
+  };
 }
 
 export interface CardNewsSection {

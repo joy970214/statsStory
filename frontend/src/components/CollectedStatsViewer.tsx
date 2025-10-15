@@ -62,7 +62,7 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
       const data = await response.json();
       setStatsData(data);
     } catch (err) {
-      console.error('수집된 통계표 목록 로드 오류:', err);
+      console.error('수집된 통계 목록 로드 오류:', err);
       setError(`통계표 목록을 불러오는데 실패했습니다: ${err instanceof Error ? err.message : '알 수 없는 오류'}`);
     } finally {
       setLoading(false);
@@ -207,7 +207,7 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
           <div>
             <h2 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-3 flex items-center gap-3">
               <ClipboardDocumentListIcon className="w-8 h-8 text-primary-600" />
-              수집된 통계표 목록
+              수집된 통계 목록
             </h2>
             <p className="text-gray-600 text-lg">
               시스템에 저장된 <span className="font-semibold text-primary-600">{statsData?.total_collected_stats || 0}개</span>의 통계표를 실제 통계표명으로 확인하고 분석할 수 있습니다.
@@ -239,7 +239,7 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
                 <ClipboardDocumentListIcon className="w-5 h-5 text-white" />
               </div>
-              <h3 className="text-lg font-semibold text-blue-800">총 통계표</h3>
+              <h3 className="text-lg font-semibold text-blue-800">총 통계</h3>
             </div>
             <p className="text-3xl font-bold text-blue-600">{statsData.total_collected_stats}</p>
           </motion.div>

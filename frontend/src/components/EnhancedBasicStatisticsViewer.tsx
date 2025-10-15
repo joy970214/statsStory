@@ -1028,526 +1028,481 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              {/* 통계표 선택 헤더 */}
-              <div className="mb-8">
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-                  <TableCellsIcon className="w-6 h-6 text-primary-600" />
-                  통계표별 상세 분석
-                  <span className="ml-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                    {processedStats.data_structure.table_count}개 수집됨
-                  </span>
-                </h3>
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
-                    <TableCellsIcon className="w-5 h-5 text-white" />
-                  </div>
-                  <h4 className="font-semibold text-gray-900">수집된 통계표 목록 (클릭하여 선택)</h4>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  {processedStats.data_structure.collected_tables.map((table, index) => (
-                    <motion.button
-                      key={index}
-                      onClick={() => setSelectedTableName(table)}
-                      className={`px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
-                        selectedTableName === table
-                          ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
-                          : 'bg-white text-gray-700 hover:bg-primary-50 border border-gray-200 hover:border-primary-300'
-                      }`}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <TableCellsIcon className="w-4 h-4" />
-                      {table}
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
-              </div>
-
-              {/* 구분선 */}
-              <div className="border-t border-gray-200 my-8"></div>
-
               {/* LLM 분석 결과 영역 */}
-              <div className="mb-8">
+              <div>
                 <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
                   <SparklesIcon className="w-6 h-6 text-primary-600" />
                   AI 분석 결과
-                {selectedTableName && (
-                  <span className="text-lg text-blue-600 ml-2 bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1 rounded-lg">
-                    {selectedTableName}
-                  </span>
-                )}
-              </h4>
+                </h4>
 
-              {/* AI 분석 결과 (10개 카테고리) */}
-              {analysisData.metadata?.ai_insights?.insights_count > 0 ? (
-                <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-8 border border-purple-200">
-                  <div className="flex items-start gap-4 mb-6">
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <SparklesIcon className="w-6 h-6 text-white" />
+                {/* AI 채팅 (AI 인사이트가 있을 때만 표시) */}
+                {(analysisData.metadata?.ai_insights?.insights_count ?? 0) > 0 && (
+                  <div className="mb-8">
+                    <button
+                      onClick={() => setIsChatOpen(!isChatOpen)}
+                      className="w-full flex items-center justify-between hover:bg-gradient-to-r from-emerald-50 to-teal-50 transition-colors duration-200 rounded-lg p-4 border border-emerald-200"
+                    >
+                      <h4 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-800 bg-clip-text text-transparent flex items-center gap-3">
+                        <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        </svg>
+                        AI 채팅 (데이터 기반 질의응답)
+                      </h4>
+                      {isChatOpen ? (
+                        <ChevronUpIcon className="w-6 h-6 text-gray-600" />
+                      ) : (
+                        <ChevronDownIcon className="w-6 h-6 text-gray-600" />
+                      )}
+                    </button>
+
+                    {isChatOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="mt-4 bg-white rounded-xl border border-emerald-200 shadow-lg"
+                      >
+                        {/* 채팅 메시지 영역 */}
+                        <div className="h-96 overflow-y-auto p-6 space-y-4">
+                          {chatMessages.length === 0 ? (
+                            <div className="text-center text-gray-500 mt-20">
+                              <svg className="w-16 h-16 mx-auto mb-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                              </svg>
+                              <p className="text-lg font-medium mb-2">통계 데이터에 대해 질문해보세요</p>
+                              <p className="text-sm">ChromaDB + RAG 방식으로 정확한 답변을 제공합니다</p>
+                            </div>
+                          ) : (
+                            chatMessages.map((msg, idx) => (
+                              <motion.div
+                                key={idx}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                              >
+                                <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                                  msg.role === 'user'
+                                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white'
+                                    : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800'
+                                }`}>
+                                  <div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>
+                                </div>
+                              </motion.div>
+                            ))
+                          )}
+                          {chatLoading && (
+                            <div className="flex justify-start">
+                              <div className="bg-gray-100 rounded-2xl px-4 py-3">
+                                <div className="flex gap-2">
+                                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          <div ref={chatEndRef} />
+                        </div>
+
+                        {/* 채팅 입력 영역 */}
+                        <div className="border-t border-emerald-200 p-4">
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={chatInput}
+                              onChange={(e) => setChatInput(e.target.value)}
+                              onKeyPress={handleKeyPress}
+                              placeholder="통계 데이터에 대해 질문하세요... (예: 2025년 서울 미분양 현황은?)"
+                              className="flex-1 px-4 py-3 border border-emerald-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                              disabled={chatLoading}
+                            />
+                            <button
+                              onClick={handleSendMessage}
+                              disabled={chatLoading || !chatInput.trim()}
+                              className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:from-emerald-600 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+                            >
+                              {chatLoading ? '전송 중...' : '전송'}
+                            </button>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-2">
+                            💡 Ollama(llama3.1) + ChromaDB RAG 방식으로 {analysisData.metadata?.title}의 실제 데이터를 기반으로 답변합니다
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+                )}
+
+                {/* AI 분석 결과 (10개 카테고리) */}
+                {(analysisData.metadata?.ai_insights?.insights_count ?? 0) > 0 ? (
+                  <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-8 border border-purple-200">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <SparklesIcon className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h5 className="font-semibold text-purple-900 mb-2">AI 분석 인사이트</h5>
+                        <p className="text-sm text-purple-700 leading-relaxed">
+                          Ollama(llama3.1) 모델이 분석한 {analysisData.metadata?.ai_insights?.insights_count}개의 인사이트입니다.
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h5 className="font-semibold text-purple-900 mb-2">AI 분석 인사이트</h5>
-                      <p className="text-sm text-purple-700 leading-relaxed">
-                        Ollama(llama3.1) 모델이 분석한 {analysisData.metadata.ai_insights.insights_count}개의 인사이트입니다.
-                      </p>
+
+                    {/* 10개 카테고리 인사이트 */}
+                    <div className="space-y-4">
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
+                        const insightKey = `insight_${num}`;
+                        const insight = analysisData.metadata?.ai_insights?.[insightKey];
+
+                        if (!insight) return null;
+
+                        return (
+                          <motion.div
+                            key={num}
+                            className="bg-white rounded-lg p-6 shadow-sm border border-purple-100"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: num * 0.05 }}
+                          >
+                            <div className="flex items-start gap-4">
+                              <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-lg flex items-center justify-center flex-shrink-0 text-white font-bold text-sm">
+                                {num}
+                              </div>
+                              <div className="flex-1">
+                                <h6 className="font-semibold text-purple-900 mb-2">
+                                  {insight.category}
+                                </h6>
+                                <p className="text-gray-700 leading-relaxed mb-3">
+                                  {insight.content}
+                                </p>
+                                <div className="flex items-center gap-2 text-sm text-purple-600">
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                  </svg>
+                                  <span>추천 시각화: {insight.visualization}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
                     </div>
                   </div>
+                ) : (
+                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8 border border-gray-200">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <SparklesIcon className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h5 className="font-semibold text-gray-900 mb-2">AI 인사이트 대기 중</h5>
+                        <p className="text-sm text-gray-700 leading-relaxed">
+                          이 통계에 대한 AI 분석 인사이트가 아직 생성되지 않았습니다.
+                          '분석하기' 버튼을 눌러 새로 분석하면 AI 인사이트가 자동 생성됩니다.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-                  {/* 10개 카테고리 인사이트 */}
-                  <div className="space-y-4">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
-                      const insightKey = `insight_${num}`;
-                      const insight = analysisData.metadata.ai_insights[insightKey];
+                {/* 임시로 남겨둔 통계 카드 - 삭제 예정 */}
+                <div className="hidden grid-cols-1 md:grid-cols-3 gap-6">
+                  <motion.div 
+                    className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 text-center"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                      <DocumentTextIcon className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-3xl font-bold text-blue-700 mb-1">
+                      {(() => {
+                        // 선택된 테이블의 필드 수 계산
+                        if (!selectedTableName || !rawDataByTable[selectedTableName]) {
+                          return 0;
+                        }
+                        const tableData = rawDataByTable[selectedTableName];
+                        let totalFields = 0;
+                        tableData.forEach(stat => {
+                          totalFields += Object.keys(stat.data || {}).length;
+                        });
+                        return totalFields;
+                      })()}
+                    </div>
+                    <div className="text-sm font-medium text-blue-600">총 데이터 필드</div>
+                  </motion.div>
+                  <motion.div 
+                    className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 text-center"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                      <ChartBarIcon className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-3xl font-bold text-purple-700 mb-1">
+                      {(() => {
+                        // 선택된 테이블의 숫자 데이터 수 계산
+                        if (!selectedTableName || !rawDataByTable[selectedTableName]) {
+                          return 0;
+                        }
+                        const tableData = rawDataByTable[selectedTableName];
+                        let numericFields = 0;
+                        tableData.forEach(stat => {
+                          Object.entries(stat.data || {}).forEach(([key, value]) => {
+                            try {
+                              const parsedValue = typeof value === 'string' && value.includes("'value'")
+                                ? JSON.parse(value.replace(/'/g, '"'))
+                                : { value, unit: 'text', raw: value };
+                              if (parsedValue.unit === 'number') {
+                                numericFields++;
+                              }
+                            } catch (error) {
+                              // Skip parsing errors
+                            }
+                          });
+                        });
+                        return numericFields;
+                      })()}
+                    </div>
+                    <div className="text-sm font-medium text-purple-600">숫자 데이터</div>
+                  </motion.div>
+                  <motion.div 
+                    className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-6 text-center"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                      <DocumentTextIcon className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-3xl font-bold text-amber-700 mb-1">
+                      {(() => {
+                        // 선택된 테이블의 텍스트 데이터 수 계산
+                        if (!selectedTableName || !rawDataByTable[selectedTableName]) {
+                          return 0;
+                        }
+                        const tableData = rawDataByTable[selectedTableName];
+                        let textFields = 0;
+                        tableData.forEach(stat => {
+                          Object.entries(stat.data || {}).forEach(([key, value]) => {
+                            try {
+                              const parsedValue = typeof value === 'string' && value.includes("'value'")
+                                ? JSON.parse(value.replace(/'/g, '"'))
+                                : { value, unit: 'text', raw: value };
+                              if (parsedValue.unit !== 'number') {
+                                textFields++;
+                              }
+                            } catch (error) {
+                              textFields++;
+                            }
+                          });
+                        });
+                        return textFields;
+                      })()}
+                    </div>
+                    <div className="text-sm font-medium text-amber-600">텍스트 데이터</div>
+                  </motion.div>
+                </div>
+                </div>
 
-                      if (!insight) return null;
+                {/* 이전 데이터 특성 분석 섹션 삭제됨 - LLM 분석으로 대체 */}
 
+                {/* 구분선 - 삭제 예정 */}
+                <div className="hidden border-t border-gray-200 my-8"></div>
+
+                {/* 데이터 특성 분석 - 삭제됨 */}
+                <div className="hidden mb-8">
+                  <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+                    <ChartBarIcon className="w-6 h-6 text-primary-600" />
+                    데이터 특성 분석
+                    {selectedTableName && (
+                      <span className="text-lg text-blue-600 ml-2 bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1 rounded-lg">
+                        {selectedTableName}
+                      </span>
+                    )}
+                  </h4>
+
+                  {(() => {
+                    const patterns = analyzeDataPatterns(processedStats?.sample_data || []);
+                    if (!patterns) return <div className="text-gray-500">데이터 패턴을 분석할 수 없습니다.</div>;
+
+                    // 비어있는 테이블 체크
+                    const isEmpty = !patterns ||
+                      (!patterns.hasNumericValues &&
+                      patterns.numericColumns.length === 0 &&
+                      getSelectedTableStats()?.count === 0);
+
+                    if (isEmpty) {
                       return (
-                        <motion.div
-                          key={num}
-                          className="bg-white rounded-lg p-6 shadow-sm border border-purple-100"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: num * 0.05 }}
+                        <motion.div 
+                          className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-8 border border-amber-200"
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.3 }}
                         >
-                          <div className="flex items-start gap-4">
-                            <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-lg flex items-center justify-center flex-shrink-0 text-white font-bold text-sm">
-                              {num}
+                          <div className="flex items-center gap-4 mb-6">
+                            <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-yellow-500 rounded-xl flex items-center justify-center">
+                              <SparklesIcon className="w-6 h-6 text-white" />
                             </div>
-                            <div className="flex-1">
-                              <h6 className="font-semibold text-purple-900 mb-2">
-                                {insight.category}
-                              </h6>
-                              <p className="text-gray-700 leading-relaxed mb-3">
-                                {insight.content}
-                              </p>
-                              <div className="flex items-center gap-2 text-sm text-purple-600">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                </svg>
-                                <span>추천 시각화: {insight.visualization}</span>
+                            <h4 className="text-xl font-semibold text-amber-800">데이터 없음</h4>
+                          </div>
+                          <p className="text-amber-700 mb-6 text-lg">
+                            선택된 통계표 <span className="font-bold">"{selectedTableName || '알 수 없음'}"</span>에는 분석 가능한 데이터가 없습니다.
+                          </p>
+                          <div className="bg-gradient-to-r from-amber-100 to-yellow-100 rounded-xl p-6">
+                            <div className="flex items-start gap-3">
+                              <div className="w-6 h-6 bg-gradient-to-br from-amber-600 to-yellow-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <span className="text-white text-xs font-bold">!</span>
+                              </div>
+                              <div className="text-sm text-amber-800 leading-relaxed">
+                                <p className="mb-2"><strong>가능한 원인:</strong></p>
+                                <ul className="space-y-1 ml-4">
+                                  <li>• 데이터가 수집되지 않았거나</li>
+                                  <li>• 해당 기간에 대한 정보가 없거나</li>
+                                  <li>• 조회 조건에 맞는 결과가 없을 수 있습니다.</li>
+                                </ul>
                               </div>
                             </div>
                           </div>
                         </motion.div>
                       );
-                    })}
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8 border border-gray-200">
-                  <div className="flex items-start gap-4 mb-6">
-                    <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <SparklesIcon className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <h5 className="font-semibold text-gray-900 mb-2">AI 인사이트 대기 중</h5>
-                      <p className="text-sm text-gray-700 leading-relaxed">
-                        이 통계에 대한 AI 분석 인사이트가 아직 생성되지 않았습니다.
-                        '분석하기' 버튼을 눌러 새로 분석하면 AI 인사이트가 자동 생성됩니다.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
+                    }
 
-              {/* AI 채팅 (AI 인사이트가 있을 때만 표시) */}
-              {analysisData.metadata?.ai_insights?.insights_count > 0 && (
-                <div className="mt-8">
-                  <button
-                    onClick={() => setIsChatOpen(!isChatOpen)}
-                    className="w-full flex items-center justify-between hover:bg-gradient-to-r from-emerald-50 to-teal-50 transition-colors duration-200 rounded-lg p-4 border border-emerald-200"
-                  >
-                    <h4 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-800 bg-clip-text text-transparent flex items-center gap-3">
-                      <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                      </svg>
-                      AI 채팅 (데이터 기반 질의응답)
-                    </h4>
-                    {isChatOpen ? (
-                      <ChevronUpIcon className="w-6 h-6 text-gray-600" />
-                    ) : (
-                      <ChevronDownIcon className="w-6 h-6 text-gray-600" />
-                    )}
-                  </button>
-
-                  {isChatOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="mt-4 bg-white rounded-xl border border-emerald-200 shadow-lg"
-                    >
-                      {/* 채팅 메시지 영역 */}
-                      <div className="h-96 overflow-y-auto p-6 space-y-4">
-                        {chatMessages.length === 0 ? (
-                          <div className="text-center text-gray-500 mt-20">
-                            <svg className="w-16 h-16 mx-auto mb-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                            </svg>
-                            <p className="text-lg font-medium mb-2">통계 데이터에 대해 질문해보세요</p>
-                            <p className="text-sm">ChromaDB + RAG 방식으로 정확한 답변을 제공합니다</p>
+                    return (
+                      <div className="space-y-6">
+                        {/* 데이터 분류 및 특성 */}
+                        <motion.div 
+                          className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-6 shadow-lg"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: 0.1 }}
+                        >
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                              <ChartBarIcon className="w-5 h-5 text-white" />
+                            </div>
+                            <h4 className="font-semibold text-blue-900">데이터 분류 및 특성</h4>
                           </div>
-                        ) : (
-                          chatMessages.map((msg, idx) => (
-                            <motion.div
-                              key={idx}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                            >
-                              <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                                msg.role === 'user'
-                                  ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white'
-                                  : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800'
-                              }`}>
-                                <div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="bg-white rounded-lg p-4 shadow-sm">
+                              <div className="flex items-center gap-2 mb-2">
+                                <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                                  <ChartBarIcon className="w-3 h-3 text-white" />
+                                </div>
+                                <span className="text-blue-800 font-medium text-sm">데이터 유형</span>
                               </div>
-                            </motion.div>
-                          ))
-                        )}
-                        {chatLoading && (
-                          <div className="flex justify-start">
-                            <div className="bg-gray-100 rounded-2xl px-4 py-3">
-                              <div className="flex gap-2">
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></div>
+                              <span className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
+                                {patterns.dataClassification === 'temporal-geographic' && '시계열-지역별'}
+                                {patterns.dataClassification === 'geographic' && '지역별 통계'}
+                                {patterns.dataClassification === 'temporal' && '시계열 통계'}
+                                {patterns.dataClassification === 'categorical' && '분류별 통계'}
+                                {patterns.dataClassification === 'general' && '일반 통계'}
+                              </span>
+                            </div>
+
+                            {patterns.mainCategory && (
+                              <div className="bg-white rounded-lg p-4 shadow-sm">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                                    <TagIcon className="w-3 h-3 text-white" />
+                                  </div>
+                                  <span className="text-green-800 font-medium text-sm">분야</span>
+                                </div>
+                                <span className="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
+                                  {patterns.mainCategory}
+                                </span>
                               </div>
+                            )}
+
+                            {patterns.timePeriod && (
+                              <div className="bg-white rounded-lg p-4 shadow-sm">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                    <SparklesIcon className="w-3 h-3 text-white" />
+                                  </div>
+                                  <span className="text-purple-800 font-medium text-sm">기간</span>
+                                </div>
+                                <span className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
+                                  {patterns.timePeriod}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+
+                        {/* 범용적 기초통계 지표 */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                          <div className="bg-red-50 rounded-lg p-4 text-center">
+                            <div className="text-2xl font-bold text-red-700">
+                              {formatNumber(getSelectedTableStats()?.mean || 0)}
+                            </div>
+                            <div className="text-sm text-red-600 font-medium">평균값</div>
+                            <div className="text-xs text-red-500 mt-1">
+                              {patterns.mainCategory === '주택건설' && '평균 준공규모'}
+                              {patterns.mainCategory === '부동산' && '평균 거래가격'}
+                              {patterns.mainCategory === '도로교통' && '평균 도로연장'}
+                              {!patterns.mainCategory && '평균값'}
                             </div>
                           </div>
-                        )}
-                        <div ref={chatEndRef} />
-                      </div>
 
-                      {/* 채팅 입력 영역 */}
-                      <div className="border-t border-emerald-200 p-4">
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            value={chatInput}
-                            onChange={(e) => setChatInput(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                            placeholder="통계 데이터에 대해 질문하세요... (예: 2025년 서울 미분양 현황은?)"
-                            className="flex-1 px-4 py-3 border border-emerald-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                            disabled={chatLoading}
-                          />
-                          <button
-                            onClick={handleSendMessage}
-                            disabled={chatLoading || !chatInput.trim()}
-                            className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:from-emerald-600 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
-                          >
-                            {chatLoading ? '전송 중...' : '전송'}
-                          </button>
-                        </div>
-                        <p className="text-xs text-gray-500 mt-2">
-                          💡 Ollama(llama3.1) + ChromaDB RAG 방식으로 {analysisData.metadata?.title}의 실제 데이터를 기반으로 답변합니다
-                        </p>
-                      </div>
-                    </motion.div>
-                  )}
-                </div>
-              )}
-
-              {/* 임시로 남겨둔 통계 카드 - 삭제 예정 */}
-              <div className="hidden grid-cols-1 md:grid-cols-3 gap-6">
-                <motion.div 
-                  className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 text-center"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <DocumentTextIcon className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="text-3xl font-bold text-blue-700 mb-1">
-                    {(() => {
-                      // 선택된 테이블의 필드 수 계산
-                      if (!selectedTableName || !rawDataByTable[selectedTableName]) {
-                        return 0;
-                      }
-                      const tableData = rawDataByTable[selectedTableName];
-                      let totalFields = 0;
-                      tableData.forEach(stat => {
-                        totalFields += Object.keys(stat.data || {}).length;
-                      });
-                      return totalFields;
-                    })()}
-                  </div>
-                  <div className="text-sm font-medium text-blue-600">총 데이터 필드</div>
-                </motion.div>
-                <motion.div 
-                  className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 text-center"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <ChartBarIcon className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="text-3xl font-bold text-purple-700 mb-1">
-                    {(() => {
-                      // 선택된 테이블의 숫자 데이터 수 계산
-                      if (!selectedTableName || !rawDataByTable[selectedTableName]) {
-                        return 0;
-                      }
-                      const tableData = rawDataByTable[selectedTableName];
-                      let numericFields = 0;
-                      tableData.forEach(stat => {
-                        Object.entries(stat.data || {}).forEach(([key, value]) => {
-                          try {
-                            const parsedValue = typeof value === 'string' && value.includes("'value'")
-                              ? JSON.parse(value.replace(/'/g, '"'))
-                              : { value, unit: 'text', raw: value };
-                            if (parsedValue.unit === 'number') {
-                              numericFields++;
-                            }
-                          } catch (error) {
-                            // Skip parsing errors
-                          }
-                        });
-                      });
-                      return numericFields;
-                    })()}
-                  </div>
-                  <div className="text-sm font-medium text-purple-600">숫자 데이터</div>
-                </motion.div>
-                <motion.div 
-                  className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-6 text-center"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <DocumentTextIcon className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="text-3xl font-bold text-amber-700 mb-1">
-                    {(() => {
-                      // 선택된 테이블의 텍스트 데이터 수 계산
-                      if (!selectedTableName || !rawDataByTable[selectedTableName]) {
-                        return 0;
-                      }
-                      const tableData = rawDataByTable[selectedTableName];
-                      let textFields = 0;
-                      tableData.forEach(stat => {
-                        Object.entries(stat.data || {}).forEach(([key, value]) => {
-                          try {
-                            const parsedValue = typeof value === 'string' && value.includes("'value'")
-                              ? JSON.parse(value.replace(/'/g, '"'))
-                              : { value, unit: 'text', raw: value };
-                            if (parsedValue.unit !== 'number') {
-                              textFields++;
-                            }
-                          } catch (error) {
-                            textFields++;
-                          }
-                        });
-                      });
-                      return textFields;
-                    })()}
-                  </div>
-                  <div className="text-sm font-medium text-amber-600">텍스트 데이터</div>
-                </motion.div>
-              </div>
-              </div>
-
-              {/* 이전 데이터 특성 분석 섹션 삭제됨 - LLM 분석으로 대체 */}
-
-              {/* 구분선 - 삭제 예정 */}
-              <div className="hidden border-t border-gray-200 my-8"></div>
-
-              {/* 데이터 특성 분석 - 삭제됨 */}
-              <div className="hidden mb-8">
-                <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-                  <ChartBarIcon className="w-6 h-6 text-primary-600" />
-                  데이터 특성 분석
-            {selectedTableName && (
-              <span className="text-lg text-blue-600 ml-2 bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1 rounded-lg">
-                {selectedTableName}
-              </span>
-            )}
-          </h4>
-
-          {(() => {
-            const patterns = analyzeDataPatterns(processedStats?.sample_data || []);
-            if (!patterns) return <div className="text-gray-500">데이터 패턴을 분석할 수 없습니다.</div>;
-
-            // 비어있는 테이블 체크
-            const isEmpty = !patterns ||
-              (!patterns.hasNumericValues &&
-               patterns.numericColumns.length === 0 &&
-               getSelectedTableStats()?.count === 0);
-
-            if (isEmpty) {
-              return (
-                <motion.div 
-                  className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-8 border border-amber-200"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-yellow-500 rounded-xl flex items-center justify-center">
-                      <SparklesIcon className="w-6 h-6 text-white" />
-                    </div>
-                    <h4 className="text-xl font-semibold text-amber-800">데이터 없음</h4>
-                  </div>
-                  <p className="text-amber-700 mb-6 text-lg">
-                    선택된 통계표 <span className="font-bold">"{selectedTableName || '알 수 없음'}"</span>에는 분석 가능한 데이터가 없습니다.
-                  </p>
-                  <div className="bg-gradient-to-r from-amber-100 to-yellow-100 rounded-xl p-6">
-                    <div className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-gradient-to-br from-amber-600 to-yellow-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                        <span className="text-white text-xs font-bold">!</span>
-                      </div>
-                      <div className="text-sm text-amber-800 leading-relaxed">
-                        <p className="mb-2"><strong>가능한 원인:</strong></p>
-                        <ul className="space-y-1 ml-4">
-                          <li>• 데이터가 수집되지 않았거나</li>
-                          <li>• 해당 기간에 대한 정보가 없거나</li>
-                          <li>• 조회 조건에 맞는 결과가 없을 수 있습니다.</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            }
-
-            return (
-              <div className="space-y-6">
-                {/* 데이터 분류 및 특성 */}
-                <motion.div 
-                  className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-6 shadow-lg"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.1 }}
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
-                      <ChartBarIcon className="w-5 h-5 text-white" />
-                    </div>
-                    <h4 className="font-semibold text-blue-900">데이터 분류 및 특성</h4>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                          <ChartBarIcon className="w-3 h-3 text-white" />
-                        </div>
-                        <span className="text-blue-800 font-medium text-sm">데이터 유형</span>
-                      </div>
-                      <span className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
-                        {patterns.dataClassification === 'temporal-geographic' && '시계열-지역별'}
-                        {patterns.dataClassification === 'geographic' && '지역별 통계'}
-                        {patterns.dataClassification === 'temporal' && '시계열 통계'}
-                        {patterns.dataClassification === 'categorical' && '분류별 통계'}
-                        {patterns.dataClassification === 'general' && '일반 통계'}
-                      </span>
-                    </div>
-
-                    {patterns.mainCategory && (
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
-                            <TagIcon className="w-3 h-3 text-white" />
+                          <div className="bg-orange-50 rounded-lg p-4 text-center">
+                            <div className="text-2xl font-bold text-orange-700">
+                              {formatNumber(getSelectedTableStats()?.median || 0)}
+                            </div>
+                            <div className="text-sm text-orange-600 font-medium">중위수</div>
+                            <div className="text-xs text-orange-500 mt-1">중앙값</div>
                           </div>
-                          <span className="text-green-800 font-medium text-sm">분야</span>
-                        </div>
-                        <span className="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
-                          {patterns.mainCategory}
-                        </span>
-                      </div>
-                    )}
 
-                    {patterns.timePeriod && (
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                            <SparklesIcon className="w-3 h-3 text-white" />
+                          <div className="bg-yellow-50 rounded-lg p-4 text-center">
+                            <div className="text-2xl font-bold text-yellow-700">
+                              {formatNumber(getSelectedTableStats()?.max || 0)}
+                            </div>
+                            <div className="text-sm text-yellow-600 font-medium">최댓값</div>
+                            <div className="text-xs text-yellow-500 mt-1">
+                              {patterns.hasGeographicData && '지역별 최고'}
+                              {!patterns.hasGeographicData && '최댓값'}
+                            </div>
                           </div>
-                          <span className="text-purple-800 font-medium text-sm">기간</span>
+
+                          <div className="bg-green-50 rounded-lg p-4 text-center">
+                            <div className="text-2xl font-bold text-green-700">
+                              {formatNumber(getSelectedTableStats()?.min || 0)}
+                            </div>
+                            <div className="text-sm text-green-600 font-medium">최솟값</div>
+                            <div className="text-xs text-green-500 mt-1">
+                              {patterns.hasGeographicData && '지역별 최저'}
+                              {!patterns.hasGeographicData && '최솟값'}
+                            </div>
+                          </div>
+
+                          <div className="bg-blue-50 rounded-lg p-4 text-center">
+                            <div className="text-2xl font-bold text-blue-700">
+                              {formatNumber(getSelectedTableStats()?.total || 0)}
+                            </div>
+                            <div className="text-sm text-blue-600 font-medium">총합계</div>
+                            <div className="text-xs text-blue-500 mt-1">
+                              {patterns.mainCategory === '주택건설' && '전체 준공량'}
+                              {patterns.mainCategory === '부동산' && '총 거래규모'}
+                              {patterns.mainCategory === '도로교통' && '총 도로연장'}
+                              {!patterns.mainCategory && '총합계'}
+                            </div>
+                          </div>
+
+                          <div className="bg-indigo-50 rounded-lg p-4 text-center">
+                            <div className="text-2xl font-bold text-indigo-700">
+                              {getSelectedTableStats()?.count || 0}
+                            </div>
+                            <div className="text-sm text-indigo-600 font-medium">데이터 수</div>
+                            <div className="text-xs text-indigo-500 mt-1">
+                              {patterns.hasTimeData && '시점 수'}
+                              {patterns.hasGeographicData && '지역 수'}
+                              {!patterns.hasTimeData && !patterns.hasGeographicData && '항목 수'}
+                            </div>
+                          </div>
                         </div>
-                        <span className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
-                          {patterns.timePeriod}
-                        </span>
                       </div>
-                    )}
-                  </div>
-                </motion.div>
-
-                {/* 범용적 기초통계 지표 */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                  <div className="bg-red-50 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-red-700">
-                      {formatNumber(getSelectedTableStats()?.mean || 0)}
-                    </div>
-                    <div className="text-sm text-red-600 font-medium">평균값</div>
-                    <div className="text-xs text-red-500 mt-1">
-                      {patterns.mainCategory === '주택건설' && '평균 준공규모'}
-                      {patterns.mainCategory === '부동산' && '평균 거래가격'}
-                      {patterns.mainCategory === '도로교통' && '평균 도로연장'}
-                      {!patterns.mainCategory && '평균값'}
-                    </div>
-                  </div>
-
-                  <div className="bg-orange-50 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-orange-700">
-                      {formatNumber(getSelectedTableStats()?.median || 0)}
-                    </div>
-                    <div className="text-sm text-orange-600 font-medium">중위수</div>
-                    <div className="text-xs text-orange-500 mt-1">중앙값</div>
-                  </div>
-
-                  <div className="bg-yellow-50 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-yellow-700">
-                      {formatNumber(getSelectedTableStats()?.max || 0)}
-                    </div>
-                    <div className="text-sm text-yellow-600 font-medium">최댓값</div>
-                    <div className="text-xs text-yellow-500 mt-1">
-                      {patterns.hasGeographicData && '지역별 최고'}
-                      {!patterns.hasGeographicData && '최댓값'}
-                    </div>
-                  </div>
-
-                  <div className="bg-green-50 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-green-700">
-                      {formatNumber(getSelectedTableStats()?.min || 0)}
-                    </div>
-                    <div className="text-sm text-green-600 font-medium">최솟값</div>
-                    <div className="text-xs text-green-500 mt-1">
-                      {patterns.hasGeographicData && '지역별 최저'}
-                      {!patterns.hasGeographicData && '최솟값'}
-                    </div>
-                  </div>
-
-                  <div className="bg-blue-50 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-blue-700">
-                      {formatNumber(getSelectedTableStats()?.total || 0)}
-                    </div>
-                    <div className="text-sm text-blue-600 font-medium">총합계</div>
-                    <div className="text-xs text-blue-500 mt-1">
-                      {patterns.mainCategory === '주택건설' && '전체 준공량'}
-                      {patterns.mainCategory === '부동산' && '총 거래규모'}
-                      {patterns.mainCategory === '도로교통' && '총 도로연장'}
-                      {!patterns.mainCategory && '총합계'}
-                    </div>
-                  </div>
-
-                  <div className="bg-indigo-50 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-indigo-700">
-                      {getSelectedTableStats()?.count || 0}
-                    </div>
-                    <div className="text-sm text-indigo-600 font-medium">데이터 수</div>
-                    <div className="text-xs text-indigo-500 mt-1">
-                      {patterns.hasTimeData && '시점 수'}
-                      {patterns.hasGeographicData && '지역 수'}
-                      {!patterns.hasTimeData && !patterns.hasGeographicData && '항목 수'}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
+                    );
+                  })()}
               </div>
 
               {/* 원본 테이블 재구성 섹션 삭제됨 - LLM 분석으로 대체 */}

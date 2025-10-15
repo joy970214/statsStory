@@ -56,7 +56,7 @@ async def chat_with_ai(request: ChatRequest):
         relevant_data = vector_db_service.search_relevant_data(
             stat_name=request.stat_name,
             query=request.message,
-            n_results=15  # 상위 15개 관련 데이터
+            n_results=8  # 상위 8개 관련 데이터 (타임아웃 방지)
         )
 
         relevant_docs = relevant_data.get('documents', [])

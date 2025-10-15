@@ -280,6 +280,47 @@ class VectorDBService:
                 "error": str(e)
             }
 
+    def get_all_data_for_analysis(self, stat_name: str, limit: int = 100) -> List[Dict[str, Any]]:
+        """
+        AI 분석을 위해 ChromaDB에서 데이터 샘플 가져오기
+
+        Args:
+            stat_name: 통계명
+            limit: 최대 반환 개수
+
+        Returns:
+            데이터 샘플 리스트 (document, year, table_name, metadata 포함)
+        """
+        try:
+            collection = self.create_or_get_collection(stat_name)
+
+            # 전체 데이터 가져오기 (limit만큼)
+            results = collection.get(
+                limit=limit,
+                include=['documents', 'metadatas']
+            )
+
+            if not results or not results.get('documents'):
+                print(f"[VectorDB] 데이터 없음: {stat_name}")
+                return []
+
+            # 데이터 구조화
+            data_samples = []
+            for doc, meta in zip(results['documents'], results['metadatas']):
+                data_samples.append({
+                    "document": doc,
+                    "year": meta.get('year'),
+                    "table_name": meta.get('table_name', ''),
+                    "metadata": meta
+                })
+
+            print(f"[VectorDB] AI 분석용 데이터 샘플 {len(data_samples)}개 추출")
+            return data_samples
+
+        except Exception as e:
+            print(f"[VectorDB] 데이터 추출 오류: {e}")
+            return []
+
 
 # 싱글톤 인스턴스
 vector_db_service = VectorDBService()

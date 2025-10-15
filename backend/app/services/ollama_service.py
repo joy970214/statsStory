@@ -15,6 +15,7 @@ class OllamaService:
         self.base_url = base_url
         self.model = model
         self.timeout = 180  # 3분 타임아웃 (10개 인사이트 생성)
+        self.chat_timeout = 120  # 2분 타임아웃 (채팅용)
 
     def is_available(self) -> bool:
         """Ollama 서버가 실행 중인지 확인"""
@@ -120,10 +121,11 @@ class OllamaService:
                     "stream": False,
                     "options": {
                         "temperature": 0.3,
-                        "top_p": 0.9
+                        "top_p": 0.9,
+                        "num_predict": 500  # 짧은 답변 유도
                     }
                 },
-                timeout=60
+                timeout=self.chat_timeout
             )
 
             if response.status_code != 200:
@@ -176,7 +178,34 @@ class OllamaService:
 - 총합: {data_summary.get('total', 0):,.2f}
 - 표준편차: {data_summary.get('std_dev', 0):,.2f}
 - 데이터 수: {data_summary.get('count', 0):,}개
+"""
 
+        # ChromaDB 데이터 샘플 추가
+        if raw_data_sample and len(raw_data_sample) > 0:
+            prompt += f"""
+## 실제 데이터 샘플 ({len(raw_data_sample)}개)
+**아래는 실제 수집된 통계 데이터입니다. 이 데이터를 기반으로 분석해주세요:**
+
+"""
+            # 처음 20개만 프롬프트에 포함 (토큰 제한)
+            for idx, sample in enumerate(raw_data_sample[:20], 1):
+                doc = sample.get('document', '')
+                year = sample.get('year', '')
+                table_name = sample.get('table_name', '')
+
+                sample_text = f"{idx}. "
+                if year:
+                    sample_text += f"[{year}년] "
+                if table_name:
+                    sample_text += f"({table_name}) "
+                sample_text += doc
+
+                prompt += f"{sample_text}\n"
+
+            if len(raw_data_sample) > 20:
+                prompt += f"\n(외 {len(raw_data_sample) - 20}개 데이터 존재)\n"
+
+        prompt += """
 ## 분석 요청사항
 다음 **10개 카테고리**에 대해 **객관적 사실만** 기반으로 분석해주세요:
 
@@ -257,32 +286,35 @@ class OllamaService:
 ## 분석 인사이트 (종합 분석)
 """
 
-        # 10개 카테고리 인사이트 추가
-        if insights:
-            for i in range(1, 11):
+        # AI 인사이트 요약 (간결하게)
+        if insights and insights.get('insights_count', 0) > 0:
+            prompt += "\n"
+            # 주요 인사이트만 3개 포함 (타임아웃 방지)
+            for i in [1, 3, 10]:  # 기본현황, 순위현황, 요약
                 key = f'insight_{i}'
                 if key in insights:
                     insight = insights[key]
-                    prompt += f"\n{i}. {insight.get('category', '')}: {insight.get('content', '')}\n"
+                    content = insight.get('content', '')[:150]  # 150자로 제한
+                    prompt += f"- {insight.get('category', '')}: {content}\n"
 
         # ChromaDB에서 검색된 관련 데이터 추가 (RAG)
         relevant_docs = relevant_data.get('documents', [])
         relevant_metas = relevant_data.get('metadatas', [])
 
         if relevant_docs:
-            prompt += f"\n## 질문과 관련된 상세 데이터 ({len(relevant_docs)}개 발견)\n"
-            for idx, (doc, meta) in enumerate(zip(relevant_docs[:10], relevant_metas[:10]), 1):
-                # 메타데이터 정보
+            prompt += f"\n## 질문과 관련된 상세 데이터 ({len(relevant_docs)}개)\n"
+            # 최대 5개만 포함 (타임아웃 방지)
+            for idx, (doc, meta) in enumerate(zip(relevant_docs[:5], relevant_metas[:5]), 1):
                 year = meta.get('year', '')
                 table_name = meta.get('table_name', '')
 
-                # 문서 텍스트
-                prompt += f"\n### 데이터 {idx}"
+                prompt += f"\n{idx}. "
                 if year:
-                    prompt += f" ({year}년)"
+                    prompt += f"[{year}년] "
                 if table_name:
-                    prompt += f" [{table_name}]"
-                prompt += f"\n{doc}\n"
+                    prompt += f"{table_name}: "
+                # 문서 길이 제한 (200자)
+                prompt += f"{doc[:200]}\n"
 
         # 대화 히스토리 추가
         if chat_history:
