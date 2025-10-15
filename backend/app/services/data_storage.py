@@ -45,33 +45,39 @@ class DataStorageService:
         """메타데이터 저장"""
         cache_key = self._get_cache_key(stat_url)
         file_path = self._get_metadata_path(cache_key)
-        
+
+        metadata_dict = {
+            'id': metadata.id,
+            'title': metadata.title,
+            'purpose': metadata.purpose,
+            'frequency': metadata.frequency,
+            'department': metadata.department,
+            'contact': metadata.contact,
+            'search_field': metadata.search_field,
+            'responsible_department': metadata.responsible_department,
+            'keywords': metadata.keywords,
+            'related_terms': metadata.related_terms,
+            'statistical_info': metadata.statistical_info,
+            'major_items': metadata.major_items,
+            'meaning_analysis': metadata.meaning_analysis,
+            'terminology': metadata.terminology,
+            'url': metadata.url
+        }
+
+        # ai_insights 필드가 있으면 저장
+        if hasattr(metadata, 'ai_insights') and metadata.ai_insights:
+            metadata_dict['ai_insights'] = metadata.ai_insights
+
         data = {
             'cache_key': cache_key,
             'stat_url': stat_url,
             'saved_at': datetime.now().isoformat(),
-            'metadata': {
-                'id': metadata.id,
-                'title': metadata.title,
-                'purpose': metadata.purpose,
-                'frequency': metadata.frequency,
-                'department': metadata.department,
-                'contact': metadata.contact,
-                'search_field': metadata.search_field,
-                'responsible_department': metadata.responsible_department,
-                'keywords': metadata.keywords,
-                'related_terms': metadata.related_terms,
-                'statistical_info': metadata.statistical_info,
-                'major_items': metadata.major_items,
-                'meaning_analysis': metadata.meaning_analysis,
-                'terminology': metadata.terminology,
-                'url': metadata.url
-            }
+            'metadata': metadata_dict
         }
-        
+
         with open(file_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
-        
+
         print(f"메타데이터 저장 완료: {cache_key} -> {metadata.title}")
         return cache_key
     
@@ -153,7 +159,11 @@ class DataStorageService:
                 terminology=metadata_dict.get('terminology', {}),
                 url=metadata_dict.get('url')
             )
-            
+
+            # ai_insights가 있으면 속성으로 추가
+            if 'ai_insights' in metadata_dict:
+                metadata.ai_insights = metadata_dict['ai_insights']
+
             print(f"메타데이터 캐시 로드 성공: {cache_key} -> {metadata.title}")
             return metadata
             
@@ -253,8 +263,13 @@ class DataStorageService:
                     if cache_key:
                         stats_file = self._get_stats_path(cache_key)
                         if os.path.exists(stats_file):
-                            # 메타데이터 재구성
-                            metadata_obj = StatMetadata(**data['metadata'])
+                            # 메타데이터 재구성 (ai_insights 포함)
+                            metadata_dict = data['metadata']
+                            metadata_obj = StatMetadata(**metadata_dict)
+
+                            # ai_insights가 있으면 속성으로 추가
+                            if 'ai_insights' in metadata_dict:
+                                metadata_obj.ai_insights = metadata_dict['ai_insights']
 
                             # 통계 데이터 로드
                             with open(stats_file, 'r', encoding='utf-8') as f:

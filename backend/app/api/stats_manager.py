@@ -680,9 +680,17 @@ async def get_available_stats():
 
 @router.delete("/stats/{cache_key}", summary="수집된 통계표 삭제")
 async def delete_collected_stat(cache_key: str):
-    """수집된 통계표 삭제 - 메타데이터, 통계 데이터, Excel 파일, 다운로드된 원본 파일 모두 삭제"""
+    """수집된 통계표 삭제 - 메타데이터, 통계 데이터, Excel 파일, 다운로드된 원본 파일, 벡터 DB 모두 삭제"""
     try:
         print(f"통계표 삭제 시작: {cache_key}")
+
+        # 벡터 DB 삭제 (cache_key 기반)
+        try:
+            from app.services.vector_db_service import vector_db_service
+            vector_db_service.delete_collection(cache_key)
+            print(f"벡터 DB 컬렉션 삭제 완료: cache_{cache_key}")
+        except Exception as e:
+            print(f"벡터 DB 삭제 중 오류 (무시하고 계속): {e}")
 
         # 기본 파일들 목록
         files_to_delete = [
@@ -734,9 +742,10 @@ async def delete_collected_stat(cache_key: str):
         if deleted_files and not errors:
             result = {
                 "success": True,
-                "message": f"통계표 '{cache_key}'가 성공적으로 삭제되었습니다 (원본 파일 포함).",
+                "message": f"통계표 '{cache_key}'가 성공적으로 삭제되었습니다 (원본 파일 및 벡터 DB 포함).",
                 "deleted_files": deleted_files,
-                "cache_key": cache_key
+                "cache_key": cache_key,
+                "vector_db_deleted": True
             }
             print(f"통계표 삭제 완료: {cache_key}")
         elif deleted_files and errors:
@@ -745,7 +754,8 @@ async def delete_collected_stat(cache_key: str):
                 "message": f"통계표 '{cache_key}'가 부분적으로 삭제되었습니다.",
                 "deleted_files": deleted_files,
                 "errors": errors,
-                "cache_key": cache_key
+                "cache_key": cache_key,
+                "vector_db_deleted": True
             }
             print(f"통계표 부분 삭제: {cache_key}")
         else:
@@ -753,7 +763,8 @@ async def delete_collected_stat(cache_key: str):
                 "success": False,
                 "message": f"통계표 '{cache_key}'를 삭제할 파일을 찾을 수 없습니다.",
                 "errors": errors if errors else ["삭제할 파일이 없습니다."],
-                "cache_key": cache_key
+                "cache_key": cache_key,
+                "vector_db_deleted": True
             }
             print(f"통계표 삭제 실패: {cache_key}")
 

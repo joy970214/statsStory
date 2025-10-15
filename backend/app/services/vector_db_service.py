@@ -32,18 +32,19 @@ class VectorDBService:
 
         print(f"[VectorDB] ChromaDB 초기화 완료: {persist_directory}")
 
-    def create_or_get_collection(self, stat_name: str):
+    def create_or_get_collection(self, cache_key: str, stat_name: str = None):
         """
         통계별 컬렉션 생성 또는 가져오기
 
         Args:
-            stat_name: 통계명 (컬렉션 이름으로 사용)
+            cache_key: 캐시 키 (컬렉션 식별자로 사용)
+            stat_name: 통계명 (메타데이터용, 선택)
 
         Returns:
             ChromaDB Collection 객체
         """
-        # 컬렉션 이름 정규화 (특수문자 제거)
-        collection_name = self._normalize_collection_name(stat_name)
+        # 컬렉션 이름 정규화
+        collection_name = self._normalize_collection_name(cache_key)
 
         try:
             # 기존 컬렉션 가져오기 시도
@@ -51,36 +52,35 @@ class VectorDBService:
             print(f"[VectorDB] 기존 컬렉션 로드: {collection_name}")
         except:
             # 없으면 새로 생성
+            metadata = {"cache_key": cache_key}
+            if stat_name:
+                metadata["stat_name"] = stat_name
             collection = self.client.create_collection(
                 name=collection_name,
-                metadata={"stat_name": stat_name}
+                metadata=metadata
             )
-            print(f"[VectorDB] 새 컬렉션 생성: {collection_name}")
+            print(f"[VectorDB] 새 컬렉션 생성: {collection_name} (cache_key: {cache_key})")
 
         return collection
 
-    def _normalize_collection_name(self, stat_name: str) -> str:
+    def _normalize_collection_name(self, cache_key: str) -> str:
         """
         컬렉션 이름 정규화 (ChromaDB는 특수문자 제한)
 
         Args:
-            stat_name: 원본 통계명
+            cache_key: 캐시 키
 
         Returns:
             정규화된 컬렉션 이름
         """
-        # 영문, 숫자, 언더스코어, 하이픈만 허용
-        import re
-        import hashlib
-
-        # 한글/특수문자가 많으므로 해시 사용
-        hash_value = hashlib.md5(stat_name.encode()).hexdigest()[:8]
-        normalized = f"stat_{hash_value}"
-
+        # cache_key는 이미 영문/숫자로 구성되어 있으므로 그대로 사용
+        # cache_ 접두사 추가
+        normalized = f"cache_{cache_key}"
         return normalized
 
     def store_stat_data(
         self,
+        cache_key: str,
         stat_name: str,
         stat_data: List[Any],
         metadata: Any = None
@@ -89,6 +89,7 @@ class VectorDBService:
         통계 데이터를 벡터 DB에 저장
 
         Args:
+            cache_key: 캐시 키 (컬렉션 식별자)
             stat_name: 통계명
             stat_data: StatData 객체 리스트
             metadata: StatMetadata 객체
@@ -96,7 +97,7 @@ class VectorDBService:
         Returns:
             저장된 행 개수
         """
-        collection = self.create_or_get_collection(stat_name)
+        collection = self.create_or_get_collection(cache_key, stat_name)
 
         # 기존 데이터 삭제 (새로 저장)
         try:
@@ -181,7 +182,7 @@ class VectorDBService:
             # 저장용 데이터 추가
             documents.append(document_text)
             metadatas.append(item_metadata)
-            ids.append(f"{stat_name}_{idx}")
+            ids.append(f"{cache_key}_{idx}")
 
         # ChromaDB에 저장
         if documents:
@@ -196,7 +197,7 @@ class VectorDBService:
 
     def search_relevant_data(
         self,
-        stat_name: str,
+        cache_key: str,
         query: str,
         n_results: int = 10,
         where: Optional[Dict] = None
@@ -205,7 +206,7 @@ class VectorDBService:
         질문과 관련된 데이터 검색
 
         Args:
-            stat_name: 통계명
+            cache_key: 캐시 키
             query: 검색 질문
             n_results: 반환할 결과 개수
             where: 메타데이터 필터 조건 (예: {"year": 2025})
@@ -214,7 +215,7 @@ class VectorDBService:
             검색 결과 (documents, metadatas, distances)
         """
         try:
-            collection = self.create_or_get_collection(stat_name)
+            collection = self.create_or_get_collection(cache_key)
 
             # 검색 실행
             results = collection.query(
@@ -239,60 +240,60 @@ class VectorDBService:
                 "distances": []
             }
 
-    def delete_collection(self, stat_name: str):
+    def delete_collection(self, cache_key: str):
         """
         컬렉션 삭제
 
         Args:
-            stat_name: 통계명
+            cache_key: 캐시 키
         """
-        collection_name = self._normalize_collection_name(stat_name)
+        collection_name = self._normalize_collection_name(cache_key)
         try:
             self.client.delete_collection(name=collection_name)
-            print(f"[VectorDB] 컬렉션 삭제: {collection_name}")
+            print(f"[VectorDB] 컬렉션 삭제: {collection_name} (cache_key: {cache_key})")
         except Exception as e:
             print(f"[VectorDB] 컬렉션 삭제 실패: {e}")
 
-    def get_collection_stats(self, stat_name: str) -> Dict[str, Any]:
+    def get_collection_stats(self, cache_key: str) -> Dict[str, Any]:
         """
         컬렉션 통계 조회
 
         Args:
-            stat_name: 통계명
+            cache_key: 캐시 키
 
         Returns:
             컬렉션 정보 (문서 개수 등)
         """
         try:
-            collection = self.create_or_get_collection(stat_name)
+            collection = self.create_or_get_collection(cache_key)
             count = collection.count()
 
             return {
-                "stat_name": stat_name,
+                "cache_key": cache_key,
                 "document_count": count,
                 "exists": True
             }
         except Exception as e:
             return {
-                "stat_name": stat_name,
+                "cache_key": cache_key,
                 "document_count": 0,
                 "exists": False,
                 "error": str(e)
             }
 
-    def get_all_data_for_analysis(self, stat_name: str, limit: int = 100) -> List[Dict[str, Any]]:
+    def get_all_data_for_analysis(self, cache_key: str, limit: int = 100) -> List[Dict[str, Any]]:
         """
         AI 분석을 위해 ChromaDB에서 데이터 샘플 가져오기
 
         Args:
-            stat_name: 통계명
+            cache_key: 캐시 키
             limit: 최대 반환 개수
 
         Returns:
             데이터 샘플 리스트 (document, year, table_name, metadata 포함)
         """
         try:
-            collection = self.create_or_get_collection(stat_name)
+            collection = self.create_or_get_collection(cache_key)
 
             # 전체 데이터 가져오기 (limit만큼)
             results = collection.get(
@@ -301,7 +302,7 @@ class VectorDBService:
             )
 
             if not results or not results.get('documents'):
-                print(f"[VectorDB] 데이터 없음: {stat_name}")
+                print(f"[VectorDB] 데이터 없음: {cache_key}")
                 return []
 
             # 데이터 구조화

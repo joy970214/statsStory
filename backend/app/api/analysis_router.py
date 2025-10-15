@@ -292,16 +292,21 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
                 ]
 
         # 분석 수행
-        progress_tracker.update_progress(task_id, "데이터 분석", 80, "통계 분석을 수행합니다")
+        progress_tracker.update_progress(task_id, "데이터분석", 80, "기본 통계량을 계산합니다")
 
         # 취소 체크
         if check_cancellation():
             return
 
         basic_stats_result = _calculate_basic_statistics_from_comprehensive(stat_data)
+        print(f"[기본통계] 분석 완료: mean={basic_stats_result.get('mean', 0):.2f}")
+
+        # cache_key 생성 (벡터 DB 식별용)
+        import hashlib
+        cache_key = hashlib.md5(stat_url.encode()).hexdigest()[:12]
 
         # 1단계: 벡터 DB에 데이터 저장 (AI 분석 및 채팅용)
-        progress_tracker.update_progress(task_id, "벡터 DB 저장", 82, "AI 분석 및 채팅을 위한 데이터를 저장합니다")
+        progress_tracker.update_progress(task_id, "벡터DB저장", 82, "ChromaDB에 데이터 저장 중 (채팅용)...")
 
         # 취소 체크
         if check_cancellation():
@@ -314,72 +319,97 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
 
             # ChromaDB에 통계 데이터 저장
             stored_count = vector_db_service.store_stat_data(
+                cache_key=cache_key,
                 stat_name=request.stat_name,
                 stat_data=stat_data,
                 metadata=metadata
             )
-            print(f"[VectorDB] {stored_count}개 데이터 저장 완료")
+            print(f"[VectorDB] {stored_count}개 데이터 저장 완료 (cache_key: {cache_key})")
         except Exception as vector_error:
             print(f"[VectorDB] 벡터 DB 저장 오류: {vector_error}")
 
         # 2단계: AI 인사이트 생성 (ChromaDB 데이터 활용)
-        progress_tracker.update_progress(task_id, "AI 분석", 88, "[AI] Ollama 인사이트 생성 시작...")
-
-        # 취소 체크
-        if check_cancellation():
-            return
-
+        # 먼저 캐시된 메타데이터에 AI 인사이트가 있는지 확인
         ai_insights = None
-        try:
-            from app.services.ollama_service import ollama_service
-            from app.services.vector_db_service import vector_db_service
+        if metadata and hasattr(metadata, 'ai_insights') and metadata.ai_insights:
+            print(f"[AI] 캐시된 AI 인사이트 발견, 재생성 건너뛰기")
+            ai_insights = metadata.ai_insights
+            progress_tracker.update_progress(task_id, "AI분석", 90, "캐시된 AI 인사이트 사용 (재생성 건너뛰기)")
+            await asyncio.sleep(0.1)
+        else:
+            print(f"[AI] 캐시된 AI 인사이트 없음, 새로 생성")
+            progress_tracker.update_progress(task_id, "AI분석", 88, "Ollama AI 인사이트 생성 중...")
+            await asyncio.sleep(0.1)  # SSE 전송을 위한 이벤트 루프 양보
 
-            # Ollama 서버 확인
-            if ollama_service.is_available() and stored_count > 0:
-                print(f"[AI] Ollama 인사이트 생성 시작...")
+            # 취소 체크
+            if check_cancellation():
+                return
 
-                # 통계표 목록 수집
-                table_names = list(set([
-                    getattr(item, 'table_name', '기본 통계표')
-                    for item in stat_data
-                    if hasattr(item, 'table_name')
-                ]))
+            try:
+                from app.services.ollama_service import ollama_service
+                from app.services.vector_db_service import vector_db_service
 
-                # ChromaDB에서 데이터 샘플 가져오기 (최대 100개)
-                chroma_data_samples = vector_db_service.get_all_data_for_analysis(
-                    stat_name=request.stat_name,
-                    limit=100
-                )
-                print(f"[AI] ChromaDB에서 {len(chroma_data_samples)}개 데이터 샘플 추출")
+                # Ollama 서버 확인
+                if ollama_service.is_available() and stored_count > 0:
+                    print(f"[AI] Ollama 인사이트 생성 시작...")
 
-                # AI 인사이트 생성 (ChromaDB 데이터 전달)
-                ai_insights = ollama_service.generate_statistical_insights(
-                    metadata=metadata.dict() if metadata else {},
-                    data_summary=basic_stats_result,
-                    table_names=table_names,
-                    raw_data_sample=chroma_data_samples  # ChromaDB 데이터 전달
-                )
+                    # 통계표 목록 수집
+                    table_names = list(set([
+                        getattr(item, 'table_name', '기본 통계표')
+                        for item in stat_data
+                        if hasattr(item, 'table_name')
+                    ]))
 
-                print(f"[AI] 인사이트 생성 완료: {ai_insights.get('insights_count', 0)}개")
+                    # ChromaDB에서 데이터 샘플 가져오기 (최대 100개)
+                    progress_tracker.update_progress(task_id, "AI분석", 89, "벡터 데이터베이스에서 관련 데이터를 검색 중...")
+                    await asyncio.sleep(0.1)  # SSE 전송을 위한 이벤트 루프 양보
 
-                # 메타데이터에 AI 인사이트 추가
-                if metadata:
-                    metadata.ai_insights = ai_insights
-                    # 메타데이터 재저장
-                    storage_service.save_complete_data(stat_url, metadata, stat_data)
-                    print(f"[AI] 메타데이터에 인사이트 저장 완료")
-            else:
-                if not ollama_service.is_available():
-                    print(f"[AI] Ollama 서버를 사용할 수 없습니다. 기본 인사이트 사용")
+                    chroma_data_samples = vector_db_service.get_all_data_for_analysis(
+                        cache_key=cache_key,
+                        limit=100
+                    )
+                    print(f"[AI] ChromaDB에서 {len(chroma_data_samples)}개 데이터 샘플 추출 (cache_key: {cache_key})")
+
+                    # AI 인사이트 생성 (ChromaDB 데이터 전달)
+                    progress_tracker.update_progress(task_id, "AI분석", 90, "Ollama AI 모델이 인사이트를 생성하고 있습니다 (최대 10분 소요)...")
+                    await asyncio.sleep(0.1)  # SSE 전송을 위한 이벤트 루프 양보
+
+                    ai_insights = ollama_service.generate_statistical_insights(
+                        metadata=metadata.dict() if metadata else {},
+                        data_summary=basic_stats_result,
+                        table_names=table_names,
+                        raw_data_sample=chroma_data_samples  # ChromaDB 데이터 전달
+                    )
+
+                    print(f"[AI] 인사이트 생성 완료: {ai_insights.get('insights_count', 0)}개")
+                    progress_tracker.update_progress(task_id, "AI분석", 94, "생성된 인사이트를 저장하고 있습니다...")
+                    await asyncio.sleep(0.1)  # SSE 전송을 위한 이벤트 루프 양보
+
+                    # 메타데이터에 AI 인사이트 추가
+                    if metadata:
+                        metadata.ai_insights = ai_insights
+                        # 메타데이터 재저장
+                        storage_service.save_complete_data(stat_url, metadata, stat_data)
+                        print(f"[AI] 메타데이터에 인사이트 저장 완료")
                 else:
-                    print(f"[AI] ChromaDB 데이터가 없어 기본 인사이트 사용")
-        except Exception as ai_error:
-            print(f"[AI] 인사이트 생성 오류: {ai_error}")
-            import traceback
-            traceback.print_exc()
+                    if not ollama_service.is_available():
+                        print(f"[AI] Ollama 서버를 사용할 수 없습니다. 기본 인사이트 사용")
+                        progress_tracker.update_progress(task_id, "AI분석", 90, "Ollama 서버를 사용할 수 없어 기본 인사이트를 사용합니다")
+                        await asyncio.sleep(0.1)
+                    else:
+                        print(f"[AI] ChromaDB 데이터가 없어 기본 인사이트 사용")
+                        progress_tracker.update_progress(task_id, "AI분석", 90, "벡터 데이터가 없어 기본 인사이트를 사용합니다")
+                        await asyncio.sleep(0.1)
+            except Exception as ai_error:
+                print(f"[AI] 인사이트 생성 오류: {ai_error}")
+                progress_tracker.update_progress(task_id, "AI분석", 90, f"AI 인사이트 생성 중 오류 발생, 기본 인사이트 사용")
+                await asyncio.sleep(0.1)
+                import traceback
+                traceback.print_exc()
 
         # 결과 생성
-        progress_tracker.update_progress(task_id, "결과 생성", 90, "분석 결과를 생성합니다")
+        progress_tracker.update_progress(task_id, "완료", 98, "최종 분석 결과를 생성하고 있습니다")
+        await asyncio.sleep(0.1)  # SSE 전송을 위한 이벤트 루프 양보
 
         # 취소 체크
         if check_cancellation():

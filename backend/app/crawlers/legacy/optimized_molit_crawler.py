@@ -319,7 +319,7 @@ class OptimizedMolitCrawler:
                 return self._create_empty_analysis(stat_url, basic_metadata)
 
             # 2단계: 통계표별 메타데이터 + 데이터 수집 (15% -> 90%)
-            progress_callback.update("데이터수집", 15, f"통계 별 메타데이터 및 통계표 별 데이터 수집 시작")
+            progress_callback.update("데이터수집", 15, f"통계 메타데이터 수집 시작")
 
             data_by_table, metadata_by_table, collection_summary = await self._collect_tables_with_individual_metadata_parallel(
                 stat_url, stat_tables_with_conditions, progress_callback
@@ -353,13 +353,13 @@ class OptimizedMolitCrawler:
                 metadata_by_table=metadata_by_table  # 통계표별 메타데이터 추가
             )
 
-            progress_callback.update("완료", 100,
-                f"분석 완료: {len(data_by_table)}개 테이블, {total_data_points}개 데이터 포인트")
+            progress_callback.update("데이터수집", 60,
+                f"데이터 수집 완료: {len(data_by_table)}개 테이블, {total_data_points}개 데이터 포인트")
 
             return analysis_result
 
         except Exception as e:
-            progress_callback.update("오류", 100, f"분석 실패: {str(e)}")
+            progress_callback.update("오류", 60, f"데이터 수집 실패: {str(e)}")
             print(f"최적화된 종합 분석 실패: {e}")
             return self._create_error_analysis(stat_url, str(e))
 
