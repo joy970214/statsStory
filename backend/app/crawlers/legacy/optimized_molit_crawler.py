@@ -1398,17 +1398,11 @@ class OptimizedMolitCrawler:
             # 다운로드 수집 시작 전 취소 체크
             check_cancellation()
 
-            # 날짜 범위가 필요한 경우 먼저 설정
-            if table_info['is_yearly'] or await self._should_use_date_range(driver):
-                print(f"연도별/날짜범위 설정: {table_info['name']}")
-                check_cancellation()
-                # 날짜 범위 설정 (다운로드 전에 수행)
-                await self._set_date_range_for_download(driver, date_format)
-            else:
-                # 통계표 선택 후 항상 조회 버튼 클릭 (데이터 갱신을 위해 필수)
-                print(f"조회 버튼 클릭: {table_info['name']}")
-                await self._click_search_button(driver)
-                check_cancellation()
+            # 통계표 선택 후 항상 조회 버튼 클릭 (데이터 갱신을 위해 필수)
+            # 날짜 입력은 시도하지 않음 (통계표명에 이미 전체 기간이 포함되어 있음)
+            print(f"조회 버튼 클릭: {table_info['name']}")
+            await self._click_search_button(driver)
+            check_cancellation()
 
             # 파일 다운로드 방식으로 데이터 수집
             download_result = await self._collect_table_data_via_download(driver, table_info['name'], file_type="excel")
@@ -1981,23 +1975,25 @@ class OptimizedMolitCrawler:
                 driver.execute_script("if (typeof doSearch === 'function') doSearch();")
                 print("JavaScript doSearch() 호출")
 
-                # 데이터 갱신 대기 - 단축 (10초 → 5초, 1초 → 0.5초)
-                max_wait = 5  # 10초 → 5초로 단축
-                for i in range(max_wait):
-                    await asyncio.sleep(0.5)  # 1초 → 0.5초로 단축
-                    try:
-                        # 테이블이 갱신되었는지 확인
-                        driver.find_element(By.CSS_SELECTOR, "table")
-                        print(f"데이터 갱신 완료 ({(i+1)*0.5}초 대기)")
-                        break
-                    except:
-                        if i < max_wait - 1:
-                            print(f"데이터 갱신 대기 중... {(i+1)*0.5}/{max_wait*0.5}초")
-                            continue
-                        else:
-                            print("데이터 갱신 타임아웃")
+                # 동적 대기: 로딩 인디케이터가 사라질 때까지 대기
+                try:
+                    # 1. 로딩 인디케이터가 나타날 때까지 잠깐 대기 (로딩이 시작되었는지 확인)
+                    await asyncio.sleep(0.3)
 
-                await asyncio.sleep(1)  # 추가 안정화 대기 (2초 → 1초로 단축)
+                    # 2. 로딩 인디케이터(preLoading2)가 사라질 때까지 대기
+                    WebDriverWait(driver, 15).until(
+                        lambda d: d.execute_script("return $('#preLoading2').is(':visible') === false;")
+                    )
+                    print("데이터 갱신 완료 (로딩 인디케이터 사라짐 감지)")
+
+                    # 3. 추가 안정화 대기 (데이터 렌더링 완료)
+                    await asyncio.sleep(0.5)
+
+                except Exception as wait_error:
+                    print(f"로딩 인디케이터 대기 실패, 고정 시간 대기: {wait_error}")
+                    # Fallback: 고정 시간 대기
+                    await asyncio.sleep(5)
+
                 return
             except Exception as e:
                 print(f"doSearch() 호출 실패: {e}, 버튼 클릭 시도")
