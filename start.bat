@@ -1,6 +1,18 @@
 @echo off
 echo Statistics Story Service Starting...
 
+REM Check if Ollama is already running
+echo Checking Ollama Server...
+tasklist /FI "IMAGENAME eq ollama.exe" 2>NUL | find /I /N "ollama.exe">NUL
+if "%ERRORLEVEL%"=="0" (
+    echo Ollama is already running.
+) else (
+    echo Starting Ollama Server...
+    start "Ollama" cmd /k "ollama serve"
+    echo Waiting for Ollama to start...
+    timeout /t 3 /nobreak >nul
+)
+
 REM Start Backend Server
 echo Starting Backend Server...
 start "Backend" cmd /k "cd /d %~dp0backend && python main.py"
