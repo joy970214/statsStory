@@ -1295,8 +1295,29 @@ class OptimizedMolitCrawler:
             # 초기 취소 체크
             check_cancellation()
 
-            driver.get(stat_url)
-            await asyncio.sleep(1)
+            # 통계표별로 고유한 URL 생성 (FormID를 URL에 포함)
+            # 기존 URL에서 hFormId 파라미터를 해당 통계표의 FormID로 변경
+            from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+
+            parsed_url = urlparse(stat_url)
+            query_params = parse_qs(parsed_url.query)
+            query_params['hFormId'] = [table_info['form_id']]  # FormID를 URL에 명시
+
+            new_query = urlencode(query_params, doseq=True)
+            table_specific_url = urlunparse((
+                parsed_url.scheme,
+                parsed_url.netloc,
+                parsed_url.path,
+                parsed_url.params,
+                new_query,
+                parsed_url.fragment
+            ))
+
+            print(f"통계표 URL 접근: {table_specific_url}")
+            driver.get(table_specific_url)
+
+            # 페이지 로드 대기
+            await asyncio.sleep(2)
 
             # 페이지 로딩 후 취소 체크
             check_cancellation()
@@ -1313,33 +1334,39 @@ class OptimizedMolitCrawler:
                 check_cancellation()
             except:
                 pass
-            
-            # 통계표 선택
+
+            # IBSheet 초기 로딩 완료 대기
+            try:
+                await asyncio.sleep(0.5)
+                WebDriverWait(driver, 15).until(
+                    lambda d: d.execute_script("return $('#preLoading2').is(':visible') === false;")
+                )
+                print(f"통계표 초기 로딩 완료: {table_info['name']}")
+            except Exception as loading_error:
+                print(f"초기 로딩 대기 실패 (무시): {loading_error}")
+
+            # 통계표 선택 확인
             try:
                 select_element = WebDriverWait(driver, 5).until(
                     EC.presence_of_element_located((By.ID, "sFormId"))
                 )
                 select = Select(select_element)
-                select.select_by_value(table_info['form_id'])
-                print(f"통계표 선택: FormID={table_info['form_id']}, 이름={table_info['name']}")
+                current_value = select.first_selected_option.get_attribute('value')
 
-                # 통계표 선택이 실제로 적용될 때까지 대기
-                max_wait = 5
-                for i in range(max_wait):
-                    await asyncio.sleep(1)
-                    current_value = select.first_selected_option.get_attribute('value')
-                    if current_value == table_info['form_id']:
-                        print(f"통계표 선택 확인 완료: {current_value}")
-                        break
-                    else:
-                        print(f"통계표 선택 대기 중... ({i+1}/{max_wait}초)")
-
-                await asyncio.sleep(2)  # 추가 안정화 대기 (데이터 갱신 대기)
+                if current_value == table_info['form_id']:
+                    print(f"통계표 선택 확인 완료: {current_value}")
+                else:
+                    print(f"경고: 통계표 선택값 불일치 - 예상: {table_info['form_id']}, 실제: {current_value}")
+                    # FormID가 다르면 직접 선택 시도
+                    select.select_by_value(table_info['form_id'])
+                    await asyncio.sleep(2)
 
                 # 통계표 선택 후 취소 체크
                 check_cancellation()
             except Exception as e:
-                print(f"통계표 선택 실패: {e}")
+                print(f"통계표 선택 확인 실패: {e}")
+                import traceback
+                traceback.print_exc()
                 return []
             
             # 날짜 형식 자동 감지

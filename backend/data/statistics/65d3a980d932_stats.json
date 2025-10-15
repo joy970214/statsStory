@@ -1,13 +1,13 @@
 {
   "cache_key": "65d3a980d932",
   "stat_url": "https://stat.molit.go.kr/portal/cate/statView.do?hRsId=32&hFormId=5328&hDivEng=&month_yn=",
-  "saved_at": "2025-10-14T23:58:13.740419",
-  "data_count": 1878,
+  "saved_at": "2025-10-15T10:06:09.022568",
+  "data_count": 2153,
   "statistics": [
     {
       "year": 2025,
       "data": {
-        "미분양주택현황보고(Unsold New Housings) / 공사완료후 미분양현황 (200701 ~ 202508)": "다운로드 시간 : 2025-10-14   23:55"
+        "미분양주택현황보고(Unsold New Housings) / 공사완료후 미분양현황 (200701 ~ 202508)": "다운로드 시간 : 2025-10-15   10:04"
       },
       "table_name": "공사완료후 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -27723,7 +27723,7 @@
     {
       "year": 2025,
       "data": {
-        "미분양주택현황보고(Unsold New Housings) / 규모별 미분양현황 (200701 ~ 202508)": "다운로드 시간 : 2025-10-14   23:56"
+        "미분양주택현황보고(Unsold New Housings) / 규모별 미분양현황 (200701 ~ 202508)": "다운로드 시간 : 2025-10-15   10:04"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -27760,15 +27760,14 @@
       "year": 2025,
       "data": {
         "미분양주택현황보고(Unsold New Housings) / 규모별 미분양현황 (200701 ~ 202508)": "월(Monthly)",
-        "Unnamed: 1": "구분",
-        "Unnamed: 2": "시군구",
-        "Unnamed: 3": "부문",
-        "Unnamed: 4": "규모",
-        "Unnamed: 5": "호"
+        "Unnamed: 1": "시도",
+        "Unnamed: 2": "부문",
+        "Unnamed: 3": "규모",
+        "Unnamed: 4": "호"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
-      "raw_data_count": 6,
+      "raw_data_count": 5,
       "collection_status": "success",
       "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_규모별 미분양현황 (200701 ~ 202508).xlsx"
     },
@@ -27779,7 +27778,7 @@
         "Unnamed: 1": "전국",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "66613"
+        "Unnamed: 4": "66,613"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -27809,7 +27808,7 @@
         "Unnamed: 1": "전국",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "66613"
+        "Unnamed: 4": "66,613"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -27824,7 +27823,7 @@
         "Unnamed: 1": "전국",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "40㎡이하",
-        "Unnamed: 4": "1932"
+        "Unnamed: 4": "1,932"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -27839,7 +27838,7 @@
         "Unnamed: 1": "전국",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "40∼60㎡",
-        "Unnamed: 4": "6111"
+        "Unnamed: 4": "6,111"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -27854,7 +27853,7 @@
         "Unnamed: 1": "전국",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "47209"
+        "Unnamed: 4": "47,209"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -27869,7 +27868,7 @@
         "Unnamed: 1": "전국",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "85㎡초과",
-        "Unnamed: 4": "11361"
+        "Unnamed: 4": "11,361"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -27884,7 +27883,7 @@
         "Unnamed: 1": "수도권",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "14631"
+        "Unnamed: 4": "14,631"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -27914,7 +27913,7 @@
         "Unnamed: 1": "수도권",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "14631"
+        "Unnamed: 4": "14,631"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -27944,7 +27943,7 @@
         "Unnamed: 1": "수도권",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "40∼60㎡",
-        "Unnamed: 4": "1814"
+        "Unnamed: 4": "1,814"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -27959,7 +27958,7 @@
         "Unnamed: 1": "수도권",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "10881"
+        "Unnamed: 4": "10,881"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -27974,7 +27973,7 @@
         "Unnamed: 1": "수도권",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "85㎡초과",
-        "Unnamed: 4": "1231"
+        "Unnamed: 4": "1,231"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -27989,7 +27988,7 @@
         "Unnamed: 1": "서울",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "1106"
+        "Unnamed: 4": "1,106"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28019,7 +28018,7 @@
         "Unnamed: 1": "서울",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "1106"
+        "Unnamed: 4": "1,106"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28094,7 +28093,7 @@
         "Unnamed: 1": "부산",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "7146"
+        "Unnamed: 4": "7,146"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28124,7 +28123,7 @@
         "Unnamed: 1": "부산",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "7146"
+        "Unnamed: 4": "7,146"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28154,7 +28153,7 @@
         "Unnamed: 1": "부산",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "40∼60㎡",
-        "Unnamed: 4": "1540"
+        "Unnamed: 4": "1,540"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28169,7 +28168,7 @@
         "Unnamed: 1": "부산",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "4063"
+        "Unnamed: 4": "4,063"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28184,7 +28183,7 @@
         "Unnamed: 1": "부산",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "85㎡초과",
-        "Unnamed: 4": "1373"
+        "Unnamed: 4": "1,373"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28199,7 +28198,7 @@
         "Unnamed: 1": "대구",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "8762"
+        "Unnamed: 4": "8,762"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28229,7 +28228,7 @@
         "Unnamed: 1": "대구",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "8762"
+        "Unnamed: 4": "8,762"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28274,7 +28273,7 @@
         "Unnamed: 1": "대구",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "6374"
+        "Unnamed: 4": "6,374"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28289,7 +28288,7 @@
         "Unnamed: 1": "대구",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "85㎡초과",
-        "Unnamed: 4": "2320"
+        "Unnamed: 4": "2,320"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28304,7 +28303,7 @@
         "Unnamed: 1": "인천",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "1668"
+        "Unnamed: 4": "1,668"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28334,7 +28333,7 @@
         "Unnamed: 1": "인천",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "1668"
+        "Unnamed: 4": "1,668"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28379,7 +28378,7 @@
         "Unnamed: 1": "인천",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "1222"
+        "Unnamed: 4": "1,222"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28409,7 +28408,7 @@
         "Unnamed: 1": "광주",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "1370"
+        "Unnamed: 4": "1,370"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28439,7 +28438,7 @@
         "Unnamed: 1": "광주",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "1370"
+        "Unnamed: 4": "1,370"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28484,7 +28483,7 @@
         "Unnamed: 1": "광주",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "1053"
+        "Unnamed: 4": "1,053"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28514,7 +28513,7 @@
         "Unnamed: 1": "대전",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "2485"
+        "Unnamed: 4": "2,485"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28544,7 +28543,7 @@
         "Unnamed: 1": "대전",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "2485"
+        "Unnamed: 4": "2,485"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28589,7 +28588,7 @@
         "Unnamed: 1": "대전",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "1586"
+        "Unnamed: 4": "1,586"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28619,7 +28618,7 @@
         "Unnamed: 1": "울산",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "2308"
+        "Unnamed: 4": "2,308"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28649,7 +28648,7 @@
         "Unnamed: 1": "울산",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "2308"
+        "Unnamed: 4": "2,308"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28694,7 +28693,7 @@
         "Unnamed: 1": "울산",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "1850"
+        "Unnamed: 4": "1,850"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28724,7 +28723,7 @@
         "Unnamed: 1": "경기",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "11857"
+        "Unnamed: 4": "11,857"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28754,7 +28753,7 @@
         "Unnamed: 1": "경기",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "11857"
+        "Unnamed: 4": "11,857"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28799,7 +28798,7 @@
         "Unnamed: 1": "경기",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "9463"
+        "Unnamed: 4": "9,463"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28814,7 +28813,7 @@
         "Unnamed: 1": "경기",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "85㎡초과",
-        "Unnamed: 4": "1121"
+        "Unnamed: 4": "1,121"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28829,7 +28828,7 @@
         "Unnamed: 1": "강원",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "3190"
+        "Unnamed: 4": "3,190"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28859,7 +28858,7 @@
         "Unnamed: 1": "강원",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "3190"
+        "Unnamed: 4": "3,190"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28904,7 +28903,7 @@
         "Unnamed: 1": "강원",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "2210"
+        "Unnamed: 4": "2,210"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28934,7 +28933,7 @@
         "Unnamed: 1": "충북",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "1912"
+        "Unnamed: 4": "1,912"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -28964,7 +28963,7 @@
         "Unnamed: 1": "충북",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "1912"
+        "Unnamed: 4": "1,912"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29009,7 +29008,7 @@
         "Unnamed: 1": "충북",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "1359"
+        "Unnamed: 4": "1,359"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29039,7 +29038,7 @@
         "Unnamed: 1": "충남",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "5499"
+        "Unnamed: 4": "5,499"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29069,7 +29068,7 @@
         "Unnamed: 1": "충남",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "5499"
+        "Unnamed: 4": "5,499"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29114,7 +29113,7 @@
         "Unnamed: 1": "충남",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "4358"
+        "Unnamed: 4": "4,358"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29249,7 +29248,7 @@
         "Unnamed: 1": "전북",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "2694"
+        "Unnamed: 4": "2,694"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29279,7 +29278,7 @@
         "Unnamed: 1": "전북",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "2694"
+        "Unnamed: 4": "2,694"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29324,7 +29323,7 @@
         "Unnamed: 1": "전북",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "1942"
+        "Unnamed: 4": "1,942"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29354,7 +29353,7 @@
         "Unnamed: 1": "전남",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "2828"
+        "Unnamed: 4": "2,828"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29384,7 +29383,7 @@
         "Unnamed: 1": "전남",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "2828"
+        "Unnamed: 4": "2,828"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29429,7 +29428,7 @@
         "Unnamed: 1": "전남",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "2170"
+        "Unnamed: 4": "2,170"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29459,7 +29458,7 @@
         "Unnamed: 1": "경북",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "6124"
+        "Unnamed: 4": "6,124"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29489,7 +29488,7 @@
         "Unnamed: 1": "경북",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "6124"
+        "Unnamed: 4": "6,124"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29534,7 +29533,7 @@
         "Unnamed: 1": "경북",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "4421"
+        "Unnamed: 4": "4,421"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29549,7 +29548,7 @@
         "Unnamed: 1": "경북",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "85㎡초과",
-        "Unnamed: 4": "1287"
+        "Unnamed: 4": "1,287"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29564,7 +29563,7 @@
         "Unnamed: 1": "경남",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "4993"
+        "Unnamed: 4": "4,993"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29594,7 +29593,7 @@
         "Unnamed: 1": "경남",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "4993"
+        "Unnamed: 4": "4,993"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29639,7 +29638,7 @@
         "Unnamed: 1": "경남",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "3641"
+        "Unnamed: 4": "3,641"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29669,7 +29668,7 @@
         "Unnamed: 1": "제주",
         "Unnamed: 2": "총합",
         "Unnamed: 3": "총합",
-        "Unnamed: 4": "2621"
+        "Unnamed: 4": "2,621"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29699,7 +29698,7 @@
         "Unnamed: 1": "제주",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "소계",
-        "Unnamed: 4": "2621"
+        "Unnamed: 4": "2,621"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29744,7 +29743,7 @@
         "Unnamed: 1": "제주",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "60∼85㎡",
-        "Unnamed: 4": "1280"
+        "Unnamed: 4": "1,280"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29759,7 +29758,7 @@
         "Unnamed: 1": "제주",
         "Unnamed: 2": "민간부문",
         "Unnamed: 3": "85㎡초과",
-        "Unnamed: 4": "1164"
+        "Unnamed: 4": "1,164"
       },
       "table_name": "규모별 미분양현황 (200701 ~ 202508)",
       "period_text": "2025-10",
@@ -29770,7 +29769,7 @@
     {
       "year": 2025,
       "data": {
-        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "다운로드 시간 : 2025-10-14   23:57"
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "다운로드 시간 : 2025-10-15   10:05"
       },
       "table_name": "미분양현황_종합 (2001 ~ 2024)",
       "period_text": "2025-10",
@@ -29781,14 +29780,13 @@
     {
       "year": 2025,
       "data": {
-        "Unnamed: 1": "검색기간  : 202508 ~ 202508",
+        "Unnamed: 1": "검색기간  : 2024 ~ 2024",
         "Unnamed: 2": "검색분야 : 주택",
-        "Unnamed: 3": "작성주기 : 매월",
-        "Unnamed: 4": "단위 : 호"
+        "Unnamed: 3": "작성주기 : 매년"
       },
       "table_name": "미분양현황_종합 (2001 ~ 2024)",
       "period_text": "2025-10",
-      "raw_data_count": 4,
+      "raw_data_count": 3,
       "collection_status": "success",
       "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
     },
@@ -29806,23 +29804,427 @@
     {
       "year": 2025,
       "data": {
-        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "월(Monthly)",
-        "Unnamed: 1": "구분",
-        "Unnamed: 2": "시군구",
-        "Unnamed: 3": "부문",
-        "Unnamed: 4": "규모",
-        "Unnamed: 5": "호"
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "년(Annual)",
+        "Unnamed: 1": "대분류",
+        "Unnamed: 2": "구분",
+        "Unnamed: 3": "미분양(12월기준)"
       },
       "table_name": "미분양현황_종합 (2001 ~ 2024)",
       "period_text": "2025-10",
-      "raw_data_count": 6,
+      "raw_data_count": 4,
       "collection_status": "success",
       "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
     },
     {
       "year": 2025,
       "data": {
-        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "다운로드 시간 : 2025-10-14   23:58"
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "부문별미분양현황",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "70,173"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "부문별미분양현황",
+        "Unnamed: 2": "민간부문",
+        "Unnamed: 3": "70,173"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "부문별미분양현황",
+        "Unnamed: 2": "공공부문",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "부문별미분양현황",
+        "Unnamed: 2": "(준공후)",
+        "Unnamed: 3": "21,480"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "전국",
+        "Unnamed: 3": "70,173"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "서울특별시",
+        "Unnamed: 3": "957"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "부산광역시",
+        "Unnamed: 3": "4,720"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "대구광역시",
+        "Unnamed: 3": "8,807"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "인천광역시",
+        "Unnamed: 3": "3,086"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "광주광역시",
+        "Unnamed: 3": "1,242"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "대전광역시",
+        "Unnamed: 3": "2,319"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "울산광역시",
+        "Unnamed: 3": "4,131"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "경기도",
+        "Unnamed: 3": "12,954"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "강원도",
+        "Unnamed: 3": "4,408"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "충청북도",
+        "Unnamed: 3": "2,192"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "충청남도",
+        "Unnamed: 3": "3,814"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "세종특별자치시",
+        "Unnamed: 3": "61"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "전라북도",
+        "Unnamed: 3": "2,743"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "전라남도",
+        "Unnamed: 3": "3,598"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "경상북도",
+        "Unnamed: 3": "6,987"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "경상남도",
+        "Unnamed: 3": "5,347"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "제주도",
+        "Unnamed: 3": "2,807"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "수도권",
+        "Unnamed: 3": "16,997"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "시도별미분양현황",
+        "Unnamed: 2": "지방",
+        "Unnamed: 3": "53,176"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "규모별미분양현황",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "70,173"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "규모별미분양현황",
+        "Unnamed: 2": "40㎡이하",
+        "Unnamed: 3": "2,160"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "규모별미분양현황",
+        "Unnamed: 2": "40-60㎡",
+        "Unnamed: 3": "7,197"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "규모별미분양현황",
+        "Unnamed: 2": "60-85㎡",
+        "Unnamed: 3": "50,468"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 미분양현황_종합 (2001 ~ 2024)": "2024",
+        "Unnamed: 1": "규모별미분양현황",
+        "Unnamed: 2": "85㎡초과",
+        "Unnamed: 3": "10,348"
+      },
+      "table_name": "미분양현황_종합 (2001 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_미분양현황_종합 (2001 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "다운로드 시간 : 2025-10-15   10:05"
       },
       "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
       "period_text": "2025-10",
@@ -29835,12 +30237,11 @@
       "data": {
         "Unnamed: 1": "검색기간  : 202508 ~ 202508",
         "Unnamed: 2": "검색분야 : 주택",
-        "Unnamed: 3": "작성주기 : 매월",
-        "Unnamed: 4": "단위 : 호"
+        "Unnamed: 3": "작성주기 : 매월"
       },
       "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
       "period_text": "2025-10",
-      "raw_data_count": 4,
+      "raw_data_count": 3,
       "collection_status": "success",
       "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
     },
@@ -29861,13 +30262,3455 @@
         "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "월(Monthly)",
         "Unnamed: 1": "구분",
         "Unnamed: 2": "시군구",
-        "Unnamed: 3": "부문",
-        "Unnamed: 4": "규모",
-        "Unnamed: 5": "호"
+        "Unnamed: 3": "미분양현황"
       },
       "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
       "period_text": "2025-10",
-      "raw_data_count": 6,
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "1,106"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "종로구",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "중구",
+        "Unnamed: 3": "64"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "용산구",
+        "Unnamed: 3": "1"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "성동구",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "광진구",
+        "Unnamed: 3": "54"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "동대문구",
+        "Unnamed: 3": "171"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "중랑구",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "성북구",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "강북구",
+        "Unnamed: 3": "51"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "도봉구",
+        "Unnamed: 3": "65"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "노원구",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "은평구",
+        "Unnamed: 3": "20"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "서대문구",
+        "Unnamed: 3": "22"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "마포구",
+        "Unnamed: 3": "48"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "양천구",
+        "Unnamed: 3": "8"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "강서구",
+        "Unnamed: 3": "145"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "구로구",
+        "Unnamed: 3": "63"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "금천구",
+        "Unnamed: 3": "8"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "영등포구",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "동작구",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "관악구",
+        "Unnamed: 3": "4"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "서초구",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "강남구",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "송파구",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "강동구",
+        "Unnamed: 3": "382"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "7,146"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "중구",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "서구",
+        "Unnamed: 3": "211"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "동구",
+        "Unnamed: 3": "419"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "영도구",
+        "Unnamed: 3": "21"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "부산진구",
+        "Unnamed: 3": "1,564"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "동래구",
+        "Unnamed: 3": "533"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "남구",
+        "Unnamed: 3": "83"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "북구",
+        "Unnamed: 3": "203"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "해운대구",
+        "Unnamed: 3": "1,284"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "사하구",
+        "Unnamed: 3": "765"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "금정구",
+        "Unnamed: 3": "300"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "강서구",
+        "Unnamed: 3": "499"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "연제구",
+        "Unnamed: 3": "211"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "수영구",
+        "Unnamed: 3": "402"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "사상구",
+        "Unnamed: 3": "430"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "부산",
+        "Unnamed: 2": "기장군",
+        "Unnamed: 3": "221"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대구",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "8,762"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대구",
+        "Unnamed: 2": "중구",
+        "Unnamed: 3": "853"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대구",
+        "Unnamed: 2": "동구",
+        "Unnamed: 3": "1,362"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대구",
+        "Unnamed: 2": "서구",
+        "Unnamed: 3": "773"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대구",
+        "Unnamed: 2": "남구",
+        "Unnamed: 3": "788"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대구",
+        "Unnamed: 2": "북구",
+        "Unnamed: 3": "1,219"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대구",
+        "Unnamed: 2": "수성구",
+        "Unnamed: 3": "1,055"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대구",
+        "Unnamed: 2": "달서구",
+        "Unnamed: 3": "2,654"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대구",
+        "Unnamed: 2": "달성군",
+        "Unnamed: 3": "58"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대구",
+        "Unnamed: 2": "군위군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "1,668"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "중구",
+        "Unnamed: 3": "33"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "남동구",
+        "Unnamed: 3": "11"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "서구",
+        "Unnamed: 3": "1,101"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "연수구",
+        "Unnamed: 3": "121"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "미추홀구",
+        "Unnamed: 3": "366"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "동구",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "부평구",
+        "Unnamed: 3": "32"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "계양구",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "강화군",
+        "Unnamed: 3": "4"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "옹진군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "광주",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "1,370"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "광주",
+        "Unnamed: 2": "동구",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "광주",
+        "Unnamed: 2": "서구",
+        "Unnamed: 3": "247"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "광주",
+        "Unnamed: 2": "남구",
+        "Unnamed: 3": "268"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "광주",
+        "Unnamed: 2": "북구",
+        "Unnamed: 3": "530"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "광주",
+        "Unnamed: 2": "광산구",
+        "Unnamed: 3": "325"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대전",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "2,485"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대전",
+        "Unnamed: 2": "동구",
+        "Unnamed: 3": "577"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대전",
+        "Unnamed: 2": "중구",
+        "Unnamed: 3": "1,333"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대전",
+        "Unnamed: 2": "서구",
+        "Unnamed: 3": "428"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대전",
+        "Unnamed: 2": "유성구",
+        "Unnamed: 3": "144"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "대전",
+        "Unnamed: 2": "대덕구",
+        "Unnamed: 3": "3"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "울산",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "2,308"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "울산",
+        "Unnamed: 2": "중구",
+        "Unnamed: 3": "350"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "울산",
+        "Unnamed: 2": "남구",
+        "Unnamed: 3": "733"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "울산",
+        "Unnamed: 2": "동구",
+        "Unnamed: 3": "64"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "울산",
+        "Unnamed: 2": "북구",
+        "Unnamed: 3": "178"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "울산",
+        "Unnamed: 2": "울주군",
+        "Unnamed: 3": "983"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "11,857"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "수원시",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "성남시",
+        "Unnamed: 3": "55"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "의정부시",
+        "Unnamed: 3": "357"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "안양시",
+        "Unnamed: 3": "70"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "부천시",
+        "Unnamed: 3": "148"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "광명시",
+        "Unnamed: 3": "6"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "평택시",
+        "Unnamed: 3": "4,197"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "동두천시",
+        "Unnamed: 3": "137"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "안산시",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "고양시",
+        "Unnamed: 3": "73"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "과천시",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "구리시",
+        "Unnamed: 3": "68"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "남양주시",
+        "Unnamed: 3": "355"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "오산시",
+        "Unnamed: 3": "4"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "시흥시",
+        "Unnamed: 3": "29"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "군포시",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "의왕시",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "하남시",
+        "Unnamed: 3": "2"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "용인시",
+        "Unnamed: 3": "452"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "파주시",
+        "Unnamed: 3": "1"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "이천시",
+        "Unnamed: 3": "1,667"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "안성시",
+        "Unnamed: 3": "368"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "김포시",
+        "Unnamed: 3": "648"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "양주시",
+        "Unnamed: 3": "1,499"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "여주시",
+        "Unnamed: 3": "378"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "화성시",
+        "Unnamed: 3": "65"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "광주시",
+        "Unnamed: 3": "614"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "연천군",
+        "Unnamed: 3": "39"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "포천시",
+        "Unnamed: 3": "123"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "가평군",
+        "Unnamed: 3": "330"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경기",
+        "Unnamed: 2": "양평군",
+        "Unnamed: 3": "172"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "3,190"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "춘천시",
+        "Unnamed: 3": "173"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "원주시",
+        "Unnamed: 3": "506"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "강릉시",
+        "Unnamed: 3": "1,115"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "동해시",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "태백시",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "속초시",
+        "Unnamed: 3": "845"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "삼척시",
+        "Unnamed: 3": "76"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "홍천군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "횡성군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "영월군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "평창군",
+        "Unnamed: 3": "266"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "정선군",
+        "Unnamed: 3": "19"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "철원군",
+        "Unnamed: 3": "21"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "화천군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "양구군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "인제군",
+        "Unnamed: 3": "85"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "고성군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "강원",
+        "Unnamed: 2": "양양군",
+        "Unnamed: 3": "84"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충북",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "1,912"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충북",
+        "Unnamed: 2": "청주시",
+        "Unnamed: 3": "178"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충북",
+        "Unnamed: 2": "충주시",
+        "Unnamed: 3": "210"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충북",
+        "Unnamed: 2": "제천시",
+        "Unnamed: 3": "165"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충북",
+        "Unnamed: 2": "보은군",
+        "Unnamed: 3": "59"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충북",
+        "Unnamed: 2": "옥천군",
+        "Unnamed: 3": "252"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충북",
+        "Unnamed: 2": "영동군",
+        "Unnamed: 3": "4"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충북",
+        "Unnamed: 2": "증평군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충북",
+        "Unnamed: 2": "진천군",
+        "Unnamed: 3": "146"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충북",
+        "Unnamed: 2": "괴산군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충북",
+        "Unnamed: 2": "음성군",
+        "Unnamed: 3": "898"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충북",
+        "Unnamed: 2": "단양군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "5,499"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "천안시",
+        "Unnamed: 3": "1,106"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "공주시",
+        "Unnamed: 3": "285"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "보령시",
+        "Unnamed: 3": "497"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "아산시",
+        "Unnamed: 3": "2,096"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "서산시",
+        "Unnamed: 3": "111"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "논산시",
+        "Unnamed: 3": "79"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "계룡시",
+        "Unnamed: 3": "370"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "당진시",
+        "Unnamed: 3": "104"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "금산군",
+        "Unnamed: 3": "28"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "부여군",
+        "Unnamed: 3": "339"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "서천군",
+        "Unnamed: 3": "6"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "청양군",
+        "Unnamed: 3": "82"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "홍성군",
+        "Unnamed: 3": "201"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "예산군",
+        "Unnamed: 3": "195"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "충남",
+        "Unnamed: 2": "태안군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "세종",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "50"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "세종",
+        "Unnamed: 2": "세종시",
+        "Unnamed: 3": "50"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전북",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "2,694"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전북",
+        "Unnamed: 2": "전주시",
+        "Unnamed: 3": "170"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전북",
+        "Unnamed: 2": "군산시",
+        "Unnamed: 3": "831"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전북",
+        "Unnamed: 2": "익산시",
+        "Unnamed: 3": "958"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전북",
+        "Unnamed: 2": "정읍시",
+        "Unnamed: 3": "1"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전북",
+        "Unnamed: 2": "남원시",
+        "Unnamed: 3": "116"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전북",
+        "Unnamed: 2": "김제시",
+        "Unnamed: 3": "371"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전북",
+        "Unnamed: 2": "완주군",
+        "Unnamed: 3": "186"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전북",
+        "Unnamed: 2": "진안군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전북",
+        "Unnamed: 2": "무주군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전북",
+        "Unnamed: 2": "장수군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전북",
+        "Unnamed: 2": "임실군",
+        "Unnamed: 3": "61"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전북",
+        "Unnamed: 2": "순창군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전북",
+        "Unnamed: 2": "고창군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전북",
+        "Unnamed: 2": "부안군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "2,828"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "목포시",
+        "Unnamed: 3": "241"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "여수시",
+        "Unnamed: 3": "451"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "순천시",
+        "Unnamed: 3": "341"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "나주시",
+        "Unnamed: 3": "142"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "광양시",
+        "Unnamed: 3": "917"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "담양군",
+        "Unnamed: 3": "45"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "곡성군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "구례군",
+        "Unnamed: 3": "189"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "고흥군",
+        "Unnamed: 3": "11"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "보성군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "화순군",
+        "Unnamed: 3": "166"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "장흥군",
+        "Unnamed: 3": "82"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "강진군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "해남군",
+        "Unnamed: 3": "4"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "영암군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "무안군",
+        "Unnamed: 3": "8"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "함평군",
+        "Unnamed: 3": "158"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "영광군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "장성군",
+        "Unnamed: 3": "73"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "완도군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "진도군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "전남",
+        "Unnamed: 2": "신안군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "6,124"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "포항시",
+        "Unnamed: 3": "2,880"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "경주시",
+        "Unnamed: 3": "991"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "김천시",
+        "Unnamed: 3": "64"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "안동시",
+        "Unnamed: 3": "289"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "구미시",
+        "Unnamed: 3": "1,140"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "영주시",
+        "Unnamed: 3": "6"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "영천시",
+        "Unnamed: 3": "3"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "상주시",
+        "Unnamed: 3": "85"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "문경시",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "경산시",
+        "Unnamed: 3": "15"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "의성군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "청송군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "영양군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "영덕군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "청도군",
+        "Unnamed: 3": "34"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "고령군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "성주군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "칠곡군",
+        "Unnamed: 3": "553"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "예천군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "봉화군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "울진군",
+        "Unnamed: 3": "64"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경북",
+        "Unnamed: 2": "울릉군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "4,993"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "창원시",
+        "Unnamed: 3": "1,544"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "진주시",
+        "Unnamed: 3": "73"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "통영시",
+        "Unnamed: 3": "262"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "사천시",
+        "Unnamed: 3": "393"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "김해시",
+        "Unnamed: 3": "1,367"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "밀양시",
+        "Unnamed: 3": "222"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "거제시",
+        "Unnamed: 3": "456"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "양산시",
+        "Unnamed: 3": "221"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "의령군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "함안군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "창녕군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "고성군",
+        "Unnamed: 3": "145"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "남해군",
+        "Unnamed: 3": "76"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "하동군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "산청군",
+        "Unnamed: 3": "40"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "함양군",
+        "Unnamed: 3": "134"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "거창군",
+        "Unnamed: 3": "60"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "경남",
+        "Unnamed: 2": "합천군",
+        "Unnamed: 3": "0"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "제주",
+        "Unnamed: 2": "계",
+        "Unnamed: 3": "2,621"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "제주",
+        "Unnamed: 2": "제주시",
+        "Unnamed: 3": "1,792"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "미분양주택현황보고(Unsold New Housings) / 시·군·구별 미분양현황 (200012 ~ 202508)": "2025-08",
+        "Unnamed: 1": "제주",
+        "Unnamed: 2": "서귀포시",
+        "Unnamed: 3": "829"
+      },
+      "table_name": "시·군·구별 미분양현황 (200012 ~ 202508)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
       "collection_status": "success",
       "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\미분양주택현황보고_시·군·구별 미분양현황 (200012 ~ 202508).xlsx"
     }
