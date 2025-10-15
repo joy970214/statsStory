@@ -300,6 +300,69 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
 
         basic_stats_result = _calculate_basic_statistics_from_comprehensive(stat_data)
 
+        # AI 인사이트 생성 (Ollama)
+        progress_tracker.update_progress(task_id, "AI 분석", 85, "AI 인사이트를 생성합니다")
+
+        # 취소 체크
+        if check_cancellation():
+            return
+
+        ai_insights = None
+        try:
+            from app.services.ollama_service import ollama_service
+
+            # Ollama 서버 확인
+            if ollama_service.is_available():
+                print(f"[AI] Ollama 인사이트 생성 시작...")
+
+                # 통계표 목록 수집
+                table_names = list(set([
+                    getattr(item, 'table_name', '기본 통계표')
+                    for item in stat_data
+                    if hasattr(item, 'table_name')
+                ]))
+
+                # AI 인사이트 생성
+                ai_insights = ollama_service.generate_statistical_insights(
+                    metadata=metadata.dict() if metadata else {},
+                    data_summary=basic_stats_result,
+                    table_names=table_names,
+                    raw_data_sample=None  # 필요시 샘플 데이터 전달
+                )
+
+                print(f"[AI] 인사이트 생성 완료: {ai_insights.get('insights_count', 0)}개")
+
+                # 메타데이터에 AI 인사이트 추가
+                if metadata:
+                    metadata.ai_insights = ai_insights
+                    # 메타데이터 재저장
+                    storage_service.save_complete_data(stat_url, metadata, stat_data)
+                    print(f"[AI] 메타데이터에 인사이트 저장 완료")
+            else:
+                print(f"[AI] Ollama 서버를 사용할 수 없습니다. 기본 인사이트 사용")
+        except Exception as ai_error:
+            print(f"[AI] 인사이트 생성 오류: {ai_error}")
+
+        # 벡터 DB에 데이터 저장 (채팅용)
+        progress_tracker.update_progress(task_id, "벡터 DB 저장", 88, "채팅을 위한 데이터를 저장합니다")
+
+        # 취소 체크
+        if check_cancellation():
+            return
+
+        try:
+            from app.services.vector_db_service import vector_db_service
+
+            # ChromaDB에 통계 데이터 저장
+            stored_count = vector_db_service.store_stat_data(
+                stat_name=request.stat_name,
+                stat_data=stat_data,
+                metadata=metadata
+            )
+            print(f"[VectorDB] {stored_count}개 데이터 저장 완료")
+        except Exception as vector_error:
+            print(f"[VectorDB] 벡터 DB 저장 오류: {vector_error}")
+
         # 결과 생성
         progress_tracker.update_progress(task_id, "결과 생성", 90, "분석 결과를 생성합니다")
 

@@ -30,6 +30,7 @@ class StatMetadata(BaseModel):
     major_items: Dict[str, str] = {}  # 주요항목과 해당내용
     meaning_analysis: Dict[str, str] = {}  # 의미분석과 해당내용
     terminology: Dict[str, str] = {}  # 관련용어와 해당내용
+    ai_insights: Optional[Dict[str, Any]] = None  # AI 분석 인사이트 (10개 카테고리)
     url: Optional[str] = None
 
 class StatData(BaseModel):

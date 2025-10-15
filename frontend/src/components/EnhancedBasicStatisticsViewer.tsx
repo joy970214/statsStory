@@ -66,6 +66,13 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
   const [isFileDownloadOpen, setIsFileDownloadOpen] = useState(false);
   const [isMetadataOpen, setIsMetadataOpen] = useState(false);
 
+  // 채팅 관련 상태
+  const [chatMessages, setChatMessages] = useState<Array<{role: string, content: string}>>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     processRealData();
   }, [analysisData]);
@@ -284,6 +291,61 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 2 }).format(num);
+  };
+
+  // 채팅 관련 함수
+  const handleSendMessage = async () => {
+    if (!chatInput.trim() || chatLoading) return;
+
+    const userMessage = chatInput.trim();
+    setChatInput('');
+
+    // 사용자 메시지 추가
+    const newMessages = [...chatMessages, { role: 'user', content: userMessage }];
+    setChatMessages(newMessages);
+    setChatLoading(true);
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          stat_name: analysisData.stat_name,
+          message: userMessage,
+          chat_history: chatMessages
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('채팅 응답 실패');
+      }
+
+      const data = await response.json();
+
+      // AI 응답 추가
+      setChatMessages([...newMessages, { role: 'assistant', content: data.response }]);
+
+      // 채팅 끝으로 스크롤
+      setTimeout(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+
+    } catch (error) {
+      console.error('채팅 오류:', error);
+      setChatMessages([...newMessages, {
+        role: 'assistant',
+        content: '죄송합니다. 응답을 생성하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+      }]);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
 
   // IBSheet 원본 완전 재구성 함수 (실제 IBSheet 구조 그대로 재현)
@@ -721,9 +783,9 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-2 flex items-center gap-3">
               <ChartBarIcon className="w-8 h-8 text-primary-600" />
-              기본통계현황분석 결과
+              통계현황결과
             </h1>
-            <p className="text-gray-600 text-lg">실제 수집 데이터 기반 분석 결과</p>
+            <p className="text-gray-600 text-lg">실제 수집 데이터 기반 결과</p>
           </div>
           <div className="flex flex-wrap gap-3">
             <button
@@ -1018,26 +1080,176 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                 )}
               </h4>
 
-              {/* LLM 분석 결과가 표시될 영역 */}
-              <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-8 border border-purple-200">
-                <div className="flex items-start gap-4 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <SparklesIcon className="w-6 h-6 text-white" />
+              {/* AI 분석 결과 (10개 카테고리) */}
+              {analysisData.metadata?.ai_insights?.insights_count > 0 ? (
+                <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-8 border border-purple-200">
+                  <div className="flex items-start gap-4 mb-6">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <SparklesIcon className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h5 className="font-semibold text-purple-900 mb-2">AI 분석 인사이트</h5>
+                      <p className="text-sm text-purple-700 leading-relaxed">
+                        Ollama(llama3.1) 모델이 분석한 {analysisData.metadata.ai_insights.insights_count}개의 인사이트입니다.
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h5 className="font-semibold text-purple-900 mb-2">오프라인 LLM 분석 준비 중</h5>
-                    <p className="text-sm text-purple-700 leading-relaxed">
-                      선택된 통계표에 대한 AI 기반 심층 분석이 곧 제공됩니다.
-                      각 통계표의 특성과 인사이트를 자동으로 생성합니다.
-                    </p>
-                  </div>
-                </div>
 
-                {/* 여기에 LLM 분석 결과가 표시됩니다 */}
-                <div className="bg-white rounded-lg p-6 text-gray-600 text-center">
-                  <p>LLM 모델 통합 예정</p>
+                  {/* 10개 카테고리 인사이트 */}
+                  <div className="space-y-4">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
+                      const insightKey = `insight_${num}`;
+                      const insight = analysisData.metadata.ai_insights[insightKey];
+
+                      if (!insight) return null;
+
+                      return (
+                        <motion.div
+                          key={num}
+                          className="bg-white rounded-lg p-6 shadow-sm border border-purple-100"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: num * 0.05 }}
+                        >
+                          <div className="flex items-start gap-4">
+                            <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-lg flex items-center justify-center flex-shrink-0 text-white font-bold text-sm">
+                              {num}
+                            </div>
+                            <div className="flex-1">
+                              <h6 className="font-semibold text-purple-900 mb-2">
+                                {insight.category}
+                              </h6>
+                              <p className="text-gray-700 leading-relaxed mb-3">
+                                {insight.content}
+                              </p>
+                              <div className="flex items-center gap-2 text-sm text-purple-600">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                                <span>추천 시각화: {insight.visualization}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8 border border-gray-200">
+                  <div className="flex items-start gap-4 mb-6">
+                    <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <SparklesIcon className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h5 className="font-semibold text-gray-900 mb-2">AI 인사이트 대기 중</h5>
+                      <p className="text-sm text-gray-700 leading-relaxed">
+                        이 통계에 대한 AI 분석 인사이트가 아직 생성되지 않았습니다.
+                        '분석하기' 버튼을 눌러 새로 분석하면 AI 인사이트가 자동 생성됩니다.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* AI 채팅 (AI 인사이트가 있을 때만 표시) */}
+              {analysisData.metadata?.ai_insights?.insights_count > 0 && (
+                <div className="mt-8">
+                  <button
+                    onClick={() => setIsChatOpen(!isChatOpen)}
+                    className="w-full flex items-center justify-between hover:bg-gradient-to-r from-emerald-50 to-teal-50 transition-colors duration-200 rounded-lg p-4 border border-emerald-200"
+                  >
+                    <h4 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-800 bg-clip-text text-transparent flex items-center gap-3">
+                      <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                      </svg>
+                      AI 채팅 (데이터 기반 질의응답)
+                    </h4>
+                    {isChatOpen ? (
+                      <ChevronUpIcon className="w-6 h-6 text-gray-600" />
+                    ) : (
+                      <ChevronDownIcon className="w-6 h-6 text-gray-600" />
+                    )}
+                  </button>
+
+                  {isChatOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="mt-4 bg-white rounded-xl border border-emerald-200 shadow-lg"
+                    >
+                      {/* 채팅 메시지 영역 */}
+                      <div className="h-96 overflow-y-auto p-6 space-y-4">
+                        {chatMessages.length === 0 ? (
+                          <div className="text-center text-gray-500 mt-20">
+                            <svg className="w-16 h-16 mx-auto mb-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                            <p className="text-lg font-medium mb-2">통계 데이터에 대해 질문해보세요</p>
+                            <p className="text-sm">ChromaDB + RAG 방식으로 정확한 답변을 제공합니다</p>
+                          </div>
+                        ) : (
+                          chatMessages.map((msg, idx) => (
+                            <motion.div
+                              key={idx}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                            >
+                              <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                                msg.role === 'user'
+                                  ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white'
+                                  : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800'
+                              }`}>
+                                <div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>
+                              </div>
+                            </motion.div>
+                          ))
+                        )}
+                        {chatLoading && (
+                          <div className="flex justify-start">
+                            <div className="bg-gray-100 rounded-2xl px-4 py-3">
+                              <div className="flex gap-2">
+                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        <div ref={chatEndRef} />
+                      </div>
+
+                      {/* 채팅 입력 영역 */}
+                      <div className="border-t border-emerald-200 p-4">
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={chatInput}
+                            onChange={(e) => setChatInput(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                            placeholder="통계 데이터에 대해 질문하세요... (예: 2025년 서울 미분양 현황은?)"
+                            className="flex-1 px-4 py-3 border border-emerald-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                            disabled={chatLoading}
+                          />
+                          <button
+                            onClick={handleSendMessage}
+                            disabled={chatLoading || !chatInput.trim()}
+                            className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:from-emerald-600 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+                          >
+                            {chatLoading ? '전송 중...' : '전송'}
+                          </button>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">
+                          💡 Ollama(llama3.1) + ChromaDB RAG 방식으로 {analysisData.metadata?.title}의 실제 데이터를 기반으로 답변합니다
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+              )}
 
               {/* 임시로 남겨둔 통계 카드 - 삭제 예정 */}
               <div className="hidden grid-cols-1 md:grid-cols-3 gap-6">
