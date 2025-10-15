@@ -1959,6 +1959,7 @@ class OptimizedMolitCrawler:
             responsible_department=base_metadata.responsible_department,
             keywords=base_metadata.keywords + [table_name] if base_metadata.keywords else [table_name],
             related_terms=base_metadata.related_terms,
+            statistical_info=base_metadata.statistical_info,
             major_items=base_metadata.major_items,
             meaning_analysis=base_metadata.meaning_analysis,
             terminology=base_metadata.terminology,

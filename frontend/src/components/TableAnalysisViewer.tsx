@@ -51,7 +51,6 @@ interface TableAnalysisViewerProps {
 
 export const TableAnalysisViewer: React.FC<TableAnalysisViewerProps> = ({ statName, onBack }) => {
   const [analysisData, setAnalysisData] = useState<TableAnalysisData | null>(null);
-  const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -71,12 +70,6 @@ export const TableAnalysisViewer: React.FC<TableAnalysisViewerProps> = ({ statNa
 
       const data = await response.json();
       setAnalysisData(data);
-
-      // 첫 번째 테이블을 기본 선택
-      const firstTable = Object.keys(data.tables_analysis)[0];
-      if (firstTable) {
-        setSelectedTable(firstTable);
-      }
 
     } catch (err) {
       console.error('테이블 분석 로드 오류:', err);
@@ -125,139 +118,84 @@ export const TableAnalysisViewer: React.FC<TableAnalysisViewerProps> = ({ statNa
     );
   }
 
-  const selectedTableData = selectedTable ? analysisData.tables_analysis[selectedTable] : null;
-
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      {/* 왼쪽: 통계표 목록 */}
-      <div className="lg:col-span-1">
-        <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
-          <div className="mb-4">
-            <h4 className="text-base font-semibold text-gray-900 mb-1">통계표 목록</h4>
-            <p className="text-xs text-gray-600">다운로드할 통계표를 선택하세요</p>
-          </div>
-          <div className="space-y-2">
-            {Object.keys(analysisData.tables_analysis).map((tableName) => {
-              const tableData = analysisData.tables_analysis[tableName];
-              return (
-                <button
-                  key={tableName}
-                  onClick={() => setSelectedTable(tableName)}
-                  className={`w-full text-left p-3 rounded-lg transition-all duration-200 ${
-                    selectedTable === tableName
-                      ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
-                      : 'bg-white hover:bg-primary-50 border border-gray-200 hover:border-primary-300 text-gray-700'
-                  }`}
-                >
-                  <div className="font-medium text-sm mb-1">{tableName}</div>
-                  <div className={`text-xs ${
-                    selectedTable === tableName ? 'text-primary-100' : 'text-gray-500'
+    <div className="space-y-4">
+      {/* 통계표 목록을 카드 형태로 나열 */}
+      {Object.keys(analysisData.tables_analysis).map((tableName) => {
+        const tableData = analysisData.tables_analysis[tableName];
+
+        return (
+          <div key={tableName} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center space-x-3 flex-1 min-w-0">
+                <div className="flex-shrink-0">
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                    tableData.downloaded_file
+                      ? 'bg-gradient-to-br from-green-500 to-green-600'
+                      : 'bg-gradient-to-br from-gray-400 to-gray-500'
                   }`}>
-                    {tableData.downloaded_file ? '파일 있음' : '파일 없음'}
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
                   </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* 오른쪽: 다운로드 파일 */}
-      <div className="lg:col-span-3">
-        {selectedTableData ? (
-          <TableDetailView tableData={selectedTableData} />
-        ) : (
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8 text-center border border-gray-200">
-            <p className="text-gray-600">통계표를 선택하여 파일을 확인하세요.</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-interface TableDetailViewProps {
-  tableData: TableAnalysis;
-}
-
-const TableDetailView: React.FC<TableDetailViewProps> = ({ tableData }) => {
-  if (!tableData.downloaded_file) {
-    return (
-      <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8 text-center border border-gray-200">
-        <div className="flex flex-col items-center justify-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-500 rounded-xl flex items-center justify-center mb-4">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-          </div>
-          <h4 className="text-lg font-semibold text-gray-900 mb-2">다운로드 파일 없음</h4>
-          <p className="text-sm text-gray-600">
-            이 통계표는 파일 다운로드 방식으로 수집되지 않았습니다.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
-      <h4 className="text-base font-semibold text-gray-900 mb-4">{tableData.table_name}</h4>
-      <div className="bg-white rounded-lg p-4 shadow-sm">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center space-x-3 flex-1 min-w-0">
-            <div className="flex-shrink-0">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900">
+                    {tableName}
+                  </p>
+                  {tableData.downloaded_file ? (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {tableData.downloaded_file.filename} • {(tableData.downloaded_file.size / 1024).toFixed(2)} KB
+                    </p>
+                  ) : (
+                    <p className="text-xs text-gray-500 mt-1">
+                      다운로드 파일 없음
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
-                {tableData.downloaded_file.filename}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                {(tableData.downloaded_file.size / 1024).toFixed(2)} KB • {new Date(tableData.downloaded_file.modified).toLocaleString('ko-KR')}
-              </p>
+
+              {tableData.downloaded_file && (
+                <button
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const downloadUrl = `/api/download-file?file_path=${encodeURIComponent(tableData.downloaded_file!.path)}`;
+
+                    try {
+                      const response = await fetch(downloadUrl);
+                      if (!response.ok) {
+                        throw new Error(`다운로드 실패: ${response.status}`);
+                      }
+
+                      const blob = await response.blob();
+                      const blobUrl = window.URL.createObjectURL(blob);
+
+                      const link = document.createElement('a');
+                      link.href = blobUrl;
+                      link.download = tableData.downloaded_file!.filename;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+
+                      window.URL.revokeObjectURL(blobUrl);
+                    } catch (error) {
+                      console.error('다운로드 오류:', error);
+                      alert('파일 다운로드에 실패했습니다.');
+                    }
+                  }}
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  <span className="font-medium">다운로드</span>
+                </button>
+              )}
             </div>
           </div>
-          <button
-            onClick={async (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              const downloadUrl = `/api/download-file?file_path=${encodeURIComponent(tableData.downloaded_file!.path)}`;
-
-              try {
-                const response = await fetch(downloadUrl);
-                if (!response.ok) {
-                  throw new Error(`다운로드 실패: ${response.status}`);
-                }
-
-                const blob = await response.blob();
-                const blobUrl = window.URL.createObjectURL(blob);
-
-                const link = document.createElement('a');
-                link.href = blobUrl;
-                link.download = tableData.downloaded_file!.filename;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-
-                window.URL.revokeObjectURL(blobUrl);
-              } catch (error) {
-                console.error('다운로드 오류:', error);
-                alert('파일 다운로드에 실패했습니다.');
-              }
-            }}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            <span className="font-medium">다운로드</span>
-          </button>
-        </div>
-      </div>
+        );
+      })}
     </div>
   );
 };

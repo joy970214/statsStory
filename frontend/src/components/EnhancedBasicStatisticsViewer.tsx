@@ -766,34 +766,58 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
             <span className="bg-blue-200 px-2 py-1 rounded-full">실제 수집 데이터 분석</span>
           </div>
         </div>
-        <div className="border-t border-gray-200 my-8"></div>
-        <div>          
-          <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-            <DocumentArrowDownIcon className="w-6 h-6 text-primary-600" />
-            원본 파일 다운로드
-          </h4>
+        <div className="border-t border-gray-200 mt-8"></div>
+
+        {/* 원본 파일 다운로드 - 아코디언 */}
+        <div>
+          <button
+            onClick={() => setIsFileDownloadOpen(!isFileDownloadOpen)}
+            className="w-full flex items-center justify-between hover:bg-gray-50 transition-colors duration-200 rounded-lg p-4"
+          >
+            <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent flex items-center gap-3">
+              <DocumentArrowDownIcon className="w-6 h-6 text-primary-600" />
+              원본 파일 다운로드
+            </h4>
+            {isFileDownloadOpen ? (
+              <ChevronUpIcon className="w-6 h-6 text-gray-600" />
+            ) : (
+              <ChevronDownIcon className="w-6 h-6 text-gray-600" />
+            )}
+          </button>
           {isFileDownloadOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
+              className="mt-4"
             >
-              <div>
-                <TableAnalysisViewer
-                  statName={analysisData.stat_name}
-                  onBack={() => {}}
-                />
-              </div>
+              <TableAnalysisViewer
+                statName={analysisData.stat_name}
+                onBack={() => {}}
+              />
             </motion.div>
           )}
         </div>
-        <div className="border-t border-gray-200 my-8"></div>
+
+        <div className="border-t border-gray-200"></div>
+
+        {/* 메타데이터 정보 - 아코디언 */}
         <div>
-          <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-            <DocumentTextIcon className="w-6 h-6 text-primary-600" />
-            메타데이터 정보
-          </h4>
+          <button
+            onClick={() => setIsMetadataOpen(!isMetadataOpen)}
+            className="w-full flex items-center justify-between hover:bg-gray-50 transition-colors duration-200 rounded-lg p-4"
+          >
+            <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent flex items-center gap-3">
+              <DocumentTextIcon className="w-6 h-6 text-primary-600" />
+              메타데이터 정보
+            </h4>
+            {isMetadataOpen ? (
+              <ChevronUpIcon className="w-6 h-6 text-gray-600" />
+            ) : (
+              <ChevronDownIcon className="w-6 h-6 text-gray-600" />
+            )}
+          </button>
           {isMetadataOpen && (analysisData.metadata?.statistical_info || analysisData.metadata?.major_items ||
             analysisData.metadata?.meaning_analysis || analysisData.metadata?.terminology) && (
             <motion.div
@@ -801,6 +825,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
+              className="mt-4"
             >
               <div>
                 {/* 상세 메타정보 */}
