@@ -26,32 +26,57 @@ export const StatCard: React.FC<StatCardProps> = ({ stat, onSelect, disabled = f
 
   const isButtonDisabled = disabled || isProcessing;
 
+  // 카테고리별 색상 매핑 (해시 기반으로 고정된 색상 할당)
+  const getCategoryColor = (category: string) => {
+    const colors = [
+      'bg-primary-50 text-primary-700',      // 파란색
+      'bg-success-50 text-success-700',      // 초록색
+      'bg-warning-50 text-warning-700',      // 주황색
+      'bg-info-50 text-info-700',            // 하늘색
+      'bg-danger-50 text-danger-700',        // 빨간색
+      'bg-secondary-50 text-secondary-700',  // 회색
+      'bg-primary-100 text-primary-800',     // 진한 파란색
+      'bg-success-100 text-success-700',     // 진한 초록색
+      'bg-warning-100 text-warning-700',     // 진한 주황색
+      'bg-danger-100 text-danger-700',       // 진한 빨간색
+    ];
+    
+    // 카테고리 문자열을 해시화하여 일관된 색상 인덱스 생성
+    let hash = 0;
+    for (let i = 0; i < category.length; i++) {
+      hash = category.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % colors.length;
+    
+    return colors[index];
+  };
+
   return (
-    <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-primary-200 group">
+    <div className="bg-white rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200">
       <div className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-primary-700 transition-colors duration-200">
+        <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">
           {stat.title}
         </h3>
         
         <div className="text-sm text-gray-600 mb-4">
           <div className="flex justify-between items-center mb-3">
-            <span className="bg-gradient-to-r from-primary-100 to-primary-200 text-primary-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
-              <TagIcon className="w-3 h-3" />
+            <span className={`${getCategoryColor(stat.stat_field || '기타')} px-3 py-1 rounded-md text-xs font-medium flex items-center gap-1.5`}>
+              <TagIcon className="w-3.5 h-3.5" />
               {stat.stat_field || '기타'}
             </span>
-            <span className="text-gray-500 flex items-center gap-1">
-              <CalendarIcon className="w-3 h-3" />
+            <span className="text-gray-500 flex items-center gap-1.5">
+              <CalendarIcon className="w-3.5 h-3.5" />
               {stat.publish_date}
             </span>
           </div>
         </div>
         
-        <div className="flex gap-3 mt-6">
+        <div className="flex gap-2 mt-6">
           <button
-            className={`flex-1 py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 font-medium ${
+            className={`flex-1 py-2.5 px-4 rounded-md transition-colors flex items-center justify-center gap-2 font-medium text-sm ${
               isButtonDisabled
-                ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                : 'bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-primary-600 text-white hover:bg-primary-700'
             }`}
             onClick={handleAnalysisClick}
             disabled={isButtonDisabled}
@@ -62,7 +87,7 @@ export const StatCard: React.FC<StatCardProps> = ({ stat, onSelect, disabled = f
 
           {stat.url && (
             <button
-              className="bg-gradient-to-r from-secondary-500 to-secondary-600 text-white py-3 px-4 rounded-lg hover:from-secondary-600 hover:to-secondary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-2"
+              className="bg-white border border-gray-300 text-gray-700 py-2.5 px-4 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium"
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(stat.url, '_blank', 'noopener,noreferrer');
@@ -70,7 +95,7 @@ export const StatCard: React.FC<StatCardProps> = ({ stat, onSelect, disabled = f
               title="통계누리에서 원본 데이터 확인"
             >
               <ChartBarIcon className="w-4 h-4" />
-              원본보기
+              원본
             </button>
           )}
         </div>

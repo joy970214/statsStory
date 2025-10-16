@@ -140,7 +140,7 @@ export const StatDetailViewer: React.FC<Props> = ({
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              📊 {detailData.stat_name}
+              {detailData.stat_name}
             </h2>
             <p className="text-gray-600 mb-3">
               {detailData.metadata.title} - {detailData.metadata.department}
@@ -161,22 +161,22 @@ export const StatDetailViewer: React.FC<Props> = ({
             )}
           </div>
 
-          <div className="flex space-x-3">
+          <div className="flex gap-2">
             <button
               onClick={() => onViewDistribution(statName)}
-              className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700"
+              className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 text-sm font-medium transition-colors"
             >
               분포 특성 분석
             </button>
             <button
               onClick={() => onViewSummary(statName)}
-              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+              className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 text-sm font-medium transition-colors"
             >
               객관적 현황 요약
             </button>
             <button
               onClick={onBack}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+              className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 text-sm font-medium transition-colors"
             >
               뒤로 가기
             </button>
@@ -185,76 +185,78 @@ export const StatDetailViewer: React.FC<Props> = ({
       </div>
 
       {/* 메타데이터 정보 */}
-      <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-        <h3 className="text-xl font-semibold text-gray-900 mb-4">📋 메타데이터 정보</h3>
+      <div className="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-3">통계정보 상세</h3>
 
-        {/* 기본 정보 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div className="space-y-3">
-            <div>
-              <span className="text-sm font-medium text-gray-600">제목:</span>
-              <p className="text-gray-900">{detailData.metadata?.title || '정보 없음'}</p>
-            </div>
-            <div>
-              <span className="text-sm font-medium text-gray-600">작성기관:</span>
-              <p className="text-gray-700">{detailData.metadata?.department || '정보 없음'}</p>
-            </div>
+        {/* 기본 정보 - 콤팩트하게 */}
+        <div className="space-y-2">
+          <div className="flex items-start">
+            <span className="text-sm font-medium text-gray-600 min-w-[80px]">제목:</span>
+            <p className="text-sm text-gray-900 flex-1">{detailData.metadata?.title || '정보 없음'}</p>
           </div>
-          <div className="space-y-3">
-            <div>
-              <span className="text-sm font-medium text-gray-600">키워드:</span>
-              <div className="flex flex-wrap gap-1 mt-1">
-                {(detailData.metadata?.keywords || []).map((keyword, index) => (
-                  <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
-                    {keyword}
-                  </span>
-                ))}
-              </div>
+          <div className="flex items-start">
+            <span className="text-sm font-medium text-gray-600 min-w-[80px]">작성기관:</span>
+            <p className="text-sm text-gray-700 flex-1">{detailData.metadata?.department || '정보 없음'}</p>
+          </div>
+          <div className="flex items-start">
+            <span className="text-sm font-medium text-gray-600 min-w-[80px]">키워드:</span>
+            <div className="flex flex-wrap gap-1 flex-1">
+              {(detailData.metadata?.keywords || []).map((keyword, index) => (
+                <span key={index} className="bg-primary-100 text-primary-800 px-2 py-0.5 rounded-full text-xs">
+                  {keyword}
+                </span>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* 관련용어 정보 */}
-        {((detailData.metadata?.terminology && Object.keys(detailData.metadata.terminology).length > 0) ||
-          (detailData.metadata?.related_terms && Object.keys(detailData.metadata.related_terms).length > 0)) && (
-          <div className="border-t pt-6">
-            <h4 className="text-lg font-semibold text-gray-900 mb-4">📊 관련용어 정보</h4>
+      </div>
 
-            {/* 수집된 관련용어 탭 정보 (terminology) */}
-            {detailData.metadata?.terminology && Object.keys(detailData.metadata.terminology).length > 0 && (
-              <div className="mb-6">
-                <h5 className="text-md font-medium text-gray-800 mb-3 flex items-center">
-                  <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded text-sm mr-2">수집된 관련용어</span>
-                </h5>
-                <div className="bg-orange-50 rounded-lg p-4">
-                  <div className="space-y-2">
-                    {Object.entries(detailData.metadata.terminology).map(([key, value], index) => (
-                      <div key={index} className="border-b border-orange-200 pb-2 last:border-b-0">
-                        <span className="text-sm font-medium text-orange-800">{key}:</span>
-                        <span className="text-sm text-orange-700 ml-2">{value || '-'}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
+      {/* 용어정리 - 콤팩트하게 */}
+      {((detailData.metadata?.terminology && Object.keys(detailData.metadata.terminology).length > 0) ||
+        (detailData.metadata?.related_terms && Object.keys(detailData.metadata.related_terms).length > 0)) && (
+        <div className="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">용어정리</h3>
 
-            {/* 기존 관련용어 정보 */}
-            {detailData.metadata?.related_terms && Object.keys(detailData.metadata.related_terms).length > 0 && (
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="space-y-2">
-                  {Object.entries(detailData.metadata.related_terms).map(([key, value], index) => (
-                    <div key={index} className="border-b border-gray-200 pb-2 last:border-b-0">
-                      <span className="text-sm font-medium text-gray-800">{key}:</span>
-                      <span className="text-sm text-gray-700 ml-2">{value || '-'}</span>
+          {/* 수집된 관련용어 탭 정보 (terminology) */}
+          {detailData.metadata?.terminology && Object.keys(detailData.metadata.terminology).length > 0 && (
+            <div className="mb-4 last:mb-0">
+              <h4 className="text-sm font-medium text-warning-700 mb-2 flex items-center">
+                <span className="bg-warning-100 text-warning-700 px-2 py-0.5 rounded text-xs">수집된 관련용어</span>
+              </h4>
+              <div className="bg-warning-50 rounded-lg p-3">
+                <div className="bg-white rounded-md p-3 space-y-1.5">
+                  {Object.entries(detailData.metadata.terminology).map(([key, value], index) => (
+                    <div key={index} className="flex items-start gap-2">
+                      <span className="text-sm font-medium text-warning-700 min-w-[100px] flex-shrink-0">{key}:</span>
+                      <span className="text-sm text-gray-900 flex-1">{value || '-'}</span>
                     </div>
                   ))}
                 </div>
               </div>
-            )}
-          </div>
-        )}
-      </div>
+            </div>
+          )}
+
+          {/* 기존 관련용어 정보 */}
+          {detailData.metadata?.related_terms && Object.keys(detailData.metadata.related_terms).length > 0 && (
+            <div>
+              <h4 className="text-sm font-medium text-secondary-700 mb-2 flex items-center">
+                <span className="bg-secondary-100 text-secondary-700 px-2 py-0.5 rounded text-xs">기본 관련용어</span>
+              </h4>
+              <div className="bg-secondary-50 rounded-lg p-3">
+                <div className="bg-white rounded-md p-3 space-y-1.5">
+                  {Object.entries(detailData.metadata.related_terms).map(([key, value], index) => (
+                    <div key={index} className="flex items-start gap-2">
+                      <span className="text-sm font-medium text-secondary-700 min-w-[100px] flex-shrink-0">{key}:</span>
+                      <span className="text-sm text-gray-900 flex-1">{value || '-'}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 전체 요약 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">

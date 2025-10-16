@@ -161,7 +161,7 @@ export const StatSummaryViewer: React.FC<Props> = ({ statName, onBack }) => {
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              📋 객관적 현황 요약
+              객관적 현황 요약
             </h2>
             <p className="text-gray-600 mb-2">
               <strong>{summaryData.stat_name}</strong>
@@ -189,7 +189,7 @@ export const StatSummaryViewer: React.FC<Props> = ({ statName, onBack }) => {
           </div>
           <button
             onClick={onBack}
-            className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+            className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium"
           >
             뒤로 가기
           </button>
@@ -198,7 +198,7 @@ export const StatSummaryViewer: React.FC<Props> = ({ statName, onBack }) => {
 
       {/* 메타데이터 정보 - 강제 표시 */}
       <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-        <h3 className="text-xl font-semibold text-gray-900 mb-4">📋 메타데이터 정보 (테스트)</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">메타데이터 정보</h3>
         <div className="bg-yellow-100 p-2 mb-4 rounded">
           <p className="text-sm">디버그: summaryData존재여부={summaryData ? '있음' : '없음'}, metadata존재여부={summaryData?.metadata ? '있음' : '없음'}</p>
         </div>
@@ -354,9 +354,9 @@ export const StatSummaryViewer: React.FC<Props> = ({ statName, onBack }) => {
       </div>
 
       {/* 전체 요약 */}
-      <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6 mb-8">
+      <div className="bg-success-50 border border-success-200 rounded-lg p-6 mb-8">
         <h3 className="text-lg font-semibold text-gray-900 mb-3">
-          📊 전체 현황 개요
+          전체 현황 개요
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="text-center">

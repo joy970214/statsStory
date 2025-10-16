@@ -154,7 +154,7 @@ export const StatDistributionViewer: React.FC<Props> = ({ statName, onBack }) =>
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              📈 데이터 분포 특성 분석
+              데이터 분포 특성 분석
             </h2>
             <p className="text-gray-600 mb-2">
               <strong>{distributionData.stat_name}</strong>
@@ -165,7 +165,7 @@ export const StatDistributionViewer: React.FC<Props> = ({ statName, onBack }) =>
           </div>
           <button
             onClick={onBack}
-            className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+            className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium"
           >
             뒤로 가기
           </button>

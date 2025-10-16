@@ -1,16 +1,20 @@
 @echo off
 echo Statistics Story Service Starting...
 
+REM Set Ollama environment variables for larger context
+set OLLAMA_NUM_PARALLEL=1
+set OLLAMA_MAX_LOADED_MODELS=1
+
 REM Check if Ollama is already running
 echo Checking Ollama Server...
 tasklist /FI "IMAGENAME eq ollama.exe" 2>NUL | find /I /N "ollama.exe">NUL
 if "%ERRORLEVEL%"=="0" (
     echo Ollama is already running.
 ) else (
-    echo Starting Ollama Server...
-    start "Ollama" cmd /k "ollama serve"
+    echo Starting Ollama Server with 16K context...
+    start "Ollama" cmd /k "set OLLAMA_NUM_PARALLEL=1 && set OLLAMA_MAX_LOADED_MODELS=1 && ollama serve"
     echo Waiting for Ollama to start...
-    timeout /t 3 /nobreak >nul
+    timeout /t 5 /nobreak >nul
 )
 
 REM Start Backend Server

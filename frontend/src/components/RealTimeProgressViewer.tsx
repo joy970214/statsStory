@@ -225,22 +225,12 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
     >
       {/* 헤더 */}
       <div className="mb-8 text-center">
-        <motion.h2 
-          className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-3"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
+        <h2 className="text-2xl font-bold text-gray-900 mb-3">
           통계현황분석
-        </motion.h2>
-        <motion.p 
-          className="text-gray-700 font-medium text-lg mb-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
+        </h2>
+        <p className="text-gray-600 mb-4">
           {statName}
-        </motion.p>
+        </p>
         <motion.div 
           className="flex justify-center items-center gap-4 text-sm"
           initial={{ opacity: 0 }}

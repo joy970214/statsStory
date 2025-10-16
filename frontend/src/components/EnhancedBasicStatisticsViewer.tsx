@@ -774,48 +774,48 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     <div className="max-w-6xl mx-auto">
       {/* 헤더 */}
       <motion.div 
-        className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-8"
+        className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 mb-8"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-2 flex items-center gap-3">
-              <ChartBarIcon className="w-8 h-8 text-primary-600" />
+            <h1 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center gap-3">
+              <ChartBarIcon className="w-7 h-7 text-primary-600" />
               통계현황결과
             </h1>
-            <p className="text-gray-600 text-lg">실제 수집 데이터 기반 결과</p>
+            <p className="text-gray-600">실제 수집 데이터 기반 결과</p>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={onBack}
-              className="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-3 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
+              className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium"
             >
-              <ArrowLeftIcon className="w-5 h-5" />
+              <ArrowLeftIcon className="w-4 h-4" />
               뒤로 가기
             </button>
             <button
               onClick={handleDownloadMD}
-              className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
+              className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm font-medium"
             >
-              <DocumentArrowDownIcon className="w-5 h-5" />
-              MD 다운로드
+              <DocumentArrowDownIcon className="w-4 h-4" />
+              MD
             </button>
             <button
               onClick={handleDownloadPDF}
-              className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
+              className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm font-medium"
             >
-              <DocumentArrowDownIcon className="w-5 h-5" />
-              PDF 다운로드
+              <DocumentArrowDownIcon className="w-4 h-4" />
+              PDF
             </button>
             {analysisData.metadata?.url && (
               <button
                 onClick={handleViewOriginal}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
+                className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium"
               >
-                <ArrowTopRightOnSquareIcon className="w-5 h-5" />
-                원본 보기
+                <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                원본
               </button>
             )}
           </div>
@@ -836,7 +836,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
             onClick={() => setIsFileDownloadOpen(!isFileDownloadOpen)}
             className="w-full flex items-center justify-between hover:bg-gray-50 transition-colors duration-200 rounded-lg p-4"
           >
-            <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent flex items-center gap-3">
+            <h4 className="text-xl font-semibold text-gray-900 flex items-center gap-3">
               <DocumentArrowDownIcon className="w-6 h-6 text-primary-600" />
               원본 파일 다운로드
             </h4>
@@ -870,7 +870,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
             onClick={() => setIsMetadataOpen(!isMetadataOpen)}
             className="w-full flex items-center justify-between hover:bg-gray-50 transition-colors duration-200 rounded-lg p-4"
           >
-            <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent flex items-center gap-3">
+            <h4 className="text-xl font-semibold text-gray-900 flex items-center gap-3">
               <DocumentTextIcon className="w-6 h-6 text-primary-600" />
               메타데이터 정보
             </h4>
@@ -893,96 +893,72 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                 {/* 상세 메타정보 */}
                 <div className="grid grid-cols-1 lg:grid-cols gap-6">
 
-                  {/* 통계정보 상세 */}
+                  {/* 통계정보 상세 - 콤팩트하게 */}
                   {analysisData.metadata?.statistical_info && Object.keys(analysisData.metadata.statistical_info).length > 0 && (
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6">
-                      <div className="flex items-start gap-3 mb-4">
-                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                          <ChartBarIcon className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h5 className="font-semibold text-blue-900 text-left">통계정보 상세</h5>
-                        </div>
+                    <div className="bg-primary-50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <ChartBarIcon className="w-5 h-5 text-primary-600" />
+                        <h5 className="font-semibold text-primary-700">통계정보 상세</h5>
                       </div>
-                      <div className="space-y-3">
+                      <div className="bg-white rounded-md p-3 space-y-2">
                         {Object.entries(analysisData.metadata.statistical_info).map(([key, value], index) => (
-                          <div key={index} className="bg-white rounded-lg p-3">
-                            <div className="text-left">
-                              <div className="text-sm font-medium text-blue-700 mb-1">{key}</div>
-                              <div className="text-sm text-blue-900 whitespace-pre-line">{value || '-'}</div>
-                            </div>
+                          <div key={index} className="flex items-start gap-2">
+                            <span className="text-sm font-medium text-primary-700 min-w-[120px] flex-shrink-0">{key}:</span>
+                            <span className="text-sm text-gray-900 flex-1">{value || '-'}</span>
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
 
-                  {/* 주요항목 */}
+                  {/* 주요항목 - 콤팩트하게 */}
                   {analysisData.metadata?.major_items && Object.keys(analysisData.metadata.major_items).length > 0 && (
-                    <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6">
-                      <div className="flex items-start gap-3 mb-4">
-                        <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                          <SparklesIcon className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h5 className="font-semibold text-green-900 text-left">주요항목</h5>
-                        </div>
+                    <div className="bg-success-50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <SparklesIcon className="w-5 h-5 text-success-600" />
+                        <h5 className="font-semibold text-success-700">주요항목</h5>
                       </div>
-                      <div className="space-y-3">
+                      <div className="bg-white rounded-md p-3 space-y-2">
                         {Object.entries(analysisData.metadata.major_items).map(([key, value], index) => (
-                          <div key={index} className="bg-white rounded-lg p-3">
-                            <div className="text-left">
-                              <div className="text-sm font-medium text-green-700 mb-1">{key}</div>
-                              <div className="text-sm text-green-900 whitespace-pre-line">{value || '-'}</div>
-                            </div>
+                          <div key={index} className="flex items-start gap-2">
+                            <span className="text-sm font-medium text-success-700 min-w-[120px] flex-shrink-0">{key}:</span>
+                            <span className="text-sm text-gray-900 flex-1">{value || '-'}</span>
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
 
-                  {/* 의미분석 */}
+                  {/* 의미분석 - 콤팩트하게 */}
                   {analysisData.metadata?.meaning_analysis && Object.keys(analysisData.metadata.meaning_analysis).length > 0 && (
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6">
-                      <div className="flex items-start gap-3 mb-4">
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                          <SparklesIcon className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h5 className="font-semibold text-purple-900 text-left">의미분석</h5>
-                        </div>
+                    <div className="bg-info-50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <SparklesIcon className="w-5 h-5 text-info-600" />
+                        <h5 className="font-semibold text-info-700">의미분석</h5>
                       </div>
-                      <div className="space-y-3">
+                      <div className="bg-white rounded-md p-3 space-y-2">
                         {Object.entries(analysisData.metadata.meaning_analysis).map(([key, value], index) => (
-                          <div key={index} className="bg-white rounded-lg p-3">
-                            <div className="text-left">
-                              <div className="text-sm font-medium text-purple-700 mb-1">{key}</div>
-                              <div className="text-sm text-purple-900 whitespace-pre-line">{value || '-'}</div>
-                            </div>
+                          <div key={index} className="flex items-start gap-2">
+                            <span className="text-sm font-medium text-info-700 min-w-[120px] flex-shrink-0">{key}:</span>
+                            <span className="text-sm text-gray-900 flex-1">{value || '-'}</span>
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
 
-                  {/* 용어정의 */}
+                  {/* 용어정리 - 콤팩트하게 */}
                   {analysisData.metadata?.terminology && Object.keys(analysisData.metadata.terminology).length > 0 && (
-                    <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-6">
-                      <div className="flex items-start gap-3 mb-4">
-                        <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                          <DocumentTextIcon className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h5 className="font-semibold text-amber-900 text-left">용어정의</h5>
-                        </div>
+                    <div className="bg-warning-50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <DocumentTextIcon className="w-5 h-5 text-warning-600" />
+                        <h5 className="font-semibold text-warning-700">용어정리</h5>
                       </div>
-                      <div className="space-y-3">
+                      <div className="bg-white rounded-md p-3 space-y-2">
                         {Object.entries(analysisData.metadata.terminology).map(([key, value], index) => (
-                          <div key={index} className="bg-white rounded-lg p-3">
-                            <div className="text-left">
-                              <div className="text-sm font-medium text-amber-700 mb-1">{key}</div>
-                              <div className="text-sm text-amber-900 whitespace-pre-line">{value || '-'}</div>
-                            </div>
+                          <div key={index} className="flex items-start gap-2">
+                            <span className="text-sm font-medium text-warning-700 min-w-[120px] flex-shrink-0">{key}:</span>
+                            <span className="text-sm text-gray-900 flex-1 whitespace-pre-line">{value || '-'}</span>
                           </div>
                         ))}
                       </div>
@@ -991,9 +967,9 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
                   {/* 관련용어 */}
                   {analysisData.metadata?.related_terms && Object.keys(analysisData.metadata.related_terms).length > 0 && (
-                    <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
+                    <div className="bg-gray-50 rounded-lg p-6">
                       <div className="flex items-start gap-3 mb-4">
-                        <div className="w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <div className="w-10 h-10 bg-gray-600 rounded-lg flex items-center justify-center flex-shrink-0">
                           <TagIcon className="w-5 h-5 text-white" />
                         </div>
                         <div className="min-w-0 flex-1">
@@ -1023,14 +999,14 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
       <div ref={contentRef}>
             {/* 통계표별 상세 분석 - 전체를 하나의 카드로 묶음 */}
             <motion.div
-              className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-8"
+              className="bg-white rounded-lg shadow-lg border border-gray-200 p-8 mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               {/* LLM 분석 결과 영역 */}
               <div>
-                <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+                <h4 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-3">
                   <SparklesIcon className="w-6 h-6 text-primary-600" />
                   AI 분석 결과
                 </h4>
@@ -1040,9 +1016,9 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                   <div className="mb-8">
                     <button
                       onClick={() => setIsChatOpen(!isChatOpen)}
-                      className="w-full flex items-center justify-between hover:bg-gradient-to-r from-emerald-50 to-teal-50 transition-colors duration-200 rounded-lg p-4 border border-emerald-200"
+                      className="w-full flex items-center justify-between hover:bg-green-50 transition-colors duration-200 rounded-lg p-4 border border-emerald-200"
                     >
-                      <h4 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-800 bg-clip-text text-transparent flex items-center gap-3">
+                      <h4 className="text-xl font-semibold text-gray-900 flex items-center gap-3">
                         <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                         </svg>
@@ -1061,7 +1037,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="mt-4 bg-white rounded-xl border border-emerald-200 shadow-lg"
+                        className="mt-4 bg-emerald-50/40 rounded-lg border-2 border-emerald-300 shadow-inner"
                       >
                         {/* 채팅 메시지 영역 */}
                         <div className="h-96 overflow-y-auto p-6 space-y-4">
@@ -1071,7 +1047,6 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                               </svg>
                               <p className="text-lg font-medium mb-2">통계 데이터에 대해 질문해보세요</p>
-                              <p className="text-sm">ChromaDB + RAG 방식으로 정확한 답변을 제공합니다</p>
                             </div>
                           ) : (
                             chatMessages.map((msg, idx) => (
@@ -1081,10 +1056,10 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                                 animate={{ opacity: 1, y: 0 }}
                                 className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                               >
-                                <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                                <div className={`max-w-[80%] rounded-2xl px-4 py-3 shadow-md ${
                                   msg.role === 'user'
-                                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white'
-                                    : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800'
+                                    ? 'bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 text-white border border-emerald-400/30'
+                                    : 'bg-white text-gray-800 border border-gray-200'
                                 }`}>
                                   <div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>
                                 </div>
@@ -1106,7 +1081,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                         </div>
 
                         {/* 채팅 입력 영역 */}
-                        <div className="border-t border-emerald-200 p-4">
+                        <div className="border-t border-gray-200 bg-white/50 p-4">
                           <div className="flex gap-2">
                             <input
                               type="text"
@@ -1114,43 +1089,35 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                               onChange={(e) => setChatInput(e.target.value)}
                               onKeyPress={handleKeyPress}
                               placeholder="통계 데이터에 대해 질문하세요... (예: 2025년 서울 미분양 현황은?)"
-                              className="flex-1 px-4 py-3 border border-emerald-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                              className="flex-1 px-4 py-3 border border-emerald-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
                               disabled={chatLoading}
                             />
                             <button
                               onClick={handleSendMessage}
                               disabled={chatLoading || !chatInput.trim()}
-                              className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:from-emerald-600 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+                              className="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium text-sm"
                             >
                               {chatLoading ? '전송 중...' : '전송'}
                             </button>
                           </div>
-                          <p className="text-xs text-gray-500 mt-2">
-                            💡 Ollama(llama3.1) + ChromaDB RAG 방식으로 {analysisData.metadata?.title}의 실제 데이터를 기반으로 답변합니다
-                          </p>
                         </div>
                       </motion.div>
                     )}
                   </div>
                 )}
 
-                {/* AI 분석 결과 (10개 카테고리) */}
+                {/* AI 분석 결과 (10개 카테고리) - 콤팩트하게 */}
                 {(analysisData.metadata?.ai_insights?.insights_count ?? 0) > 0 ? (
-                  <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-8 border border-purple-200">
-                    <div className="flex items-start gap-4 mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <SparklesIcon className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <h5 className="font-semibold text-purple-900 mb-2">AI 분석 인사이트</h5>
-                        <p className="text-sm text-purple-700 leading-relaxed">
-                          Ollama(llama3.1) 모델이 분석한 {analysisData.metadata?.ai_insights?.insights_count}개의 인사이트입니다.
-                        </p>
-                      </div>
+                  <div className="bg-purple-50 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <SparklesIcon className="w-5 h-5 text-purple-600" />
+                      <h5 className="font-semibold text-purple-700">
+                        AI 분석 인사이트 ({analysisData.metadata?.ai_insights?.insights_count}개)
+                      </h5>
                     </div>
 
                     {/* 10개 카테고리 인사이트 */}
-                    <div className="space-y-4">
+                    <div className="bg-white rounded-md p-3 space-y-3">
                       {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
                         const insightKey = `insight_${num}`;
                         const insight = analysisData.metadata?.ai_insights?.[insightKey];
@@ -1158,50 +1125,43 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                         if (!insight) return null;
 
                         return (
-                          <motion.div
+                          <div
                             key={num}
-                            className="bg-white rounded-lg p-6 shadow-sm border border-purple-100"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: num * 0.05 }}
+                            className="border-b border-gray-100 pb-3 last:border-b-0 last:pb-0"
                           >
-                            <div className="flex items-start gap-4">
-                              <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-lg flex items-center justify-center flex-shrink-0 text-white font-bold text-sm">
+                            <div className="flex items-start gap-3">
+                              <div className="w-6 h-6 bg-purple-500 text-white rounded flex items-center justify-center flex-shrink-0 text-xs font-bold">
                                 {num}
                               </div>
                               <div className="flex-1">
-                                <h6 className="font-semibold text-purple-900 mb-2">
+                                <h6 className="font-medium text-purple-700 text-sm mb-1">
                                   {insight.category}
                                 </h6>
-                                <p className="text-gray-700 leading-relaxed mb-3">
+                                <p className="text-sm text-gray-700 leading-relaxed mb-2">
                                   {insight.content}
                                 </p>
-                                <div className="flex items-center gap-2 text-sm text-purple-600">
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                  </svg>
-                                  <span>추천 시각화: {insight.visualization}</span>
+                                <div className="flex items-center gap-1.5 text-xs text-purple-600">
+                                  <ChartBarIcon className="w-3.5 h-3.5" />
+                                  <span>{insight.visualization}</span>
                                 </div>
                               </div>
                             </div>
-                          </motion.div>
+                          </div>
                         );
                       })}
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8 border border-gray-200">
-                    <div className="flex items-start gap-4 mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <SparklesIcon className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <h5 className="font-semibold text-gray-900 mb-2">AI 인사이트 대기 중</h5>
-                        <p className="text-sm text-gray-700 leading-relaxed">
-                          이 통계에 대한 AI 분석 인사이트가 아직 생성되지 않았습니다.
-                          '분석하기' 버튼을 눌러 새로 분석하면 AI 인사이트가 자동 생성됩니다.
-                        </p>
-                      </div>
+                  <div className="bg-secondary-50 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <SparklesIcon className="w-5 h-5 text-secondary-600" />
+                      <h5 className="font-semibold text-secondary-700">AI 인사이트 대기 중</h5>
+                    </div>
+                    <div className="bg-white rounded-md p-3">
+                      <p className="text-sm text-gray-700">
+                        이 통계에 대한 AI 분석 인사이트가 아직 생성되지 않았습니다.
+                        '분석하기' 버튼을 눌러 새로 분석하면 AI 인사이트가 자동 생성됩니다.
+                      </p>
                     </div>
                   </div>
                 )}
@@ -1209,11 +1169,11 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                 {/* 임시로 남겨둔 통계 카드 - 삭제 예정 */}
                 <div className="hidden grid-cols-1 md:grid-cols-3 gap-6">
                   <motion.div 
-                    className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 text-center"
+                    className="bg-blue-50 rounded-lg p-6 text-center"
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <div className="w-12 h-12 bg-primary-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                       <DocumentTextIcon className="w-6 h-6 text-white" />
                     </div>
                     <div className="text-3xl font-bold text-blue-700 mb-1">
@@ -1233,11 +1193,11 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                     <div className="text-sm font-medium text-blue-600">총 데이터 필드</div>
                   </motion.div>
                   <motion.div 
-                    className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 text-center"
+                    className="bg-purple-50 rounded-lg p-6 text-center"
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                       <ChartBarIcon className="w-6 h-6 text-white" />
                     </div>
                     <div className="text-3xl font-bold text-purple-700 mb-1">
@@ -1268,11 +1228,11 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                     <div className="text-sm font-medium text-purple-600">숫자 데이터</div>
                   </motion.div>
                   <motion.div 
-                    className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-6 text-center"
+                    className="bg-amber-50 rounded-lg p-6 text-center"
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <div className="w-12 h-12 bg-amber-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                       <DocumentTextIcon className="w-6 h-6 text-white" />
                     </div>
                     <div className="text-3xl font-bold text-amber-700 mb-1">
@@ -1312,11 +1272,11 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
                 {/* 데이터 특성 분석 - 삭제됨 */}
                 <div className="hidden mb-8">
-                  <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+                  <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
                     <ChartBarIcon className="w-6 h-6 text-primary-600" />
                     데이터 특성 분석
                     {selectedTableName && (
-                      <span className="text-lg text-blue-600 ml-2 bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1 rounded-lg">
+                      <span className="text-lg text-blue-600 ml-2 bg-blue-100 px-3 py-1 rounded-lg">
                         {selectedTableName}
                       </span>
                     )}
@@ -1335,13 +1295,13 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                     if (isEmpty) {
                       return (
                         <motion.div 
-                          className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-8 border border-amber-200"
+                          className="bg-amber-50 rounded-lg p-8 border border-amber-200"
                           initial={{ opacity: 0, scale: 0.95 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ duration: 0.3 }}
                         >
                           <div className="flex items-center gap-4 mb-6">
-                            <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-yellow-500 rounded-xl flex items-center justify-center">
+                            <div className="w-12 h-12 bg-amber-600 rounded-lg flex items-center justify-center">
                               <SparklesIcon className="w-6 h-6 text-white" />
                             </div>
                             <h4 className="text-xl font-semibold text-amber-800">데이터 없음</h4>
@@ -1349,9 +1309,9 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                           <p className="text-amber-700 mb-6 text-lg">
                             선택된 통계표 <span className="font-bold">"{selectedTableName || '알 수 없음'}"</span>에는 분석 가능한 데이터가 없습니다.
                           </p>
-                          <div className="bg-gradient-to-r from-amber-100 to-yellow-100 rounded-xl p-6">
+                          <div className="bg-amber-100 rounded-lg p-6">
                             <div className="flex items-start gap-3">
-                              <div className="w-6 h-6 bg-gradient-to-br from-amber-600 to-yellow-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                              <div className="w-6 h-6 bg-amber-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                                 <span className="text-white text-xs font-bold">!</span>
                               </div>
                               <div className="text-sm text-amber-800 leading-relaxed">
@@ -1372,13 +1332,13 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                       <div className="space-y-6">
                         {/* 데이터 분류 및 특성 */}
                         <motion.div 
-                          className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-6 shadow-lg"
+                          className="bg-blue-50 rounded-lg p-6 shadow-lg"
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.3, delay: 0.1 }}
                         >
                           <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                            <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
                               <ChartBarIcon className="w-5 h-5 text-white" />
                             </div>
                             <h4 className="font-semibold text-blue-900">데이터 분류 및 특성</h4>
@@ -1386,12 +1346,12 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="bg-white rounded-lg p-4 shadow-sm">
                               <div className="flex items-center gap-2 mb-2">
-                                <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                                <div className="w-6 h-6 bg-primary-600 rounded-lg flex items-center justify-center">
                                   <ChartBarIcon className="w-3 h-3 text-white" />
                                 </div>
                                 <span className="text-blue-800 font-medium text-sm">데이터 유형</span>
                               </div>
-                              <span className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
+                              <span className="bg-primary-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
                                 {patterns.dataClassification === 'temporal-geographic' && '시계열-지역별'}
                                 {patterns.dataClassification === 'geographic' && '지역별 통계'}
                                 {patterns.dataClassification === 'temporal' && '시계열 통계'}
@@ -1403,12 +1363,12 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                             {patterns.mainCategory && (
                               <div className="bg-white rounded-lg p-4 shadow-sm">
                                 <div className="flex items-center gap-2 mb-2">
-                                  <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                                  <div className="w-6 h-6 bg-green-600 rounded-lg flex items-center justify-center">
                                     <TagIcon className="w-3 h-3 text-white" />
                                   </div>
                                   <span className="text-green-800 font-medium text-sm">분야</span>
                                 </div>
-                                <span className="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
+                                <span className="bg-green-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
                                   {patterns.mainCategory}
                                 </span>
                               </div>
@@ -1417,12 +1377,12 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                             {patterns.timePeriod && (
                               <div className="bg-white rounded-lg p-4 shadow-sm">
                                 <div className="flex items-center gap-2 mb-2">
-                                  <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                  <div className="w-6 h-6 bg-purple-600 rounded-lg flex items-center justify-center">
                                     <SparklesIcon className="w-3 h-3 text-white" />
                                   </div>
                                   <span className="text-purple-800 font-medium text-sm">기간</span>
                                 </div>
-                                <span className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
+                                <span className="bg-purple-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
                                   {patterns.timePeriod}
                                 </span>
                               </div>
@@ -1510,11 +1470,11 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
               {/* 원본 테이블 재구성 - 삭제됨 */}
               <div className="hidden mb-8">
-                <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+                <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
                   <TableCellsIcon className="w-6 h-6 text-primary-600" />
                   원본 테이블 재구성
             {selectedTableName && (
-              <span className="text-lg text-blue-600 ml-2 bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1 rounded-lg">
+              <span className="text-lg text-blue-600 ml-2 bg-blue-100 px-3 py-1 rounded-lg">
                 {selectedTableName}
               </span>
             )}
@@ -1523,7 +1483,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
           {(() => {
             const patterns = analyzeDataPatterns(processedStats?.sample_data || []);
             return (
-              <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 mb-4">
+              <div className="bg-green-50 rounded-lg p-4 mb-4">
                 <div className="flex items-center gap-4 flex-wrap text-sm">
                   <span className="text-green-800 font-medium">🎯 데이터 특성:</span>
                   <div className="flex flex-wrap gap-2">
@@ -1555,13 +1515,13 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
             if (!reconstructedTables || Object.keys(reconstructedTables).length === 0) {
               return (
                 <motion.div 
-                  className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8 text-center"
+                  className="bg-gray-50 rounded-lg p-8 text-center"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3 }}
                 >
                   <div className="flex flex-col items-center gap-4 mb-6">
-                    <div className="w-16 h-16 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center">
+                    <div className="w-16 h-16 bg-gray-600 rounded-lg flex items-center justify-center">
                       <TableCellsIcon className="w-8 h-8 text-white" />
                     </div>
                     <div>
@@ -1619,7 +1579,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
                   return (
                     <div key={tableIndex} className="border rounded-lg overflow-hidden shadow-sm">
-                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-3 border-b">
+                      <div className="bg-blue-50 px-4 py-3 border-b">
                         <h4 className="font-semibold text-gray-900 flex items-center">
                           <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-2">
                             {tableIndex + 1}
@@ -1738,13 +1698,13 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               })}
 
                 <motion.div 
-                  className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200 shadow-lg"
+                  className="bg-green-50 rounded-lg p-6 border border-green-200 shadow-lg"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3 }}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
                       <SparklesIcon className="w-6 h-6 text-white" />
                     </div>
                     <div>
@@ -1782,14 +1742,14 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
               {/* 데이터 분포 특성 - 삭제됨 */}
               <div className="hidden mb-8">
-                <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+                <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
                   <ChartBarIcon className="w-6 h-6 text-primary-600" />
                   데이터 분포 특성
                 </h4>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6">
+            <div className="bg-blue-50 rounded-lg p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
                   <ChartBarIcon className="w-5 h-5 text-white" />
                 </div>
                 <h4 className="font-semibold text-blue-900">중심경향 분석</h4>
@@ -1814,9 +1774,9 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6">
+            <div className="bg-green-50 rounded-lg p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
                   <SparklesIcon className="w-5 h-5 text-white" />
                 </div>
                 <h4 className="font-semibold text-green-900">변동성 분석</h4>
@@ -1846,9 +1806,9 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6">
+            <div className="bg-purple-50 rounded-lg p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
                   <TableCellsIcon className="w-5 h-5 text-white" />
                 </div>
                 <h4 className="font-semibold text-purple-900">데이터 구성</h4>
@@ -1884,21 +1844,21 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
               {/* 객관적 현황 요약 - 삭제됨 */}
               <div className="hidden">
-                <h4 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-6 flex items-center gap-3">
+                <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
                   <SparklesIcon className="w-6 h-6 text-primary-600" />
                   객관적 현황 요약
                 </h4>
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8">
+          <div className="bg-gray-50 rounded-lg p-8">
             
             
             <motion.div 
-              className="mb-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200 shadow-lg"
+              className="mb-8 p-6 bg-green-50 rounded-lg border border-green-200 shadow-lg"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.6 }}
             >
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
                   <SparklesIcon className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -1912,9 +1872,9 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
               </div>
             </motion.div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="bg-white rounded-xl p-6">
+              <div className="bg-white rounded-lg p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+                  <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
                     <ChartBarIcon className="w-5 h-5 text-white" />
                   </div>
                   <h4 className="font-semibold text-gray-900">핵심 통계</h4>
@@ -1939,9 +1899,9 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                 </div>
               </div>
               
-              <div className="bg-white rounded-xl p-6">
+              <div className="bg-white rounded-lg p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center">
+                  <div className="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
                     <TableCellsIcon className="w-5 h-5 text-white" />
                   </div>
                   <h4 className="font-semibold text-gray-900">수집 현황</h4>
