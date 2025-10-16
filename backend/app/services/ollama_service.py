@@ -14,7 +14,7 @@ class OllamaService:
     def __init__(self, base_url: str = "http://localhost:11434", model: str = "llama3.1:8b-instruct-q4_K_M"):
         self.base_url = base_url
         self.model = model
-        self.timeout = 600  # 10분 타임아웃 (10개 인사이트 생성)
+        self.timeout = 60  # 10분 타임아웃 (10개 인사이트 생성)
         self.chat_timeout = 120  # 2분 타임아웃 (채팅용)
 
     def is_available(self) -> bool:
@@ -24,6 +24,217 @@ class OllamaService:
             return response.status_code == 200
         except:
             return False
+
+    def generate_statistical_insights_by_tables(
+        self,
+        metadata: Dict[str, Any],
+        tables_data: Dict[str, List[Dict]]  # {table_name: [data1, data2, ...]}
+    ) -> Dict[str, Any]:
+        """
+        통계표별로 나눠서 AI 인사이트 생성 (16K 컨텍스트 제한 대응)
+
+        Args:
+            metadata: 통계 메타데이터
+            tables_data: {통계표명: 데이터리스트} 딕셔너리
+
+        Returns:
+            종합된 인사이트
+        """
+        try:
+            print(f"[Ollama] 통계표별 인사이트 생성 시작... (총 {len(tables_data)}개 통계표)")
+
+            table_insights = []
+
+            # 각 통계표별로 개별 인사이트 생성
+            for idx, (table_name, table_data) in enumerate(tables_data.items(), 1):
+                print(f"[Ollama] [{idx}/{len(tables_data)}] '{table_name}' 분석 중... ({len(table_data)}개 데이터)")
+
+                # 통계표별 기본 통계량 계산
+                table_summary = self._calculate_table_statistics(table_data)
+
+                # 단일 통계표 인사이트 생성
+                insight = self.generate_single_table_insight(
+                    table_name=table_name,
+                    table_data=table_data,
+                    table_summary=table_summary,
+                    metadata=metadata
+                )
+
+                table_insights.append({
+                    'table_name': table_name,
+                    'insight': insight,
+                    'data_count': len(table_data)
+                })
+
+                print(f"[Ollama] [{idx}/{len(tables_data)}] '{table_name}' 분석 완료")
+
+            # 통계표별 인사이트를 종합
+            combined_insights = self._combine_table_insights(metadata, table_insights)
+
+            print(f"[Ollama] 통계표별 인사이트 생성 완료: 총 {len(table_insights)}개 통계표")
+
+            return combined_insights
+
+        except Exception as e:
+            print(f"[Ollama] 통계표별 인사이트 생성 실패: {e}")
+            return self._create_fallback_insights(metadata, {}, list(tables_data.keys()))
+
+    def generate_single_table_insight(
+        self,
+        table_name: str,
+        table_data: List[Dict],
+        table_summary: Dict[str, Any],
+        metadata: Dict[str, Any]
+    ) -> str:
+        """단일 통계표에 대한 인사이트 생성 (간단 버전)"""
+        try:
+            # 프롬프트 구성 (간결한 버전)
+            prompt = self._build_single_table_prompt(
+                table_name, table_data, table_summary, metadata
+            )
+
+            # Ollama API 호출
+            response = requests.post(
+                f"{self.base_url}/api/generate",
+                json={
+                    "model": self.model,
+                    "prompt": prompt,
+                    "stream": False,
+                    "options": {
+                        "temperature": 0.3,
+                        "top_p": 0.9,
+                        "num_predict": 500,  # 통계표당 500 토큰
+                        "num_ctx": 16384
+                    }
+                },
+                timeout=self.timeout
+            )
+
+            if response.status_code != 200:
+                raise Exception(f"Ollama API 오류: {response.status_code}")
+
+            result = response.json()
+            return result.get('response', '').strip()
+
+        except Exception as e:
+            print(f"[Ollama] 통계표 '{table_name}' 인사이트 생성 실패: {e}")
+            return f"{table_name}: 분석 실패"
+
+    def _build_single_table_prompt(
+        self,
+        table_name: str,
+        table_data: List[Dict],
+        table_summary: Dict[str, Any],
+        metadata: Dict[str, Any]
+    ) -> str:
+        """단일 통계표 분석용 프롬프트 (간결 버전)"""
+
+        # 최신 데이터 50개만 사용 (16K 컨텍스트 제한)
+        sample_data = table_data[-50:] if len(table_data) > 50 else table_data
+
+        prompt = f"""당신은 통계 데이터 분석 전문가입니다. '{table_name}' 통계표를 분석해주세요.
+
+## 통계표 정보
+- 통계표명: {table_name}
+- 데이터 수: {len(table_data):,}개
+- 평균: {table_summary.get('mean', 0):,.2f}
+- 최댓값: {table_summary.get('max', 0):,.2f}
+- 최솟값: {table_summary.get('min', 0):,.2f}
+
+## 데이터 샘플 (최신 {len(sample_data)}개)
+"""
+
+        # 샘플 데이터 추가
+        for idx, data in enumerate(sample_data[:30], 1):  # 최대 30개만
+            year = data.get('year', '')
+            values = data.get('data', {})
+
+            # 주요 값만 추출 (최대 5개)
+            main_values = []
+            for k, v in list(values.items())[:5]:
+                if not k.startswith('_'):
+                    main_values.append(f"{k}={v}")
+
+            if main_values:
+                prompt += f"{idx}. [{year}년] {', '.join(main_values)}\n"
+
+        prompt += """
+## 분석 요청
+이 통계표의 주요 특징을 2-3문장으로 간결하게 분석해주세요:
+- 전체 규모 및 추세
+- 주요 특징 (최댓값/최솟값, 증감 패턴 등)
+- 한줄 요약
+
+답변:"""
+
+        return prompt
+
+    def _calculate_table_statistics(self, table_data: List[Dict]) -> Dict[str, Any]:
+        """통계표별 기본 통계량 계산"""
+        numeric_values = []
+
+        for item in table_data:
+            data = item.get('data', {})
+            for key, value in data.items():
+                if key.startswith('_'):
+                    continue
+                try:
+                    if isinstance(value, (int, float)):
+                        numeric_values.append(float(value))
+                    elif isinstance(value, str):
+                        cleaned = value.replace(',', '').replace('%', '').strip()
+                        numeric_values.append(float(cleaned))
+                except (ValueError, TypeError):
+                    continue
+
+        if not numeric_values:
+            return {'mean': 0, 'max': 0, 'min': 0, 'count': 0}
+
+        import numpy as np
+        return {
+            'mean': float(np.mean(numeric_values)),
+            'max': float(np.max(numeric_values)),
+            'min': float(np.min(numeric_values)),
+            'count': len(numeric_values)
+        }
+
+    def _combine_table_insights(
+        self,
+        metadata: Dict[str, Any],
+        table_insights: List[Dict]
+    ) -> Dict[str, Any]:
+        """통계표별 인사이트를 종합"""
+
+        stat_name = metadata.get('title', '통계')
+        table_names = [t['table_name'] for t in table_insights]
+
+        # 종합 인사이트 구조 생성
+        combined = {
+            'stat_name': stat_name,
+            'raw_text': '',
+            'insights_count': len(table_insights),
+            'generated_at': datetime.now().isoformat(),
+            'model': self.model,
+
+            # 필수 항목
+            'analysis_title': f'{stat_name} 통계표별 현황 분석',
+            'analysis_overview': f'{stat_name}의 {len(table_names)}개 통계표를 개별 분석하여 종합한 결과입니다.',
+            'analysis_purpose': f'- {stat_name}의 통계표별 현황 파악\n- 각 통계표의 주요 특징 분석',
+            'data_sources': '\n'.join([f'- {name}' for name in table_names])
+        }
+
+        # 통계표별 인사이트를 insight_1, insight_2, ... 형태로 저장
+        for idx, table_insight in enumerate(table_insights, 1):
+            combined[f'insight_{idx}'] = {
+                'title': table_insight['table_name'],
+                'method': '기본 통계량 산출',
+                'items': table_insight['table_name'],
+                'content': table_insight['insight'],
+                'features': f"데이터 수: {table_insight['data_count']:,}개",
+                'visualization': '막대그래프'
+            }
+
+        return combined
 
     def generate_statistical_insights(
         self,
@@ -73,7 +284,8 @@ class OllamaService:
                     "options": {
                         "temperature": 0.3,  # 낮은 temperature로 객관적 분석
                         "top_p": 0.9,
-                        "num_predict": 1000  # 10개 인사이트를 위해 늘림
+                        "num_predict": 1000,  # 10개 인사이트를 위해 늘림
+                        "num_ctx": 16384  # 16K 토큰 컨텍스트 (기본 8K → 16K)
                     }
                 },
                 timeout=self.timeout
@@ -136,7 +348,8 @@ class OllamaService:
                     "options": {
                         "temperature": 0.3,
                         "top_p": 0.9,
-                        "num_predict": 500  # 짧은 답변 유도
+                        "num_predict": 500,  # 짧은 답변 유도
+                        "num_ctx": 16384  # 16K 토큰 컨텍스트 (채팅용)
                     }
                 },
                 timeout=self.chat_timeout

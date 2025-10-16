@@ -298,17 +298,27 @@ class DataStorageService:
         return None, None
 
     def _normalize_stat_name(self, name: str) -> str:
-        """통계명 정규화 (비교용)"""
+        """통계명 정규화 (비교용) - 한글 괄호는 유지 (준공, 인허가 등 구분용)"""
         import re
         # 1. "-" 뒤의 통계표명 제거 (통계명만 남김)
         if '-' in name:
             name = name.split('-')[0].strip()
-        # 2. 괄호 안의 영문 제거
-        normalized = re.sub(r'\([^)]*\)', '', name)
-        # 3. 공백/특수문자 정리
-        normalized = re.sub(r'[^\w가-힣]', '', normalized)
-        # 4. 추가 정리: 대소문자 통일, 공백 제거
-        normalized = normalized.lower().strip().replace(' ', '')
+        
+        # 2. 영문, 숫자, 특수문자만 포함된 괄호만 제거 (한글 괄호는 유지)
+        # 예: "(MOLIT)" 제거, "(1999 ~ 2024)" 제거, 하지만 "(준공)", "(인허가)" 유지
+        normalized = name
+        prev_normalized = ''
+        while prev_normalized != normalized:
+            prev_normalized = normalized
+            # 영문, 숫자, 공백, 특수문자만 포함된 괄호 제거
+            normalized = re.sub(r'\([A-Za-z0-9\s.,\-/~]+\)', '', normalized)
+        
+        # 3. 공백/특수문자 정리 (한글과 영문, 숫자, 괄호만 남김)
+        normalized = re.sub(r'[^\w가-힣()]+', '', normalized)
+        
+        # 4. 추가 정리: 대소문자 통일
+        normalized = normalized.lower().strip()
+        
         print(f"[NORMALIZE] '{name}' -> '{normalized}'")
         return normalized
     

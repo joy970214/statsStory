@@ -137,14 +137,14 @@ async def get_collected_stats_list():
                 if '-' in full_title:
                     stat_name_display = full_title.split('-')[0].strip()
 
-                # 괄호 안의 영문만 제거 (한글은 유지 - 준공, 착공 등 구분용)
+                # 괄호 안의 영문, 숫자만 제거 (한글은 유지 - 준공, 착공 등 구분용)
                 import re
-                # 영문, 공백, 특수문자만 포함된 괄호를 반복적으로 제거
-                while True:
-                    new_display = re.sub(r'\([A-Za-z\s\.,\-\/]+\)', '', stat_name_display).strip()
-                    if new_display == stat_name_display:
-                        break
-                    stat_name_display = new_display
+                # 영문, 숫자, 공백, 특수문자만 포함된 괄호를 반복적으로 제거
+                # 예: "(1999 ~ 2024)" 제거, 하지만 "(준공)", "(인허가)" 유지
+                prev_display = ''
+                while prev_display != stat_name_display:
+                    prev_display = stat_name_display
+                    stat_name_display = re.sub(r'\([A-Za-z0-9\s.,\-/~]+\)', '', stat_name_display).strip()
 
                 stat_info = {
                     "stat_name": stat_name_display,

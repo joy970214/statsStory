@@ -4,7 +4,14 @@ import { motion } from 'framer-motion';
 import { 
   CheckCircleIcon, 
   ClockIcon, 
-  SparklesIcon
+  SparklesIcon,
+  RocketLaunchIcon,
+  ClipboardDocumentListIcon,
+  ChartBarIcon,
+  MagnifyingGlassIcon,
+  CircleStackIcon,
+  CpuChipIcon,
+  CheckBadgeIcon
 } from '@heroicons/react/24/outline';
 
 interface ProgressData {
@@ -335,7 +342,7 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
         </div>
       </motion.div>
 
-      {/* 처리 단계 표시 */}
+      {/* 처리 단계 표시 - 가로 레이아웃 */}
       <motion.div
         className="bg-white border border-gray-200 rounded-xl p-6 shadow-lg"
         initial={{ opacity: 0, y: 20 }}
@@ -346,70 +353,85 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
           <SparklesIcon className="w-5 h-5 text-primary-600" />
           처리 단계
         </h3>
-        <div className="space-y-4">
-          {[
-            { name: '초기화', key: 'init', description: '최적화된 크롤러 초기화 및 설정', threshold: 0 },
-            { name: '통계표목록', key: 'tables', description: '사용 가능한 통계표 목록 조회', threshold: 15 },
-            { name: '데이터수집', key: 'data', description: '통계표별 메타데이터 및 데이터 수집', threshold: 30 },
-            { name: '데이터분석', key: 'stats', description: '기본 통계량 계산', threshold: 80 },
-            { name: '벡터DB저장', key: 'vector', description: 'ChromaDB에 데이터 저장 (채팅용)', threshold: 82 },
-            { name: 'AI분석', key: 'ai', description: 'Ollama AI 인사이트 생성', threshold: 88 },
-            { name: '완료', key: 'complete', description: '분석 결과 정리 및 완료', threshold: 100 }
-          ].map((step, index) => {
-            const isActive = progress.stage.toLowerCase().includes(step.key) ||
-                           step.name === progress.stage ||
-                           (step.key === 'data' && progress.stage.includes('데이터')) ||
-                           (step.key === 'stats' && progress.stage.includes('분석') && progress.progress >= 80 && progress.progress < 82) ||
-                           (step.key === 'vector' && (progress.stage.includes('벡터') || progress.stage.includes('DB'))) ||
-                           (step.key === 'ai' && (progress.stage.includes('AI') || progress.message.includes('Ollama') || progress.message.includes('인사이트')));
-            const isCompleted = progress.progress >= step.threshold;
-            
-            return (
-              <motion.div 
-                key={step.key} 
-                className="flex items-start p-3 rounded-lg transition-all duration-200 hover:bg-gray-50"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.8 + index * 0.1 }}
-              >
-                <div className="flex-shrink-0 mr-4 mt-1">
-                  {isCompleted ? (
-                    <motion.div 
-                      className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-lg"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    >
-                      <CheckCircleIcon className="w-4 h-4 text-white" />
-                    </motion.div>
-                  ) : isActive ? (
-                    <motion.div 
-                      className="w-6 h-6 bg-primary-600 rounded-full shadow-lg"
-                      animate={{ 
-                        scale: [1, 1.1, 1],
-                        opacity: [1, 0.7, 1]
-                      }}
-                      transition={{ 
-                        duration: 1.5, 
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-                  ) : (
-                    <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
-                  )}
-                </div>
-                <div className="flex-1">
-                  <p className={`text-base font-semibold mb-1 ${
-                    isActive ? 'text-primary-600' : isCompleted ? 'text-green-600' : 'text-gray-500'
+        <div className="relative">
+          {/* 연결선 */}
+          <div className="absolute top-8 left-0 right-0 h-0.5 bg-gray-200" style={{ zIndex: 0 }} />
+          
+          {/* 단계들 */}
+          <div className="relative flex justify-between items-start" style={{ zIndex: 1 }}>
+            {[
+              { name: '초기화', key: 'init', Icon: RocketLaunchIcon, threshold: 0 },
+              { name: '통계표목록', key: 'tables', Icon: ClipboardDocumentListIcon, threshold: 15 },
+              { name: '데이터수집', key: 'data', Icon: ChartBarIcon, threshold: 30 },
+              { name: '데이터분석', key: 'stats', Icon: MagnifyingGlassIcon, threshold: 80 },
+              { name: '벡터DB', key: 'vector', Icon: CircleStackIcon, threshold: 82 },
+              { name: 'AI분석', key: 'ai', Icon: CpuChipIcon, threshold: 88 },
+              { name: '완료', key: 'complete', Icon: CheckBadgeIcon, threshold: 100 }
+            ].map((step, index) => {
+              const isActive = progress.stage.toLowerCase().includes(step.key) ||
+                             step.name === progress.stage ||
+                             (step.key === 'data' && progress.stage.includes('데이터')) ||
+                             (step.key === 'stats' && progress.stage.includes('분석') && progress.progress >= 80 && progress.progress < 82) ||
+                             (step.key === 'vector' && (progress.stage.includes('벡터') || progress.stage.includes('DB'))) ||
+                             (step.key === 'ai' && (progress.stage.includes('AI') || progress.message.includes('Ollama') || progress.message.includes('인사이트')));
+              const isCompleted = progress.progress >= step.threshold;
+              
+              return (
+                <motion.div 
+                  key={step.key} 
+                  className="flex flex-col items-center"
+                  style={{ flex: '1' }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 + index * 0.1 }}
+                >
+                  {/* 아이콘/상태 표시 */}
+                  <div className="relative mb-3">
+                    {isCompleted ? (
+                      <motion.div 
+                        className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                      >
+                        <CheckCircleIcon className="w-8 h-8 text-white" />
+                      </motion.div>
+                    ) : isActive ? (
+                      <motion.div 
+                        className="w-16 h-16 bg-primary-600 rounded-full flex items-center justify-center shadow-lg"
+                        animate={{ 
+                          scale: [1, 1.1, 1],
+                          boxShadow: [
+                            '0 10px 15px -3px rgba(59, 130, 246, 0.3)',
+                            '0 20px 25px -5px rgba(59, 130, 246, 0.5)',
+                            '0 10px 15px -3px rgba(59, 130, 246, 0.3)'
+                          ]
+                        }}
+                        transition={{ 
+                          duration: 1.5, 
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      >
+                        <step.Icon className="w-8 h-8 text-white" />
+                      </motion.div>
+                    ) : (
+                      <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center opacity-50">
+                        <step.Icon className="w-8 h-8 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* 단계 이름 */}
+                  <p className={`text-xs font-semibold text-center whitespace-nowrap ${
+                    isActive ? 'text-primary-600' : isCompleted ? 'text-green-600' : 'text-gray-400'
                   }`}>
                     {step.name}
                   </p>
-                  <p className="text-sm text-gray-600">{step.description}</p>
-                </div>
-              </motion.div>
-            );
-          })}
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </motion.div>
     </motion.div>

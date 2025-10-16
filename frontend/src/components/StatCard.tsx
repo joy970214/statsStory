@@ -4,16 +4,18 @@ import {
   MagnifyingGlassIcon,
   ChartBarIcon,
   CalendarIcon,
-  TagIcon
+  TagIcon,
+  CheckCircleIcon
 } from '@heroicons/react/24/outline';
 
 interface StatCardProps {
   stat: StatItem;
   onSelect: (stat: StatItem) => void;
   disabled?: boolean;
+  isCollected?: boolean;
 }
 
-export const StatCard: React.FC<StatCardProps> = ({ stat, onSelect, disabled = false }) => {
+export const StatCard: React.FC<StatCardProps> = ({ stat, onSelect, disabled = false, isCollected = false }) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleAnalysisClick = () => {
@@ -29,16 +31,20 @@ export const StatCard: React.FC<StatCardProps> = ({ stat, onSelect, disabled = f
   // 카테고리별 색상 매핑 (해시 기반으로 고정된 색상 할당)
   const getCategoryColor = (category: string) => {
     const colors = [
-      'bg-primary-50 text-primary-700',      // 파란색
-      'bg-success-50 text-success-700',      // 초록색
-      'bg-warning-50 text-warning-700',      // 주황색
-      'bg-info-50 text-info-700',            // 하늘색
-      'bg-danger-50 text-danger-700',        // 빨간색
-      'bg-secondary-50 text-secondary-700',  // 회색
-      'bg-primary-100 text-primary-800',     // 진한 파란색
-      'bg-success-100 text-success-700',     // 진한 초록색
-      'bg-warning-100 text-warning-700',     // 진한 주황색
-      'bg-danger-100 text-danger-700',       // 진한 빨간색
+      'bg-blue-50 text-blue-700 border-blue-200',           // 파란색
+      'bg-green-50 text-green-700 border-green-200',        // 초록색
+      'bg-yellow-50 text-yellow-700 border-yellow-200',     // 노란색
+      'bg-cyan-50 text-cyan-700 border-cyan-200',           // 시안색
+      'bg-red-50 text-red-700 border-red-200',              // 빨간색
+      'bg-violet-50 text-violet-700 border-violet-200',     // 보라색
+      'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200',  // 자홍색
+      'bg-indigo-50 text-indigo-700 border-indigo-200',     // 인디고
+      'bg-teal-50 text-teal-700 border-teal-200',           // 청록색
+      'bg-orange-50 text-orange-700 border-orange-200',     // 오렌지색
+      'bg-rose-50 text-rose-700 border-rose-200',           // 로즈색
+      'bg-emerald-50 text-emerald-700 border-emerald-200',  // 에메랄드
+      'bg-amber-50 text-amber-700 border-amber-200',        // 호박색
+      'bg-sky-50 text-sky-700 border-sky-200',              // 스카이블루
     ];
     
     // 카테고리 문자열을 해시화하여 일관된 색상 인덱스 생성
@@ -60,10 +66,23 @@ export const StatCard: React.FC<StatCardProps> = ({ stat, onSelect, disabled = f
         
         <div className="text-sm text-gray-600 mb-4">
           <div className="flex justify-between items-center mb-3">
-            <span className={`${getCategoryColor(stat.stat_field || '기타')} px-3 py-1 rounded-md text-xs font-medium flex items-center gap-1.5`}>
-              <TagIcon className="w-3.5 h-3.5" />
-              {stat.stat_field || '기타'}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className={`${getCategoryColor(stat.stat_field || '기타')} border px-3 py-1 rounded-md text-xs font-medium flex items-center gap-1.5`}>
+                <TagIcon className="w-3.5 h-3.5" />
+                {stat.stat_field || '기타'}
+              </span>
+              {isCollected ? (
+                <span className="bg-green-50 text-green-700 px-3 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 border border-green-200">
+                  <CheckCircleIcon className="w-3.5 h-3.5" />
+                  수집됨
+                </span>
+              ) : (
+                <span className="bg-gray-50 text-gray-600 px-3 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 border border-gray-200">
+                  <CheckCircleIcon className="w-3.5 h-3.5" />
+                  수집안됨
+                </span>
+              )}
+            </div>
             <span className="text-gray-500 flex items-center gap-1.5">
               <CalendarIcon className="w-3.5 h-3.5" />
               {stat.publish_date}

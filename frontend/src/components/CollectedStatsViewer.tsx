@@ -184,30 +184,30 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <ClipboardDocumentListIcon className="w-5 h-5 text-primary-600" />
+              <ClipboardDocumentListIcon className="w-5 h-5 text-blue-600" />
               <h3 className="text-base font-semibold text-gray-900">총 통계</h3>
             </div>
-            <p className="text-2xl font-bold text-primary-600">{statsData.total_collected_stats}</p>
+            <p className="text-2xl font-bold text-blue-600">{statsData.total_collected_stats}</p>
           </div>
           
-          <div className="bg-success-50 border border-success-200 rounded-lg p-4">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <ChartBarIcon className="w-5 h-5 text-success-600" />
+              <ChartBarIcon className="w-5 h-5 text-green-600" />
               <h3 className="text-base font-semibold text-gray-900">총 데이터 포인트</h3>
             </div>
-            <p className="text-2xl font-bold text-success-600">
+            <p className="text-2xl font-bold text-green-600">
               {statsData.stats.reduce((sum, stat) => sum + stat.total_data_points, 0).toLocaleString()}
             </p>
           </div>
           
-          <div className="bg-info-50 border border-info-200 rounded-lg p-4">
+          <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <DocumentTextIcon className="w-5 h-5 text-info-600" />
+              <DocumentTextIcon className="w-5 h-5 text-cyan-600" />
               <h3 className="text-base font-semibold text-gray-900">평균 필드 수</h3>
             </div>
-            <p className="text-2xl font-bold text-info-600">
+            <p className="text-2xl font-bold text-cyan-600">
               {statsData.stats.length > 0
                 ? Math.round(statsData.stats.reduce((sum, stat) => sum + stat.data_fields_info.total_fields, 0) / statsData.stats.length).toLocaleString()
                 : 0
@@ -215,12 +215,12 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
             </p>
           </div>
           
-          <div className="bg-warning-50 border border-warning-200 rounded-lg p-4">
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <CalendarIcon className="w-5 h-5 text-warning-600" />
+              <CalendarIcon className="w-5 h-5 text-amber-600" />
               <h3 className="text-base font-semibold text-gray-900">최근 수집</h3>
             </div>
-            <p className="text-base font-semibold text-warning-700">
+            <p className="text-base font-semibold text-amber-700">
               {statsData.stats.length > 0
                 ? formatDate(statsData.stats[0].saved_at)
                 : '수집데이터 없음'
@@ -265,7 +265,7 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
                     <h3 className="text-xl font-semibold text-gray-900">
                       {stat.stat_name}
                     </h3>
-                    <span className="bg-primary-100 text-primary-800 text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1">
+                    <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1 border border-blue-300">
                       <TagIcon className="w-3 h-3" />
                       {stat.department}
                     </span>
@@ -273,39 +273,39 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
 
                   {/* 데이터 정보 */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                    <div className="bg-primary-50 rounded-lg p-3">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                       <div className="flex items-center gap-2 mb-1">
-                        <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                         <span className="text-xs text-gray-600">총 데이터</span>
                       </div>
-                      <span className="text-lg font-bold text-primary-600">
+                      <span className="text-lg font-bold text-blue-600">
                         {stat.total_data_points.toLocaleString()}개
                       </span>
                     </div>
-                    <div className="bg-info-50 rounded-lg p-3">
+                    <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-3">
                       <div className="flex items-center gap-2 mb-1">
-                        <div className="w-2 h-2 bg-info-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
                         <span className="text-xs text-gray-600">총 필드</span>
                       </div>
-                      <span className="text-lg font-bold text-info-600">
+                      <span className="text-lg font-bold text-cyan-600">
                         {stat.data_fields_info.total_fields}개
                       </span>
                     </div>
-                    <div className="bg-success-50 rounded-lg p-3">
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                       <div className="flex items-center gap-2 mb-1">
-                        <div className="w-2 h-2 bg-success-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                         <span className="text-xs text-gray-600">숫자 데이터</span>
                       </div>
-                      <span className="text-lg font-bold text-success-600">
+                      <span className="text-lg font-bold text-green-600">
                         {stat.data_fields_info.numeric_fields}개
                       </span>
                     </div>
-                    <div className="bg-secondary-100 rounded-lg p-3">
+                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
                       <div className="flex items-center gap-2 mb-1">
-                        <div className="w-2 h-2 bg-secondary-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                         <span className="text-xs text-gray-600">텍스트 데이터</span>
                       </div>
-                      <span className="text-lg font-bold text-secondary-600">
+                      <span className="text-lg font-bold text-purple-600">
                         {stat.data_fields_info.text_fields}개
                       </span>
                     </div>
@@ -342,7 +342,7 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
                 <div className="flex flex-col space-y-2 ml-6">
                   <button
                     onClick={() => onSelectStat(stat.stat_name)}
-                    className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors text-sm font-medium whitespace-nowrap flex items-center gap-2"
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium whitespace-nowrap flex items-center gap-2"
                   >
                     <ChartBarIcon className="w-4 h-4" />
                     상세 분석
@@ -356,7 +356,7 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
                   </button>
                   <button
                     onClick={() => deleteStat(stat.cache_key, stat.stat_name)}
-                    className="bg-danger-600 text-white px-4 py-2 rounded-md hover:bg-danger-700 transition-colors text-sm font-medium whitespace-nowrap flex items-center gap-2"
+                    className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors text-sm font-medium whitespace-nowrap flex items-center gap-2"
                     title="이 통계표의 모든 데이터를 삭제합니다"
                   >
                     <TrashIcon className="w-4 h-4" />

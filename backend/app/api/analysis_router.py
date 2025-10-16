@@ -357,52 +357,52 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
                 if ollama_service.is_available() and stored_count > 0:
                     print(f"[AI] Ollama 인사이트 생성 시작...")
 
-                    # 통계표 목록 수집
-                    table_names = list(set([
-                        getattr(item, 'table_name', '기본 통계표')
-                        for item in stat_data
-                        if hasattr(item, 'table_name')
-                    ]))
-
-                    # JSON 파일에서 직접 데이터 로드 (VectorDB 대신)
+                    # JSON 파일에서 통계표별로 데이터 로드
                     progress_tracker.update_progress(task_id, "AI분석", 89, "통계 데이터를 로드하고 있습니다...")
-                    await asyncio.sleep(0.1)  # SSE 전송을 위한 이벤트 루프 양보
+                    await asyncio.sleep(0.1)
 
                     # JSON 파일 경로
                     json_file_path = Path(__file__).parent.parent.parent / "data" / "statistics" / f"{cache_key}_stats.json"
 
-                    # JSON 직접 로드 (별도 스레드에서)
-                    def load_json_data():
+                    # JSON에서 통계표별로 데이터 그룹화 (별도 스레드에서)
+                    def load_and_group_by_table():
                         try:
                             if json_file_path.exists():
                                 with open(json_file_path, 'r', encoding='utf-8') as f:
                                     json_data = json.load(f)
-                                    # statistics 배열에서 데이터 추출
-                                    return json_data.get('statistics', [])
+                                    all_data = json_data.get('statistics', [])
+
+                                    # 통계표별로 그룹화
+                                    tables_data = {}
+                                    for item in all_data:
+                                        table_name = item.get('table_name', '기본 통계표')
+                                        if table_name not in tables_data:
+                                            tables_data[table_name] = []
+                                        tables_data[table_name].append(item)
+
+                                    return tables_data
                             else:
                                 print(f"[AI] JSON 파일 없음: {json_file_path}")
-                                return []
+                                return {}
                         except Exception as e:
                             print(f"[AI] JSON 로드 오류: {e}")
-                            return []
+                            return {}
 
                     loop = asyncio.get_event_loop()
-                    json_data_samples = await loop.run_in_executor(None, load_json_data)
-                    print(f"[AI] JSON에서 {len(json_data_samples)}개 데이터 샘플 로드 완료 (cache_key: {cache_key})")
+                    tables_data = await loop.run_in_executor(None, load_and_group_by_table)
+                    print(f"[AI] {len(tables_data)}개 통계표로 데이터 그룹화 완료")
 
-                    # AI 인사이트 생성 (JSON 데이터 직접 전달)
-                    progress_tracker.update_progress(task_id, "AI분석", 90, "Ollama AI 모델이 인사이트를 생성하고 있습니다 (최대 10분 소요)...")
-                    await asyncio.sleep(0.1)  # SSE 전송을 위한 이벤트 루프 양보
+                    # 통계표별 AI 인사이트 생성 (새 방식)
+                    progress_tracker.update_progress(task_id, "AI분석", 90, f"통계표별 인사이트 생성 중... ({len(tables_data)}개 통계표)")
+                    await asyncio.sleep(0.1)
 
-                    # 동기 함수를 별도 스레드에서 실행 (이벤트 루프 블로킹 방지)
+                    # 동기 함수를 별도 스레드에서 실행
                     loop = asyncio.get_event_loop()
                     ai_insights = await loop.run_in_executor(
-                        None,  # ThreadPoolExecutor 사용
-                        lambda: ollama_service.generate_statistical_insights(
+                        None,
+                        lambda: ollama_service.generate_statistical_insights_by_tables(
                             metadata=metadata.dict() if metadata else {},
-                            data_summary=basic_stats_result,
-                            table_names=table_names,
-                            raw_data_sample=json_data_samples  # JSON 데이터 직접 전달
+                            tables_data=tables_data
                         )
                     )
 

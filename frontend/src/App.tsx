@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StatCard } from './components/StatCard';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import EnhancedBasicStatisticsViewer from './components/EnhancedBasicStatisticsViewer';
@@ -10,12 +10,10 @@ import StatDistributionViewer from './components/StatDistributionViewer';
 import StatSummaryViewer from './components/StatSummaryViewer';
 import {
   statsAPI,
-  StatItem,
-  AdvancedCardNewsResponse
+  StatItem
 } from './services/api';
 import { 
   ChartBarIcon, 
-  DocumentTextIcon, 
   ClipboardDocumentListIcon,
   SparklesIcon,
   ArrowPathIcon,
@@ -33,6 +31,8 @@ type SystemStatus = {
 function App() {
   const [state, setState] = useState<AppState>('loading');
   const [stats, setStats] = useState<StatItem[]>([]);
+  const [collectedStatNames, setCollectedStatNames] = useState<Set<string>>(new Set());
+  const [collectedStatUrls, setCollectedStatUrls] = useState<Set<string>>(new Set());
   const [systemStatus, setSystemStatus] = useState<SystemStatus>({
     isOnline: navigator.onLine,
     isServerConnected: false
@@ -49,6 +49,7 @@ function App() {
 
   useEffect(() => {
     loadRecentStats();
+    loadCollectedStatNames();
     checkOngoingTask();
     checkSystemStatus();
     
@@ -67,6 +68,7 @@ function App() {
       window.removeEventListener('offline', handleOffline);
       clearInterval(serverCheckInterval);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 스크롤 이벤트 리스너
@@ -146,6 +148,67 @@ function App() {
     }
   };
 
+  // 제목 정규화 함수: 공백, 특수문자, 영문 괄호만 제거 (한글 괄호는 유지 - 준공, 인허가 등 구분용)
+  const normalizeTitle = (title: string): string => {
+    let normalized = title
+      .replace(/\s+/g, '')  // 모든 공백 제거
+      .replace(/[_-]/g, '');  // 언더스코어, 하이픈 제거
+    
+    // 영문, 숫자, 특수문자만 포함된 괄호를 반복적으로 제거 (한글 괄호는 유지)
+    // 예: "(MOLIT)" 제거, "(1999 ~ 2024)" 제거, 하지만 "(준공)", "(인허가)" 유지
+    let prevNormalized = '';
+    while (prevNormalized !== normalized) {
+      prevNormalized = normalized;
+      normalized = normalized.replace(/\([A-Za-z0-9\s.,\-/~]+\)/g, '');
+    }
+    
+    return normalized.toLowerCase();  // 소문자로 변환
+  };
+
+  const loadCollectedStatNames = useCallback(async () => {
+    try {
+      const response = await fetch('/api/stats-list');
+      if (response.ok) {
+        const data = await response.json();
+        
+        // 통계명 Set 생성 (정규화된 버전과 원본 모두 저장)
+        const names = new Set<string>();
+        const urls = new Set<string>();
+        
+        data.stats.forEach((stat: any) => {
+          // 원본 제목 추가
+          names.add(stat.stat_name);
+          // 정규화된 제목 추가
+          names.add(normalizeTitle(stat.stat_name));
+          // full_title도 추가 (있는 경우)
+          if (stat.full_title) {
+            names.add(stat.full_title);
+            names.add(normalizeTitle(stat.full_title));
+          }
+          // URL 추가
+          if (stat.stat_url) {
+            urls.add(stat.stat_url);
+            // URL에서 hRsId만 추출하여 추가 (더 유연한 매칭)
+            const match = stat.stat_url.match(/hRsId=(\d+)/);
+            if (match) {
+              urls.add(match[1]);
+            }
+          }
+        });
+        
+        setCollectedStatNames(names);
+        setCollectedStatUrls(urls);
+        
+        console.log('수집된 통계 목록:', {
+          names: Array.from(names),
+          urls: Array.from(urls)
+        });
+      }
+    } catch (err) {
+      console.error('수집된 통계 목록 로드 오류:', err);
+    }
+  }, []);
+
   const handleStatSelect = async (stat: StatItem) => {
     try {
       // 🚀 즉시 로딩 화면 표시 (API 호출 전)
@@ -217,6 +280,8 @@ function App() {
     if (!ongoingTask) {
       setCurrentTaskId(null);
     }
+    // 수집된 통계 목록 새로고침 (최신 통계 재크롤링 없이 수집 상태 업데이트)
+    loadCollectedStatNames();
   };
 
   const handleOptimizedComplete = (result: any) => {
@@ -227,6 +292,9 @@ function App() {
     localStorage.removeItem('ongoingAnalysisTask');
     setOngoingTask(null);
     setCurrentTaskId(null);
+    
+    // 수집된 통계 목록 새로고침 (분석 완료 후 수집 상태 업데이트)
+    loadCollectedStatNames();
   };
 
   const handleOptimizedError = (errorMsg: string) => {
@@ -246,6 +314,8 @@ function App() {
 
   const handleViewCollectedStats = () => {
     setState('collected-stats');
+    // 수집된 통계 화면으로 이동할 때 최신 목록 로드
+    loadCollectedStatNames();
   };
 
   const handleSelectStatForDetail = (statName: string) => {
@@ -261,6 +331,34 @@ function App() {
   const handleViewSummary = (statName: string) => {
     setSelectedStatForDetail(statName);
     setState('stat-summary');
+  };
+
+  // 통계가 수집되었는지 확인하는 함수 (URL, 정규화된 제목, 원본 제목 모두 확인)
+  const isStatCollected = (stat: StatItem): boolean => {
+    // 1. 원본 제목으로 확인
+    if (collectedStatNames.has(stat.title)) {
+      return true;
+    }
+    
+    // 2. 정규화된 제목으로 확인
+    if (collectedStatNames.has(normalizeTitle(stat.title))) {
+      return true;
+    }
+    
+    // 3. URL 기반 확인
+    if (stat.url) {
+      // 전체 URL로 확인
+      if (collectedStatUrls.has(stat.url)) {
+        return true;
+      }
+      // hRsId만 추출하여 확인
+      const match = stat.url.match(/hRsId=(\d+)/);
+      if (match && collectedStatUrls.has(match[1])) {
+        return true;
+      }
+    }
+    
+    return false;
   };
 
   // 필터링된 통계 목록
@@ -331,7 +429,7 @@ function App() {
                     return (
                       <>
                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span className="text-xs text-gray-600">시스템 정상</span>
+                        <span className="text-xs text-gray-600">서버 연결 정상</span>
                       </>
                     );
                   }
@@ -349,7 +447,7 @@ function App() {
       </header>
 
       {/* 메인 콘텐츠 */}
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 w-full">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16 w-full">
         {error && (
           <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-6 shadow-sm">
             <div className="flex items-start gap-3">
@@ -557,6 +655,7 @@ function App() {
                       stat={stat}
                       onSelect={handleStatSelect}
                       disabled={isCancelling}
+                      isCollected={isStatCollected(stat)}
                     />
                   ))}
                 </div>
