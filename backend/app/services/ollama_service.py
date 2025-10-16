@@ -14,7 +14,7 @@ class OllamaService:
     def __init__(self, base_url: str = "http://localhost:11434", model: str = "llama3.1:8b-instruct-q4_K_M"):
         self.base_url = base_url
         self.model = model
-        self.timeout = 60  # 10분 타임아웃 (10개 인사이트 생성)
+        self.timeout = 600  # 10분 타임아웃 (통계표별 분석)
         self.chat_timeout = 120  # 2분 타임아웃 (채팅용)
 
     def is_available(self) -> bool:
