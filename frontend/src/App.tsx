@@ -400,7 +400,7 @@ function App() {
                     통계이야기
                   </h1>
                   <p className="text-xs text-gray-500">
-                    국토교통부 통계 카드뉴스
+                    국토교통부 최신 통계 분석
                   </p>
                 </div>
               </div>
@@ -745,7 +745,6 @@ function App() {
               <ul className="space-y-1.5 text-sm text-gray-400">
                 <li>기본통계현황분석</li>
                 <li>실시간 데이터 수집</li>
-                <li>AI 카드뉴스 생성</li>
                 <li>통계표 분석</li>
               </ul>
             </div>

@@ -484,14 +484,19 @@ export const StatSummaryViewer: React.FC<Props> = ({ statName, onBack }) => {
           {/* 데이터 인사이트 */}
           {selectedTableData.data_insights.length > 0 && (
             <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <h4 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
                 <span className="mr-2">💡</span>
                 데이터 인사이트
               </h4>
+              <p className="text-sm text-gray-600 mb-4">
+                통계표: <strong>{selectedTable}</strong>
+              </p>
               <div className="space-y-3">
                 {selectedTableData.data_insights.map((insight, idx) => (
                   <div key={idx} className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
-                    <p className="text-gray-800 font-mono text-sm">{insight}</p>
+                    <p className="text-gray-800 text-sm leading-relaxed whitespace-pre-line">
+                      {insight.split('. ').join('.\n')}
+                    </p>
                   </div>
                 ))}
               </div>

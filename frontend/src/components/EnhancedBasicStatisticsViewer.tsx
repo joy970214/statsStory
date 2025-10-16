@@ -4,7 +4,7 @@ import {
   downloadMarkdown,
   downloadPDF,
   openOriginalUrl,
-  generateBasicStatisticsMarkdown
+  generateAIInsightsMarkdown
 } from '../utils/downloadUtils';
 import { motion } from 'framer-motion';
 import {
@@ -14,7 +14,6 @@ import {
   ArrowTopRightOnSquareIcon,
   TableCellsIcon,
   SparklesIcon,
-  EyeIcon,
   DocumentTextIcon,
   TagIcon,
   ChevronDownIcon,
@@ -59,6 +58,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
   onViewTableAnalysis
 }) => {
   const contentRef = useRef<HTMLDivElement>(null);
+  const aiInsightsRef = useRef<HTMLDivElement>(null); // AI 인사이트 전용 ref
   const [processedStats, setProcessedStats] = useState<ProcessedStatistics | null>(null);
   const [selectedTableName, setSelectedTableName] = useState<string | null>(null);
   const [rawDataByTable, setRawDataByTable] = useState<Record<string, any[]>>({});
@@ -474,8 +474,9 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
 
   const handleDownloadMD = () => {
     try {
-      const markdown = generateBasicStatisticsMarkdown(analysisData);
-      const filename = `기본통계현황분석_${analysisData.stat_name}_${new Date().toISOString().split('T')[0]}`;
+      // AI 인사이트만 마크다운으로 변환
+      const markdown = generateAIInsightsMarkdown(analysisData);
+      const filename = `AI분석인사이트_${analysisData.stat_name}_${new Date().toISOString().split('T')[0]}`;
       downloadMarkdown(markdown, filename);
     } catch (error) {
       console.error('MD 다운로드 실패:', error);
@@ -720,14 +721,17 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
   };
 
   const handleDownloadPDF = async () => {
-    if (contentRef.current) {
+    // AI 인사이트 영역만 PDF로 다운로드
+    if (aiInsightsRef.current) {
       try {
-        const filename = `기본통계현황분석_${analysisData.stat_name}_${new Date().toISOString().split('T')[0]}`;
-        await downloadPDF(contentRef.current, filename);
+        const filename = `AI분석인사이트_${analysisData.stat_name}_${new Date().toISOString().split('T')[0]}`;
+        await downloadPDF(aiInsightsRef.current, filename);
       } catch (error) {
         console.error('PDF 다운로드 실패:', error);
         alert('PDF 파일 다운로드에 실패했습니다.');
       }
+    } else {
+      alert('AI 인사이트 영역을 찾을 수 없습니다.');
     }
   };
 
@@ -798,16 +802,18 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
             <button
               onClick={handleDownloadMD}
               className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm font-medium"
+              title="AI 인사이트를 마크다운 파일로 다운로드"
             >
               <DocumentArrowDownIcon className="w-4 h-4" />
-              MD
+              AI 인사이트 MD
             </button>
             <button
               onClick={handleDownloadPDF}
               className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm font-medium"
+              title="AI 인사이트를 PDF 파일로 다운로드"
             >
               <DocumentArrowDownIcon className="w-4 h-4" />
-              PDF
+              AI 인사이트 PDF
             </button>
             {analysisData.metadata?.url && (
               <button
@@ -1107,64 +1113,66 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                 )}
 
                 {/* AI 분석 결과 (10개 카테고리) - 콤팩트하게 */}
-                {(analysisData.metadata?.ai_insights?.insights_count ?? 0) > 0 ? (
-                  <div className="bg-purple-50 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <SparklesIcon className="w-5 h-5 text-purple-600" />
-                      <h5 className="font-semibold text-purple-700">
-                        AI 분석 인사이트 ({analysisData.metadata?.ai_insights?.insights_count}개)
-                      </h5>
-                    </div>
+                <div ref={aiInsightsRef}>
+                  {(analysisData.metadata?.ai_insights?.insights_count ?? 0) > 0 ? (
+                    <div className="bg-purple-50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <SparklesIcon className="w-5 h-5 text-purple-600" />
+                        <h5 className="font-semibold text-purple-700">
+                          AI 분석 인사이트 ({analysisData.metadata?.ai_insights?.insights_count}개)
+                        </h5>
+                      </div>
 
-                    {/* 10개 카테고리 인사이트 */}
-                    <div className="bg-white rounded-md p-3 space-y-3">
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
-                        const insightKey = `insight_${num}`;
-                        const insight = analysisData.metadata?.ai_insights?.[insightKey];
+                      {/* 10개 카테고리 인사이트 */}
+                      <div className="bg-white rounded-md p-3 space-y-3">
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
+                          const insightKey = `insight_${num}`;
+                          const insight = analysisData.metadata?.ai_insights?.[insightKey];
 
-                        if (!insight) return null;
+                          if (!insight) return null;
 
-                        return (
-                          <div
-                            key={num}
-                            className="border-b border-gray-100 pb-3 last:border-b-0 last:pb-0"
-                          >
-                            <div className="flex items-start gap-3">
-                              <div className="w-6 h-6 bg-purple-500 text-white rounded flex items-center justify-center flex-shrink-0 text-xs font-bold">
-                                {num}
-                              </div>
-                              <div className="flex-1">
-                                <h6 className="font-medium text-purple-700 text-sm mb-1">
-                                  {insight.category}
-                                </h6>
-                                <p className="text-sm text-gray-700 leading-relaxed mb-2">
-                                  {insight.content}
-                                </p>
-                                <div className="flex items-center gap-1.5 text-xs text-purple-600">
-                                  <ChartBarIcon className="w-3.5 h-3.5" />
-                                  <span>{insight.visualization}</span>
+                          return (
+                            <div
+                              key={num}
+                              className="border-b border-gray-100 pb-3 last:border-b-0 last:pb-0"
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="w-6 h-6 bg-purple-500 text-white rounded flex items-center justify-center flex-shrink-0 text-xs font-bold">
+                                  {num}
+                                </div>
+                                <div className="flex-1">
+                                  <h6 className="font-medium text-purple-700 text-sm mb-1">
+                                    {insight.title || insight.category}
+                                  </h6>
+                                  <p className="text-sm text-gray-700 leading-relaxed mb-2 whitespace-pre-line">
+                                    {insight.content.split('. ').join('.\n')}
+                                  </p>
+                                  <div className="flex items-center gap-1.5 text-xs text-purple-600">
+                                    <ChartBarIcon className="w-3.5 h-3.5" />
+                                    <span>{insight.visualization}</span>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className="bg-secondary-50 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <SparklesIcon className="w-5 h-5 text-secondary-600" />
-                      <h5 className="font-semibold text-secondary-700">AI 인사이트 대기 중</h5>
+                  ) : (
+                    <div className="bg-secondary-50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <SparklesIcon className="w-5 h-5 text-secondary-600" />
+                        <h5 className="font-semibold text-secondary-700">AI 인사이트 대기 중</h5>
+                      </div>
+                      <div className="bg-white rounded-md p-3">
+                        <p className="text-sm text-gray-700">
+                          이 통계에 대한 AI 분석 인사이트가 아직 생성되지 않았습니다.
+                          '분석하기' 버튼을 눌러 새로 분석하면 AI 인사이트가 자동 생성됩니다.
+                        </p>
+                      </div>
                     </div>
-                    <div className="bg-white rounded-md p-3">
-                      <p className="text-sm text-gray-700">
-                        이 통계에 대한 AI 분석 인사이트가 아직 생성되지 않았습니다.
-                        '분석하기' 버튼을 눌러 새로 분석하면 AI 인사이트가 자동 생성됩니다.
-                      </p>
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {/* 임시로 남겨둔 통계 카드 - 삭제 예정 */}
                 <div className="hidden grid-cols-1 md:grid-cols-3 gap-6">

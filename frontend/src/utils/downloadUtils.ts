@@ -297,3 +297,64 @@ ${analysisData.analysis.card_news.status === 'success' ?
 *이 보고서는 statsStory 시스템에서 자동 생성되었습니다.*
 `;
 };
+
+/**
+ * AI 분석 인사이트만 마크다운 형식으로 변환
+ */
+export const generateAIInsightsMarkdown = (analysisData: any): string => {
+  const date = new Date(analysisData.analysis_date).toLocaleString('ko-KR');
+  const aiInsights = analysisData.metadata?.ai_insights;
+  
+  if (!aiInsights || (aiInsights?.insights_count ?? 0) === 0) {
+    return `# ✨ AI 분석 인사이트
+
+## 개요
+- **통계명**: ${analysisData.stat_name}
+- **분석일시**: ${date}
+
+## 인사이트 부재
+AI 분석 인사이트가 아직 생성되지 않았습니다.
+'분석하기' 버튼을 눌러 새로 분석하면 AI 인사이트가 자동 생성됩니다.
+
+---
+*이 보고서는 statsStory 시스템에서 자동 생성되었습니다.*
+`;
+  }
+  
+  let markdown = `# ✨ AI 분석 인사이트
+
+## 개요
+- **통계명**: ${analysisData.stat_name}
+- **분석일시**: ${date}
+- **총 인사이트 수**: ${aiInsights.insights_count}개
+
+---
+
+`;
+
+  // 10개 카테고리 인사이트 추가
+  for (let i = 1; i <= 10; i++) {
+    const insightKey = `insight_${i}`;
+    const insight = aiInsights[insightKey];
+    
+    if (insight) {
+      markdown += `## ${i}. ${insight.category}
+
+**내용:**
+${insight.content}
+
+**시각화 제안:** ${insight.visualization}
+
+---
+
+`;
+    }
+  }
+  
+  markdown += `
+*이 AI 인사이트는 수집된 통계 데이터를 바탕으로 자동 생성되었습니다.*
+*분석일시: ${date}*
+`;
+  
+  return markdown;
+};

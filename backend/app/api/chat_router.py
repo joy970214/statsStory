@@ -53,8 +53,15 @@ async def chat_with_ai(request: ChatRequest):
         insights_available = ai_insights is not None and ai_insights.get('insights_count', 0) > 0
 
         # 4. ChromaDB에서 관련 데이터 검색 (RAG)
+        cache_key = getattr(metadata, 'cache_key', None)
+        if not cache_key:
+            raise HTTPException(
+                status_code=500,
+                detail="통계 데이터에 cache_key가 없습니다."
+            )
+
         relevant_data = vector_db_service.search_relevant_data(
-            stat_name=request.stat_name,
+            cache_key=cache_key,
             query=request.message,
             n_results=8  # 상위 8개 관련 데이터 (타임아웃 방지)
         )
@@ -169,8 +176,14 @@ async def check_chat_availability(stat_name: str):
         insights_available = ai_insights is not None and ai_insights.get('insights_count', 0) > 0
 
         # ChromaDB 데이터 확인
-        vector_stats = vector_db_service.get_collection_stats(stat_name)
-        vector_db_available = vector_stats['exists'] and vector_stats['document_count'] > 0
+        cache_key = getattr(metadata, 'cache_key', None)
+        vector_db_available = False
+        vector_db_count = 0
+
+        if cache_key:
+            vector_stats = vector_db_service.get_collection_stats(cache_key)
+            vector_db_available = vector_stats['exists'] and vector_stats['document_count'] > 0
+            vector_db_count = vector_stats.get('document_count', 0)
 
         # Ollama 서버 확인
         ollama_available = ollama_service.is_available()
@@ -197,7 +210,7 @@ async def check_chat_availability(stat_name: str):
             "insights_available": insights_available,
             "insights_count": ai_insights.get('insights_count', 0) if ai_insights else 0,
             "vector_db_available": vector_db_available,
-            "vector_db_count": vector_stats.get('document_count', 0),
+            "vector_db_count": vector_db_count,
             "stat_title": metadata.title
         }
 
