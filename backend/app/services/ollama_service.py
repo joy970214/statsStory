@@ -14,7 +14,7 @@ class OllamaService:
     def __init__(self, base_url: str = "http://localhost:11434", model: str = "llama3.1:8b-instruct-q4_K_M"):
         self.base_url = base_url
         self.model = model
-        self.timeout = 0  # 10분 타임아웃 (통계표별 분석)
+        self.timeout = 600  # 10분 타임아웃 (통계표별 분석)
         self.chat_timeout = 120  # 2분 타임아웃 (채팅용)
 
     def is_available(self) -> bool:
@@ -598,8 +598,12 @@ class OllamaService:
         if chat_history:
             prompt += "\n## 이전 대화\n"
             for chat in chat_history[-3:]:  # 최근 3개만
-                prompt += f"사용자: {chat.get('user', '')}\n"
-                prompt += f"AI: {chat.get('ai', '')}\n"
+                role = chat.get('role', '')
+                content = chat.get('content', '')
+                if role == 'user':
+                    prompt += f"사용자: {content}\n"
+                elif role == 'assistant':
+                    prompt += f"AI: {content}\n"
 
         prompt += f"""
 ## 사용자 질문

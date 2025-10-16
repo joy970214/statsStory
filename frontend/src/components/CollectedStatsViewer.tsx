@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { statsAPI } from '../services/api';
 import { motion } from 'framer-motion';
 import { 
   ClipboardDocumentListIcon,
@@ -7,7 +6,6 @@ import {
   ChartBarIcon,
   TrashIcon,
   ArrowTopRightOnSquareIcon,
-  SparklesIcon,
   CalendarIcon,
   TagIcon,
   DocumentTextIcon,
@@ -163,7 +161,7 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
               수집된 통계 목록
             </h2>
             <p className="text-gray-600">
-              시스템에 저장된 <span className="font-semibold text-primary-600">{statsData?.total_collected_stats || 0}개</span>의 통계표를 확인하고 분석할 수 있습니다.
+              시스템에 저장된 <span className="font-semibold text-primary-600">{statsData?.total_collected_stats || 0}개</span>의 통계를 확인하고 분석할 수 있습니다.
             </p>
           </div>
           <button
@@ -192,6 +190,16 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
             <p className="text-2xl font-bold text-blue-600">{statsData.total_collected_stats}</p>
           </div>
           
+          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <DocumentTextIcon className="w-5 h-5 text-indigo-600" />
+              <h3 className="text-base font-semibold text-gray-900">총 통계표</h3>
+            </div>
+            <p className="text-2xl font-bold text-indigo-600">
+              {statsData.stats.reduce((sum, stat) => sum + (stat.table_names?.length || 0), 0).toLocaleString()}
+            </p>
+          </div>
+          
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
               <ChartBarIcon className="w-5 h-5 text-green-600" />
@@ -199,19 +207,6 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
             </div>
             <p className="text-2xl font-bold text-green-600">
               {statsData.stats.reduce((sum, stat) => sum + stat.total_data_points, 0).toLocaleString()}
-            </p>
-          </div>
-          
-          <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <DocumentTextIcon className="w-5 h-5 text-cyan-600" />
-              <h3 className="text-base font-semibold text-gray-900">평균 필드 수</h3>
-            </div>
-            <p className="text-2xl font-bold text-cyan-600">
-              {statsData.stats.length > 0
-                ? Math.round(statsData.stats.reduce((sum, stat) => sum + stat.data_fields_info.total_fields, 0) / statsData.stats.length).toLocaleString()
-                : 0
-              }
             </p>
           </div>
           
@@ -288,7 +283,7 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
                         <span className="text-xs text-gray-600">총 필드</span>
                       </div>
                       <span className="text-lg font-bold text-cyan-600">
-                        {stat.data_fields_info.total_fields}개
+                        {stat.data_fields_info.total_fields.toLocaleString()}개
                       </span>
                     </div>
                     <div className="bg-green-50 border border-green-200 rounded-lg p-3">
@@ -297,7 +292,7 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
                         <span className="text-xs text-gray-600">숫자 데이터</span>
                       </div>
                       <span className="text-lg font-bold text-green-600">
-                        {stat.data_fields_info.numeric_fields}개
+                        {stat.data_fields_info.numeric_fields.toLocaleString()}개
                       </span>
                     </div>
                     <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
@@ -306,7 +301,7 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
                         <span className="text-xs text-gray-600">텍스트 데이터</span>
                       </div>
                       <span className="text-lg font-bold text-purple-600">
-                        {stat.data_fields_info.text_fields}개
+                        {stat.data_fields_info.text_fields.toLocaleString()}개
                       </span>
                     </div>
                   </div>

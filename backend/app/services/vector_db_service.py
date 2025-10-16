@@ -2,12 +2,17 @@
 ChromaDB 기반 벡터 데이터베이스 서비스
 - 엑셀 통계 데이터를 벡터로 저장
 - 의미 기반 검색 및 메타데이터 필터링
+- 동적 테이블 구조 분석 및 자연어 생성
 """
 import chromadb
 from chromadb.config import Settings
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 import json
+
+# 새로 추가된 분석기 및 생성기
+from app.services.table_structure_analyzer import TableStructureAnalyzer
+from app.services.natural_language_generator import NaturalLanguageGenerator
 
 class VectorDBService:
     def __init__(self, persist_directory: str = None):
@@ -29,6 +34,10 @@ class VectorDBService:
                 allow_reset=True
             )
         )
+
+        # 분석기 및 생성기 초기화
+        self.analyzer = TableStructureAnalyzer()
+        self.generator = NaturalLanguageGenerator()
 
         print(f"[VectorDB] ChromaDB 초기화 완료: {persist_directory}")
 
@@ -86,7 +95,10 @@ class VectorDBService:
         metadata: Any = None
     ) -> int:
         """
-        통계 데이터를 벡터 DB에 저장
+        통계 데이터를 벡터 DB에 저장 (개선된 버전)
+        - 동적 테이블 구조 분석
+        - 자연어 텍스트 생성
+        - 연도-카테고리 단위 청킹
 
         Args:
             cache_key: 캐시 키 (컬렉션 식별자)
@@ -95,7 +107,7 @@ class VectorDBService:
             metadata: StatMetadata 객체
 
         Returns:
-            저장된 행 개수
+            저장된 청크 개수
         """
         collection = self.create_or_get_collection(cache_key, stat_name)
 
@@ -106,83 +118,78 @@ class VectorDBService:
         except:
             pass
 
+        # StatData 객체를 Dict로 변환
+        statistics_list = []
+        for data_item in stat_data:
+            if not hasattr(data_item, 'data') or not data_item.data:
+                continue
+
+            statistics_list.append({
+                'year': getattr(data_item, 'year', 2025),
+                'data': data_item.data,
+                'table_name': getattr(data_item, 'table_name', ''),
+                'period_text': getattr(data_item, 'period_text', '')
+            })
+
+        if not statistics_list:
+            print(f"[VectorDB] 저장할 데이터가 없음")
+            return 0
+
+        # 1단계: 테이블 구조 분석
+        print(f"[VectorDB] 테이블 구조 분석 중...")
+        structure = self.analyzer.analyze(statistics_list)
+        table_name = structure.get('table_name', stat_name)
+
+        # 2단계: 데이터 행만 추출
+        data_rows = structure.get('data_rows', [])
+        if not data_rows:
+            print(f"[VectorDB] 데이터 행이 없음")
+            return 0
+
+        # 3단계: 연도-카테고리 단위로 그룹화
+        year_category_groups = self._group_by_year_category(data_rows, structure)
+
+        # 4단계: 각 그룹을 자연어 청크로 변환
         documents = []
         metadatas = []
         ids = []
 
-        for idx, data_item in enumerate(stat_data):
-            if not hasattr(data_item, 'data') or not data_item.data:
+        chunk_idx = 0
+        for (year, category), rows in year_category_groups.items():
+            # 자연어 텍스트 생성
+            natural_text = self.generator.generate(
+                year=str(year),
+                category=category,
+                rows=rows,
+                structure=structure,
+                table_name=table_name
+            )
+
+            if not natural_text.strip():
                 continue
 
-            # 텍스트 생성 (ChromaDB가 임베딩)
-            text_parts = []
-            item_metadata = {}
+            # 메타데이터 구성
+            chunk_metadata = {
+                'year': year,
+                'category': category,
+                'table_name': table_name,
+                'cache_key': cache_key,
+                'row_count': len(rows)
+            }
 
-            # 기본 정보
-            year = getattr(data_item, 'year', None)
-            table_name = getattr(data_item, 'table_name', '')
-            period_text = getattr(data_item, 'period_text', '')
+            # 추가 메타데이터 (구조 정보)
+            if structure.get('data_structure', {}).get('is_timeseries'):
+                chunk_metadata['data_type'] = 'timeseries'
+            elif structure.get('data_structure', {}).get('is_geographic'):
+                chunk_metadata['data_type'] = 'geographic'
+            else:
+                chunk_metadata['data_type'] = 'categorical'
 
-            if year:
-                text_parts.append(f"{year}년")
-                item_metadata['year'] = year
-
-            if table_name:
-                text_parts.append(f"[{table_name}]")
-                item_metadata['table_name'] = table_name
-
-            if period_text:
-                item_metadata['period'] = period_text
-
-            # 데이터 파싱
-            data_dict = data_item.data
-
-            # 숫자 값 추출
-            numeric_values = {}
-            text_values = []
-
-            for key, value in data_dict.items():
-                # 특수 키 건너뛰기
-                if key.startswith('_') or key.startswith('Unnamed'):
-                    # Unnamed 컬럼도 값이 의미있으면 포함
-                    if value and str(value).strip() and value != ' ':
-                        text_values.append(str(value))
-                    continue
-
-                # 값 처리
-                if value is not None and str(value).strip() and str(value) != ' ':
-                    # 숫자 변환 시도
-                    try:
-                        # 쉼표 제거 후 숫자 변환
-                        numeric_val = float(str(value).replace(',', ''))
-                        numeric_values[key] = numeric_val
-                        text_parts.append(f"{key}: {value}")
-                    except ValueError:
-                        # 숫자가 아니면 텍스트로
-                        text_values.append(f"{key}: {value}")
-                        text_parts.append(f"{key}: {value}")
-
-            # 메타데이터에 숫자 정보 저장 (필터링용)
-            if numeric_values:
-                # 첫 번째 숫자 값만 메타데이터에 (ChromaDB 제한)
-                first_numeric_key = list(numeric_values.keys())[0]
-                item_metadata['first_value'] = numeric_values[first_numeric_key]
-                item_metadata['first_key'] = first_numeric_key
-
-            # 텍스트 값 추가
-            if text_values:
-                text_parts.extend(text_values)
-
-            # 최종 텍스트 생성
-            document_text = " ".join(text_parts)
-
-            if not document_text.strip():
-                continue
-
-            # 저장용 데이터 추가
-            documents.append(document_text)
-            metadatas.append(item_metadata)
-            ids.append(f"{cache_key}_{idx}")
+            # 저장
+            documents.append(natural_text)
+            metadatas.append(chunk_metadata)
+            ids.append(f"{cache_key}_chunk_{chunk_idx}")
+            chunk_idx += 1
 
         # ChromaDB에 저장
         if documents:
@@ -191,9 +198,64 @@ class VectorDBService:
                 metadatas=metadatas,
                 ids=ids
             )
-            print(f"[VectorDB] {len(documents)}개 데이터 저장 완료: {stat_name}")
+            print(f"[VectorDB] {len(documents)}개 청크 저장 완료: {stat_name}")
+            print(f"[VectorDB] 샘플 텍스트: {documents[0][:200]}...")
+        else:
+            print(f"[VectorDB] 생성된 문서가 없음")
 
         return len(documents)
+
+    def _group_by_year_category(self, data_rows: List[Dict], structure: Dict) -> Dict[tuple, List[Dict]]:
+        """
+        데이터를 연도-카테고리 단위로 그룹화
+
+        Args:
+            data_rows: 데이터 행 리스트
+            structure: 테이블 구조 정보
+
+        Returns:
+            {(year, category): [rows]} 형태의 딕셔너리
+        """
+        groups = {}
+
+        # 컬럼 정보 추출
+        temporal_col = structure.get('data_structure', {}).get('temporal_column')
+        category_col = structure.get('data_structure', {}).get('category_column')
+
+        for row in data_rows:
+            data = row.get('data', {})
+
+            # 연도 추출
+            if temporal_col and temporal_col in data:
+                year_value = data.get(temporal_col)
+                try:
+                    year = int(str(year_value))
+                except:
+                    year = 2025  # 기본값
+            else:
+                # 첫 번째 컬럼에서 연도 추출 시도
+                first_col_value = list(data.values())[0] if data else None
+                try:
+                    year = int(str(first_col_value))
+                except:
+                    year = 2025
+
+            # 카테고리 추출
+            if category_col and category_col in data:
+                category = str(data.get(category_col, '기타'))
+            else:
+                # 두 번째 컬럼을 카테고리로 간주
+                col_list = list(data.values())
+                category = str(col_list[1]) if len(col_list) > 1 else '기타'
+
+            # 그룹에 추가
+            key = (year, category)
+            if key not in groups:
+                groups[key] = []
+            groups[key].append(row)
+
+        print(f"[VectorDB] {len(groups)}개 그룹 생성 (연도-카테고리 단위)")
+        return groups
 
     def search_relevant_data(
         self,

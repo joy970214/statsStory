@@ -160,7 +160,8 @@ class DataStorageService:
                 url=metadata_dict.get('url')
             )
 
-            # ai_insights가 있으면 속성으로 추가
+            # cache_key와 ai_insights 속성 추가
+            metadata.cache_key = cache_key
             if 'ai_insights' in metadata_dict:
                 metadata.ai_insights = metadata_dict['ai_insights']
 
@@ -593,6 +594,7 @@ class DataStorageService:
                     # 정규화된 이름이 정확히 일치하면 반환
                     if normalized_search == normalized_title:
                         stat_url = data['stat_url']
+                        cache_key = data['cache_key']
                         metadata = StatMetadata(
                             id=metadata_dict.get('id', ''),
                             title=metadata_dict.get('title', ''),
@@ -603,8 +605,14 @@ class DataStorageService:
                             keywords=metadata_dict.get('keywords', []),
                             related_terms=metadata_dict.get('related_terms', {})
                         )
+
+                        # cache_key와 ai_insights 속성 추가
+                        metadata.cache_key = cache_key
+                        if 'ai_insights' in metadata_dict:
+                            metadata.ai_insights = metadata_dict['ai_insights']
+
                         stat_data = self.load_statistics(stat_url, max_age_hours)
-                        print(f"[FIND SUCCESS] '{stat_name}' -> {title} ({data['cache_key']})")
+                        print(f"[FIND SUCCESS] '{stat_name}' -> {title} ({cache_key})")
                         return metadata, stat_data, stat_url
 
                 except Exception as e:

@@ -16,6 +16,8 @@ class RecentStatsResponse(BaseModel):
     total_count: int
 
 class StatMetadata(BaseModel):
+    model_config = {"extra": "allow"}  # 동적 속성 추가 허용
+
     id: str
     title: str
     purpose: Optional[str] = None
