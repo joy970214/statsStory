@@ -1115,16 +1115,16 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                 {/* AI 분석 결과 (10개 카테고리) - 콤팩트하게 */}
                 <div ref={aiInsightsRef}>
                   {(analysisData.metadata?.ai_insights?.insights_count ?? 0) > 0 ? (
-                    <div className="bg-purple-50 rounded-lg p-4">
+                    <div className="bg-blue-50 rounded-lg p-4">
                       <div className="flex items-center gap-2 mb-3">
-                        <SparklesIcon className="w-5 h-5 text-purple-600" />
-                        <h5 className="font-semibold text-purple-700">
+                        <SparklesIcon className="w-5 h-5 text-primary-600" />
+                        <h5 className="font-semibold text-primary-700">
                           AI 분석 인사이트 ({analysisData.metadata?.ai_insights?.insights_count}개)
                         </h5>
                       </div>
 
                       {/* 10개 카테고리 인사이트 */}
-                      <div className="bg-white rounded-md p-3 space-y-3">
+                      <div className="bg-white rounded-md p-4 space-y-4">
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
                           const insightKey = `insight_${num}`;
                           const insight = analysisData.metadata?.ai_insights?.[insightKey];
@@ -1134,22 +1134,25 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                           return (
                             <div
                               key={num}
-                              className="border-b border-gray-100 pb-3 last:border-b-0 last:pb-0"
+                              className="border-l-4 border-primary-400 bg-blue-50/50 rounded-r-lg p-4 hover:bg-blue-50 transition-colors duration-200"
                             >
-                              <div className="flex items-start gap-3">
-                                <div className="w-6 h-6 bg-purple-500 text-white rounded flex items-center justify-center flex-shrink-0 text-xs font-bold">
+                              <div className="flex items-start gap-4">
+                                <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-lg flex items-center justify-center flex-shrink-0 font-bold">
                                   {num}
                                 </div>
-                                <div className="flex-1">
-                                  <h6 className="font-medium text-purple-700 text-sm mb-1">
+                                <div className="flex-1 min-w-0">
+                                  <h6 className="font-semibold text-primary-800 text-base mb-3">
                                     {insight.title || insight.category}
                                   </h6>
-                                  <p className="text-sm text-gray-700 leading-relaxed mb-2 whitespace-pre-line">
-                                    {insight.content.split('. ').join('.\n')}
-                                  </p>
-                                  <div className="flex items-center gap-1.5 text-xs text-purple-600">
-                                    <ChartBarIcon className="w-3.5 h-3.5" />
-                                    <span>{insight.visualization}</span>
+                                  <div className="text-sm text-gray-800 leading-relaxed space-y-2">
+                                    {insight.content.split('. ').map((sentence: string, idx: number) => {
+                                      if (!sentence.trim()) return null;
+                                      return (
+                                        <p key={idx} className="text-gray-700">
+                                          • {sentence.trim()}{sentence.trim().endsWith('.') ? '' : '.'}
+                                        </p>
+                                      );
+                                    })}
                                   </div>
                                 </div>
                               </div>

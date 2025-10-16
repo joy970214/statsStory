@@ -1,59 +1,6 @@
----
-marp: true
-theme: default
-paginate: true
-backgroundColor: #fff
-style: |
-  section {
-    font-family: 'Arial', 'Noto Sans KR', sans-serif;
-    font-size: 20px;
-    padding: 50px;
-  }
-  h1 {
-    color: #2563eb;
-    font-size: 42px;
-    margin-bottom: 20px;
-  }
-  h2 {
-    color: #1e40af;
-    font-size: 32px;
-    margin-bottom: 15px;
-  }
-  h3 {
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
-  ul, ol {
-    font-size: 18px;
-    line-height: 1.6;
-  }
-  li {
-    margin-bottom: 8px;
-  }
-  code {
-    font-size: 16px;
-  }
-  pre {
-    font-size: 14px;
-    overflow-x: auto;
-  }
-  /* 내용이 많은 슬라이드용 작은 글씨 클래스 */
-  section.small {
-    font-size: 16px;
-  }
-  section.small h2 {
-    font-size: 28px;
-  }
-  section.small ul, section.small ol {
-    font-size: 15px;
-  }
----
+# 📊 통계누리 최신 통계 분석 서비스
 
-<!-- _class: lead -->
-
-# 📊 통계이야기 (StatsStory)
-
-## AI 기반 국토교통부 통계 분석 시스템
+## 통계이야기 제작을 위한 AI 기반 통계누리 최신 통계 분석 시스템
 
 발표일: 2025년 10월 17일
 

@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>통계이야기 - StatsStory 발표자료</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <style>
+        /* Paperlogy Font */
+        @font-face {
+            font-family: 'Paperlogy';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2');
+            font-weight: 400;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Paperlogy';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2');
+            font-weight: 600;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Paperlogy';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-7Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f9fafb;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Paperlogy', sans-serif;
+        }
+        
+        h4 {
+            color: #0284c7;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            padding: 60px 80px 100px 80px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .slide.active {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        /* 헤더 */
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #0284c7;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-icon svg {
+            stroke: white;
+        }
+
+        .logo-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .logo-text p {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .slide-number {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* 콘텐츠 영역 */
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding-top: 20px;
+        }
+
+        /* 커버 슬라이드는 가운데 정렬 */
+        .cover-slide .slide-content {
+            justify-content: center;
+            padding-top: 0;
+        }
+
+        .slide-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: #0284c7;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .slide-title svg {
+            stroke: #0284c7;
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+        }
+
+        .slide-subtitle {
+            font-size: 24px;
+            color: #6b7280;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0284c7;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .content-grid {
+            display: grid;
+            gap: 32px;
+        }
+
+        .content-grid.two-col {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .content-box {
+            background: white;
+            border-left: 3px solid #e5e7eb;
+            padding: 24px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        .content-box h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0284c7;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .content-box p, .content-box li {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #6b7280;
+        }
+
+        .content-list {
+            list-style: none;
+        }
+
+        .content-list li {
+            margin-bottom: 12px;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .content-list li:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 6px;
+            height: 6px;
+            background: currentColor;
+            border-radius: 50%;
+        }
+        
+        /* 기본 리스트 점 색상 */
+        .content-box {
+            color: #6b7280;
+        }
+        
+        .content-box p, .content-box li {
+            color: inherit;
+        }
+        
+        /* border-left 색상에 따라 리스트 점 색상 변경 */
+        .content-box[style*="border-left: 3px solid #0284c7"] .content-list,
+        .content-box[style*="border-left: 3px solid #0284c7"] .content-list li {
+            color: #0284c7;
+        }
+        
+        .content-box[style*="border-left: 3px solid #22c55e"] .content-list,
+        .content-box[style*="border-left: 3px solid #22c55e"] .content-list li {
+            color: #22c55e;
+        }
+        
+        .content-box[style*="border-left: 3px solid #ef4444"] .content-list,
+        .content-box[style*="border-left: 3px solid #ef4444"] .content-list li {
+            color: #ef4444;
+        }
+        
+        .content-box[style*="border-left: 3px solid #f59e0b"] .content-list,
+        .content-box[style*="border-left: 3px solid #f59e0b"] .content-list li {
+            color: #f59e0b;
+        }
+        
+        .content-box[style*="border-left: 3px solid #a855f7"] .content-list,
+        .content-box[style*="border-left: 3px solid #a855f7"] .content-list li {
+            color: #a855f7;
+        }
+        
+        /* 일반 텍스트는 회색 유지 */
+        .content-box p {
+            color: #6b7280;
+        }
+
+        .highlight-box {
+            background: white;
+            border-left: 4px solid #0284c7;
+            padding: 24px;
+            margin: 16px 0;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        .highlight-box p {
+            font-size: 20px;
+            font-weight: 600;
+            color: #111827;
+            line-height: 1.6;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #0284c7;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .image-placeholder {
+            background: white;
+            border: 1px solid #e5e7eb;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 14px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        /* 네비게이션 */
+        .navigation {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .nav-btn:hover {
+            background: #f9fafb;
+            border-color: #0284c7;
+            color: #0284c7;
+        }
+        
+        .nav-btn svg {
+            stroke: currentColor;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .nav-btn:disabled:hover {
+            background: white;
+            color: #111827;
+            border-color: #d1d5db;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: #0284c7;
+            transition: width 0.3s;
+            z-index: 100;
+        }
+
+        /* 아이콘 */
+        .icon {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .icon-lg {
+            width: 36px;
+            height: 36px;
+            stroke: #0284c7;
+            flex-shrink: 0;
+        }
+
+        .icon-sm {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* 두 컬럼 레이아웃 */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        /* 코드 블록 스타일 */
+        pre {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* 특수 슬라이드 스타일 */
+        .cover-slide .slide-content {
+            text-align: center;
+        }
+
+        .cover-slide .slide-title {
+            justify-content: center;
+            font-size: 56px;
+        }
+
+        .cover-slide .slide-subtitle {
+            font-size: 28px;
+        }
+
+        /* 마지막 슬라이드(Q&A) */
+        .slide[data-slide="16"] .slide-content {
+            justify-content: center;
+            padding-top: 0;
+        }
+
+        /* 문제점/해결책 스타일 */
+        .problem-item {
+            background: white;
+            border-left: 3px solid #ef4444;
+            padding: 20px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+        
+        .problem-item .content-list li {
+            color: #ef4444;
+        }
+
+        .solution-item {
+            background: white;
+            border-left: 3px solid #22c55e;
+            padding: 20px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+        
+        .solution-item .content-list li {
+            color: #22c55e;
+        }
+
+        /* 스크롤바 스타일 */
+        .slide::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .slide::-webkit-scrollbar-track {
+            background: #f3f4f6;
+        }
+
+        .slide::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+
+        .slide::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1024px) {
+            .slide {
+                padding: 40px 40px 80px 40px;
+            }
+            .slide-title {
+                font-size: 36px;
+            }
+            .section-title {
+                font-size: 24px;
+            }
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <div class="presentation-container">
+        <!-- 슬라이드 1: 커버 -->
+        <div class="slide active cover-slide" data-slide="1">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">1 / 16</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="slide-title">
+                    <svg class="icon-lg" stroke="#0284c7" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                    </svg>
+                    통계누리 최신 통계 분석 서비스
+                </h2>
+                <p class="slide-subtitle">통계이야기 제작을 위한 AI 기반 통계누리 최신 통계 분석 시스템</p>
+                <div class="image-placeholder">
+                    서비스 메인 화면 이미지 자리
+                </div>
+                <p style="text-align: center; margin-top: 32px; color: #6b7280; font-size: 18px;">
+                    발표일: 2025년 10월 17일
+                </p>
+            </div>
+        </div>
+
+        <!-- 슬라이드 2: 목차 -->
+        <div class="slide" data-slide="2">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">2 / 16</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="section-title">
+                    <svg class="icon-lg" stroke="#0284c7" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+                    </svg>
+                    목차
+                </h2>
+                <div class="content-grid two-col">
+                    <div class="content-box">
+                        <ul class="content-list">
+                            <li>프로젝트 개요</li>
+                            <li>시스템 아키텍처</li>
+                            <li>기술 스택</li>
+                            <li>핵심 워크플로우</li>
+                            <li>주요 기능</li>
+                            <li>핵심 기술</li>
+                            <li>프로젝트 구조</li>
+                            <li>개발 방법론</li>
+                        </ul>
+                    </div>
+                    <div class="content-box">
+                        <ul class="content-list">
+                            <li>개발 과정 & 챌린지</li>
+                            <li>향후 개선 방향</li>
+                            <li>프로젝트 성과</li>
+                            <li>핵심 가치 제안</li>
+                            <li>현재 한계점 & 개선 계획</li>
+                            <li>배운 점 & 인사이트</li>
+                            <li>Q&A</li>
+                            <li>감사합니다</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 3: 프로젝트 개요 - 시작 배경 -->
+        <div class="slide" data-slide="3">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">3 / 16</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="section-title">
+                    <svg class="icon-lg" stroke="#0284c7" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                    </svg>
+                    프로젝트 개요 - 시작 배경
+                </h2>
+                <div class="two-column">
+                    <div>
+                        <div class="content-box" style="margin-bottom: 32px;">
+                            <h3>실무 니즈에서 출발</h3>
+                            <ul class="content-list">
+                                <li>국토교통부 통계누리 사이트의 "통계이야기" 페이지</li>
+                                <li>매달 카드뉴스 제작 업무 담당</li>
+                                <li>예: 8월 통계이야기 → 7월에 올라온 통계 중 선택</li>
+                            </ul>
+                        </div>
+                        <div style="background: #fafafa; border-left: 3px solid #ef4444; padding: 24px;">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">겪었던 문제점</h3>
+                            <ul class="content-list">
+                                <li>디자이너 배경이라 통계 분석 경험 부족</li>
+                                <li>1달치 모든 통계를 일일이 확인하기 불편</li>
+                                <li>어떤 통계를 선택할지 방향 잡기 어려움</li>
+                                <li>통계표만 봐서는 기획 포인트 파악 힘듦</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="image-placeholder" style="height: 100%;">
+                            통계누리 사이트 캡쳐 이미지 자리
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 4: 해결 아이디어 -->
+        <div class="slide" data-slide="4">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">4 / 16</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="section-title">
+                    <svg class="icon-lg" stroke="#0284c7" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+                    </svg>
+                    해결 아이디어
+                </h2>
+                <div class="highlight-box" style="margin-bottom: 32px;">
+                    <p style="font-size: 24px;">"AI 인사이트만 있어도 기획할 때 방향 잡기가 편하지 않을까?"</p>
+                </div>
+                <div class="content-grid two-col">
+                    <div class="content-box" style="background: #fafafa; border-left: 3px solid #22c55e;">
+                        <h3>해결 방안</h3>
+                        <ul class="content-list">
+                            <li>최신 통계 1달치만 자동 수집</li>
+                            <li>AI가 각 통계의 핵심 인사이트 자동 생성</li>
+                            <li>통계별 특징을 한눈에 비교</li>
+                            <li>어떤 통계로 카드뉴스를 만들지 결정</li>
+                        </ul>
+                    </div>
+                    <div class="content-box">
+                        <h3>현실적 제약</h3>
+                        <ul class="content-list">
+                            <li>통계당 인사이트 생성: 5-10분 소요</li>
+                            <li>CPU 환경의 한계로 실시간 분석은 어려움</li>
+                        </ul>
+                        <h3 style="margin-top: 28px;">향후 목표</h3>
+                        <ul class="content-list">
+                            <li>HTML 차트 기반 시각화 구현</li>
+                            <li>카드뉴스 형태 분석 결과 제공</li>
+                            <li>실제 업무에 바로 활용 가능한 수준으로 발전</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 5: 시스템 아키텍처 -->
+        <div class="slide" data-slide="5">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">5 / 16</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="section-title">
+                    <svg class="icon-lg" stroke="#0284c7" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7m0 0a3 3 0 01-3 3m0 3h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008zm-3 6h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008z" />
+                    </svg>
+                    시스템 아키텍처
+                </h2>
+                <div class="image-placeholder" style="height: 400px; margin-bottom: 24px;">
+                    시스템 아키텍처 다이어그램 이미지 자리
+                </div>
+                <div class="content-grid two-col">
+                    <div class="content-box">
+                        <h3>Frontend</h3>
+                        <ul class="content-list">
+                            <li>React + TypeScript + Tailwind CSS</li>
+                            <li>통계 목록 보기 및 선택</li>
+                            <li>실시간 진행률 확인 (SSE)</li>
+                            <li>분석 결과 시각화</li>
+                            <li>AI 채팅 인터페이스</li>
+                        </ul>
+                    </div>
+                    <div class="content-box">
+                        <h3>Backend</h3>
+                        <ul class="content-list">
+                            <li>Python FastAPI</li>
+                            <li>통계 크롤링 (Selenium)</li>
+                            <li>데이터 가공 (Pandas)</li>
+                            <li>AI 분석 처리 (Ollama + Llama 3.1)</li>
+                            <li>RAG 기반 질의응답 (ChromaDB)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 6: 기술 스택 -->
+        <div class="slide" data-slide="6">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">6 / 16</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="section-title">
+                    <svg class="icon-lg" stroke="#0284c7" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+                    </svg>
+                    기술 스택
+                </h2>
+                <div class="two-column">
+                    <div>
+                        <div class="content-box" style="margin-bottom: 24px;">
+                            <h3>Frontend 기술</h3>
+                            <ul class="content-list">
+                                <li><strong>React 19</strong> - 최신 UI 프레임워크</li>
+                                <li><strong>TypeScript</strong> - 타입 안정성 보장</li>
+                                <li><strong>Tailwind CSS</strong> - 모던한 스타일링</li>
+                                <li><strong>Axios</strong> - HTTP 클라이언트</li>
+                                <li><strong>Framer Motion</strong> - 부드러운 애니메이션</li>
+                                <li><strong>Heroicons & Lucide React</strong> - 아이콘 라이브러리</li>
+                            </ul>
+                        </div>
+                        <div class="image-placeholder">
+                            Frontend 화면 캡쳐 이미지 자리
+                        </div>
+                    </div>
+                    <div>
+                        <div class="content-box" style="margin-bottom: 24px;">
+                            <h3>Backend 기술</h3>
+                            <ul class="content-list">
+                                <li><strong>FastAPI</strong> - 고성능 Python 웹 프레임워크</li>
+                                <li><strong>Selenium</strong> - 동적 웹 크롤링</li>
+                                <li><strong>BeautifulSoup4</strong> - HTML 파싱</li>
+                                <li><strong>Pandas</strong> - 데이터 처리 및 분석</li>
+                                <li><strong>Pydantic</strong> - 데이터 검증 및 직렬화</li>
+                                <li><strong>Ollama (Llama 3.1)</strong> - 로컬 AI 분석 엔진</li>
+                                <li><strong>ChromaDB</strong> - 벡터 데이터베이스 (RAG 지원)</li>
+                            </ul>
+                        </div>
+                        <div class="content-box" style="background: #fafafa; border-left: 3px solid #0284c7;">
+                            <h3>배포 & 확장성</h3>
+                            <p><strong>현재:</strong> 로컬 환경, 개인 프로젝트 수준</p>
+                            <p style="margin-top: 8px;"><strong>향후 계획:</strong> Docker Compose 원클릭 설치, 타 팀 사용 가능</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 7: 핵심 워크플로우 -->
+        <div class="slide" data-slide="7">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">7 / 16</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="section-title">
+                    <svg class="icon-lg" stroke="#0284c7" fill="none">
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    </svg>
+                    핵심 워크플로우
+                </h2>
+                <div class="content-grid">
+                    <div style="display: flex; gap: 24px; align-items: stretch;">
+                        <div class="content-box" style="flex: 1; background: white; border-left: 3px solid #0284c7;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                                <div style="width: 36px; height: 36px; background: #0284c7; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px;">1</div>
+                                <h3 style="margin: 0;">최신 통계 수집</h3>
+                            </div>
+                            <p>국토교통부 통계누리에서 최근 1개월 통계 자동 크롤링</p>
+                            <p style="margin-top: 8px; font-size: 14px; color: #6b7280;">매달 "통계이야기" 제작을 위한 후보 통계 수집</p>
+                        </div>
+                        <svg style="width: 24px; color: #9ca3af; flex-shrink: 0; margin-top: 20px;">
+                            <path stroke="currentColor" stroke-width="2" fill="none" d="M5 12h14m0 0l-7-7m7 7l-7 7"/>
+                        </svg>
+                        <div class="content-box" style="flex: 1; background: white; border-left: 3px solid #0284c7;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                                <div style="width: 36px; height: 36px; background: #0284c7; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px;">2</div>
+                                <h3 style="margin: 0;">사용자 통계 선택</h3>
+                            </div>
+                            <p>관심 있는 통계를 클릭</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 24px; align-items: stretch;">
+                        <div class="content-box" style="flex: 1; background: white; border-left: 3px solid #0284c7;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                                <div style="width: 36px; height: 36px; background: #0284c7; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px;">3</div>
+                                <h3 style="margin: 0;">실시간 데이터 수집 & 분석</h3>
+                            </div>
+                            <ul class="content-list">
+                                <li>메타데이터 수집 (통계 개요, 용어정의 등)</li>
+                                <li>엑셀 파일 자동 다운로드 (우선)</li>
+                                <li>테이블 데이터 직접 수집 (백업)</li>
+                                <li>로컬 AI 기반 자동 분석</li>
+                            </ul>
+                        </div>
+                        <svg style="width: 24px; color: #9ca3af; flex-shrink: 0; margin-top: 20px;">
+                            <path stroke="currentColor" stroke-width="2" fill="none" d="M5 12h14m0 0l-7-7m7 7l-7 7"/>
+                        </svg>
+                        <div class="content-box" style="flex: 1; background: white; border-left: 3px solid #0284c7;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                                <div style="width: 36px; height: 36px; background: #0284c7; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px;">4</div>
+                                <h3 style="margin: 0;">결과 확인 및 활용</h3>
+                            </div>
+                            <ul class="content-list">
+                                <li>AI 인사이트로 통계별 특징 파악</li>
+                                <li>AI 채팅으로 통계 데이터에 대해 질문 (RAG 방식)</li>
+                                <li>어떤 통계로 카드뉴스를 만들지 빠르게 결정</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 8: 주요 기능 - AI 채팅 (RAG) -->
+        <div class="slide" data-slide="8">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">8 / 16</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="section-title">
+                    <svg class="icon-lg" stroke="#0284c7" fill="none">
+                        <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                    주요 기능 - AI 채팅 (RAG)
+                    <span class="badge">NEW</span>
+                </h2>
+                <div class="two-column">
+                    <div>
+                        <div class="content-box" style="margin-bottom: 24px;">
+                            <h3>RAG 기반 대화형 분석</h3>
+                            <p style="margin-bottom: 16px;"><strong>위치:</strong> 분석 결과 페이지 내 아코디언 UI</p>
+                            <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">작동 방식</h4>
+                            <ol style="list-style: decimal; padding-left: 20px;">
+                                <li style="margin-bottom: 8px; line-height: 1.6;">사용자가 통계 데이터에 대해 질문</li>
+                                <li style="margin-bottom: 8px; line-height: 1.6;">ChromaDB에서 질문과 관련된 데이터만 검색 (상위 8개)</li>
+                                <li style="margin-bottom: 8px; line-height: 1.6;">AI 인사이트 + 검색된 데이터 → Ollama에게 전달</li>
+                                <li style="margin-bottom: 8px; line-height: 1.6;">컨텍스트 기반 정확한 답변 생성</li>
+                            </ol>
+                        </div>
+                        <div class="content-box" style="background: #fafafa; border-left: 3px solid #22c55e;">
+                            <h3>주요 특징</h3>
+                            <ul class="content-list">
+                                <li>RAG (Retrieval-Augmented Generation) 방식</li>
+                                <li>대화 히스토리 유지</li>
+                                <li>실시간 응답 (로컬 LLM)</li>
+                                <li>데이터 외부 유출 없음</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="image-placeholder" style="height: 100%;">
+                            AI 채팅 UI 캡쳐 이미지 자리
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 9: 핵심 기술 - 동적 웹 크롤링 -->
+        <div class="slide" data-slide="9">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">9 / 16</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="section-title">
+                    <svg class="icon-lg" stroke="#0284c7" fill="none">
+                        <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                    </svg>
+                    핵심 기술 - 동적 웹 크롤링
+                </h2>
+                <div class="two-column">
+                    <div>
+                        <div style="background: #fafafa; border-left: 3px solid #ef4444; padding: 24px; margin-bottom: 24px;">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">도전 과제</h3>
+                            <ul class="content-list">
+                                <li>복잡한 JavaScript 기반 통계 사이트</li>
+                                <li>동적 렌더링으로 일반 크롤링 불가능</li>
+                                <li>복잡한 테이블 구조 (병합 셀, 다층 헤더)</li>
+                                <li>다양한 데이터 형식 (IBSheet, 엑셀 등)</li>
+                            </ul>
+                        </div>
+                        <div style="background: #fafafa; border-left: 3px solid #22c55e; padding: 24px;">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">해결 방법 - 이중 전략</h3>
+                            <ul class="content-list">
+                                <li><strong>우선: 엑셀 다운로드 방식</strong> - 브라우저 자동화로 엑셀 파일 다운로드 및 Pandas 파싱</li>
+                                <li><strong>백업: 직접 테이블 수집</strong> - Selenium 헤드리스 브라우저로 DOM 파싱</li>
+                                <li><strong>안정성 확보</strong> - 모듈화된 크롤러 구조, 에러 핸들링 및 자동 재시도</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="image-placeholder" style="height: 100%;">
+                            크롤링 프로세스 다이어그램 이미지 자리
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 10: 핵심 기술 - AI 분석 엔진 -->
+        <div class="slide" data-slide="10">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">10 / 16</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="section-title">
+                    <svg class="icon-lg" stroke="#0284c7" fill="none">
+                        <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                    핵심 기술 - AI 분석 엔진 (Ollama)
+                </h2>
+                <div class="content-grid two-col">
+                    <div class="content-box">
+                        <h3>Ollama 로컬 LLM 활용</h3>
+                        <p style="margin-bottom: 16px;">오픈소스 로컬 AI로 데이터 프라이버시 보장</p>
+                        <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">기술 스펙</h4>
+                        <ul class="content-list">
+                            <li><strong>모델:</strong> Llama 3.1 (8B Instruct)</li>
+                            <li><strong>실행 환경:</strong> 로컬 서버 (CPU 전용)</li>
+                            <li><strong>장점:</strong> 비용 0원, 데이터 외부 유출 없음</li>
+                            <li><strong>제약사항:</strong> 16K 토큰 제한, CPU 성능 제한</li>
+                        </ul>
+                        <div style="background: #fafafa; padding: 20px; margin-top: 16px; border-left: 3px solid #0284c7;">
+                            <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">극복 방법</h4>
+                            <ul class="content-list">
+                                <li>통계표별 분할 분석으로 토큰 제한 회피</li>
+                                <li>CPU 최적화 모델 사용</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="content-box">
+                        <h3>분석 프로세스</h3>
+                        <ol style="list-style: decimal; padding-left: 20px;">
+                            <li style="margin-bottom: 12px; line-height: 1.6;"><strong>데이터 구조 분석</strong> - 컬럼, 연도, 단위 파악</li>
+                            <li style="margin-bottom: 12px; line-height: 1.6;"><strong>기본 통계량 계산</strong> - 평균, 중앙값, 최대/최소값</li>
+                            <li style="margin-bottom: 12px; line-height: 1.6;"><strong>시계열 트렌드 분석</strong> - 증가/감소 패턴 파악</li>
+                            <li style="margin-bottom: 12px; line-height: 1.6;"><strong>주요 변화 시점 탐지</strong> - 급격한 변화 지점 식별</li>
+                            <li style="margin-bottom: 12px; line-height: 1.6;"><strong>통계표별 개별 인사이트</strong></li>
+                            <li style="margin-bottom: 12px; line-height: 1.6;"><strong>종합 인사이트</strong></li>
+                        </ol>
+                        <div style="background: #fafafa; padding: 20px; margin-top: 16px; border-left: 3px solid #f59e0b;">
+                            <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">성능 한계</h4>
+                            <ul class="content-list">
+                                <li>통계표당 3~10분 소요 (CPU 환경)</li>
+                                <li>Claude/GPT 대비 30-40% 품질 차이</li>
+                                <li>하지만 업무 목적으로는 충분</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 11: 개발 방법론 - 바이브 코딩 -->
+        <div class="slide" data-slide="11">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">11 / 16</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="section-title">
+                    <svg class="icon-lg" stroke="#0284c7" fill="none">
+                        <path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                    </svg>
+                    개발 방법론 - 바이브 코딩
+                </h2>
+                <div class="content-box" style="margin-bottom: 32px; background: #fafafa; border-left: 3px solid #0284c7;">
+                    <h3>개발 규모</h3>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 16px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 32px; font-weight: 700; color: #0284c7;">2-3주</div>
+                            <p style="margin-top: 4px; font-size: 14px; color: #6b7280;">개발 기간</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 32px; font-weight: 700; color: #0284c7;">40-60h</div>
+                            <p style="margin-top: 4px; font-size: 14px; color: #6b7280;">작업 시간</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 32px; font-weight: 700; color: #0284c7;">1명</div>
+                            <p style="margin-top: 4px; font-size: 14px; color: #6b7280;">개발 인원</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 32px; font-weight: 700; color: #0284c7;">20+</div>
+                            <p style="margin-top: 4px; font-size: 14px; color: #6b7280;">개발 일지</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-grid two-col">
+                    <div>
+                        <div class="content-box" style="margin-bottom: 24px;">
+                            <h3>바이브 코딩이란?</h3>
+                            <p style="margin-bottom: 16px;"><strong>AI와 대화하며 코드를 작성하는 방식</strong></p>
+                            <ul class="content-list">
+                                <li>Claude (Cursor AI)와 실시간 대화</li>
+                                <li>문제 설명 → AI가 코드 제안 → 테스트 → 개선</li>
+                                <li>전통적인 검색 & 복붙이 아닌 협업 개발</li>
+                            </ul>
+                        </div>
+                        <div style="background: #fafafa; border-left: 3px solid #22c55e; padding: 24px;">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">장점</h3>
+                            <ul class="content-list">
+                                <li>비개발자도 복잡한 시스템 구축 가능</li>
+                                <li>디자이너가 풀스택 개발 완성</li>
+                                <li>전통적 방식 대비 2-3배 빠름</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="background: #fafafa; border-left: 3px solid #ef4444; padding: 24px; margin-bottom: 24px;">
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">한계점</h3>
+                            <ul class="content-list">
+                                <li>AI가 제안한 코드를 이해 없이 사용하면 위험</li>
+                                <li>복잡한 버그는 직접 디버깅 필요</li>
+                                <li>프로젝트 전체 구조 파악은 개발자 몫</li>
+                                <li>주석과 문서 부족 - 향후 개선 필요</li>
+                            </ul>
+                        </div>
+                        <div class="image-placeholder">
+                            바이브 코딩 과정 이미지 자리
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 12: 개발 과정 - 주요 챌린지 -->
+        <div class="slide" data-slide="12">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">12 / 16</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="section-title">
+                    <svg class="icon-lg" stroke="#0284c7" fill="none">
+                        <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    개발 과정 - 주요 챌린지
+                </h2>
+                <div class="content-grid">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                        <div class="content-box">
+                            <h3>1. IBSheet 동적 테이블 크롤링</h3>
+                            <div class="problem-item" style="margin-top: 16px;">
+                                <p style="font-weight: 600; margin-bottom: 8px;">문제점</p>
+                                <ul class="content-list">
+                                    <li>특수 JavaScript 라이브러리로 렌더링</li>
+                                    <li>DOM에 직접 접근 불가</li>
+                                </ul>
+                            </div>
+                            <div class="solution-item">
+                                <p style="font-weight: 600; margin-bottom: 8px;">해결책</p>
+                                <ul class="content-list">
+                                    <li>Selenium으로 완전 로딩 대기</li>
+                                    <li>JavaScript 실행 완료 후 DOM 파싱</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="content-box">
+                            <h3>2. 대용량 데이터 처리</h3>
+                            <div class="problem-item" style="margin-top: 16px;">
+                                <p style="font-weight: 600; margin-bottom: 8px;">문제점</p>
+                                <ul class="content-list">
+                                    <li>수십 년치 통계 데이터</li>
+                                    <li>메모리 부족 위험</li>
+                                </ul>
+                            </div>
+                            <div class="solution-item">
+                                <p style="font-weight: 600; margin-bottom: 8px;">해결책</p>
+                                <ul class="content-list">
+                                    <li>캐시 시스템 구축</li>
+                                    <li>점진적 로딩 (Lazy Loading)</li>
+                                    <li>Pandas 최적화</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-box" style="background: #fafafa; border-left: 3px solid #f59e0b;">
+                        <h3>3. AI 분석 - 하드웨어 제약 극복</h3>
+                        <div style="margin-top: 16px;">
+                            <p style="margin-bottom: 12px;"><strong>하드웨어 환경:</strong> CPU만 있는 노트북 (GPU 없음)</p>
+                            <div class="problem-item">
+                                <p style="font-weight: 600; margin-bottom: 8px;">문제점</p>
+                                <ul class="content-list">
+                                    <li>처음 시도: 통계 전체 데이터를 한 번에 분석</li>
+                                    <li>결과: 토큰 양 초과로 실패 (16K 제한)</li>
+                                </ul>
+                            </div>
+                            <div class="solution-item">
+                                <p style="font-weight: 600; margin-bottom: 8px;">해결책 (핵심!)</p>
+                                <ul class="content-list">
+                                    <li>Ollama 로컬 LLM 활용 (비용 0원)</li>
+                                    <li><strong>통계표별 분할 분석</strong> - 통계 전체 → 개별 통계표로 분할, 각 표별 인사이트 생성 후 종합</li>
+                                    <li>프롬프트 최적화</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 13: 향후 개선 방향 -->
+        <div class="slide" data-slide="13">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">13 / 16</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="section-title">
+                    <svg class="icon-lg" stroke="#0284c7" fill="none">
+                        <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    향후 개선 방향
+                </h2>
+                <div class="content-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="content-box" style="border-left: 3px solid #0284c7;">
+                        <h3>단기 목표 (3개월)</h3>
+                        <ul class="content-list">
+                            <li><strong>성능 개선</strong> (최우선)
+                                <ul style="margin-top: 8px; padding-left: 20px;">
+                                    <li style="list-style: disc;">GPU 활용 (CUDA 지원)</li>
+                                    <li style="list-style: disc;">경량화 모델 테스트</li>
+                                </ul>
+                            </li>
+                            <li><strong>AI 채팅 기능 고도화</strong>
+                                <ul style="margin-top: 8px; padding-left: 20px;">
+                                    <li style="list-style: disc;">대화 맥락 이해 개선</li>
+                                    <li style="list-style: disc;">차트/표 생성 답변 지원</li>
+                                </ul>
+                            </li>
+                            <li><strong>데이터 시각화 구현</strong>
+                                <ul style="margin-top: 8px; padding-left: 20px;">
+                                    <li style="list-style: disc;">HTML 기반 차트 생성</li>
+                                    <li style="list-style: disc;">카드뉴스 형태 레이아웃</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="content-box" style="border-left: 3px solid #22c55e;">
+                        <h3>중기 목표 (6개월)</h3>
+                        <ul class="content-list">
+                            <li><strong>카드뉴스 완전 구현</strong> (최우선)
+                                <ul style="margin-top: 8px; padding-left: 20px;">
+                                    <li style="list-style: disc;">시각화된 분석 결과</li>
+                                    <li style="list-style: disc;">PDF/이미지 내보내기</li>
+                                    <li style="list-style: disc;">소셜 미디어 공유</li>
+                                </ul>
+                            </li>
+                            <li><strong>타 정부기관 통계 확장</strong>
+                                <ul style="margin-top: 8px; padding-left: 20px;">
+                                    <li style="list-style: disc;">통계청, 산업부 등</li>
+                                </ul>
+                            </li>
+                            <li><strong>사용자 맞춤형 대시보드</strong></li>
+                            <li><strong>통계 알림 서비스</strong></li>
+                        </ul>
+                    </div>
+                    <div class="content-box" style="border-left: 3px solid #f59e0b;">
+                        <h3>장기 목표 (1년)</h3>
+                        <ul class="content-list">
+                            <li><strong>모바일 앱 개발</strong>
+                                <ul style="margin-top: 8px; padding-left: 20px;">
+                                    <li style="list-style: disc;">React Native</li>
+                                </ul>
+                            </li>
+                            <li><strong>다국어 지원</strong>
+                                <ul style="margin-top: 8px; padding-left: 20px;">
+                                    <li style="list-style: disc;">영어, 중국어</li>
+                                </ul>
+                            </li>
+                            <li><strong>오픈 API 제공</strong>
+                                <ul style="margin-top: 8px; padding-left: 20px;">
+                                    <li style="list-style: disc;">개발자용 API</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="image-placeholder" style="margin-top: 24px; min-height: 200px;">
+                    로드맵 다이어그램 이미지 자리
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 14: 핵심 가치 제안 -->
+        <div class="slide" data-slide="14">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">14 / 16</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="section-title">
+                    <svg class="icon-lg" stroke="#0284c7" fill="none">
+                        <path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                    </svg>
+                    핵심 가치 제안
+                </h2>
+                <div class="content-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="content-box" style="border-left: 3px solid #0284c7;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                            <div style="width: 40px; height: 40px; background: #0284c7; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 20px;">1</div>
+                            <h3 style="margin: 0;">실무자 관점의 실용성</h3>
+                        </div>
+                        <p style="font-weight: 600; margin-bottom: 12px;">"통계이야기" 제작자를 위한 실용 도구</p>
+                        <ul class="content-list">
+                            <li>통계 분석 전문 지식 불필요</li>
+                            <li>AI가 자동으로 핵심 인사이트 추출</li>
+                            <li>어떤 통계를 선택할지 의사결정 지원</li>
+                        </ul>
+                    </div>
+                    <div class="content-box" style="border-left: 3px solid #22c55e;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                            <div style="width: 40px; height: 40px; background: #22c55e; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 20px;">2</div>
+                            <h3 style="margin: 0;">시간 배분 최적화</h3>
+                        </div>
+                        <p style="margin-bottom: 12px;"><strong>기존:</strong> 통계 하나하나 수동 분석</p>
+                        <p style="margin-bottom: 12px;"><strong>개선:</strong> 밤사이 자동 분석 → 아침에 결과 확인</p>
+                        <ul class="content-list">
+                            <li>실제 소요 시간: 통계당 5-10분</li>
+                            <li>하지만 사람이 직접 작업할 필요 없음</li>
+                        </ul>
+                    </div>
+                    <div class="content-box" style="border-left: 3px solid #f59e0b;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                            <div style="width: 40px; height: 40px; background: #f59e0b; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 20px;">3</div>
+                            <h3 style="margin: 0;">기획 효율성 향상</h3>
+                        </div>
+                        <ul class="content-list">
+                            <li>AI 인사이트로 기획 방향 빠르게 수립</li>
+                            <li>통계별 핵심 포인트 한눈에 비교</li>
+                            <li>카드뉴스 소재 선정 시간 단축</li>
+                        </ul>
+                    </div>
+                    <div class="content-box" style="border-left: 3px solid #a855f7;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                            <div style="width: 40px; height: 40px; background: #a855f7; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 20px;">4</div>
+                            <h3 style="margin: 0;">확장 가능성</h3>
+                        </div>
+                        <ul class="content-list">
+                            <li>국토교통부 → 모든 정부 통계로 확장 가능</li>
+                            <li>인사이트 → 시각화 카드뉴스로 발전 가능</li>
+                            <li>개인 프로젝트 → 실무 도구로 진화</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 15: 배운 점 & 인사이트 -->
+        <div class="slide" data-slide="15">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">15 / 16</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="section-title">
+                    <svg class="icon-lg" stroke="#0284c7" fill="none">
+                        <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    배운 점 & 인사이트
+                </h2>
+                <div class="content-grid two-col">
+                    <div class="content-box">
+                        <h3>기술적 학습</h3>
+                        <ul class="content-list">
+                            <li>바이브 코딩 - AI(Claude)와 대화하며 개발</li>
+                            <li>동적 웹 크롤링 노하우 습득</li>
+                            <li>FastAPI + React 풀스택 개발 경험</li>
+                            <li>SSE 실시간 통신 구현 경험</li>
+                            <li>로컬 LLM 통합 및 제약사항 극복 (Ollama)</li>
+                            <li>토큰 제한 문제 해결 - 데이터 분할 전략</li>
+                            <li>RAG (Retrieval-Augmented Generation) 구현</li>
+                            <li>벡터 DB (ChromaDB) 통합 및 의미 검색</li>
+                        </ul>
+                    </div>
+                    <div class="content-box">
+                        <h3>비즈니스 인사이트</h3>
+                        <ul class="content-list">
+                            <li><strong>실무 문제에서 출발</strong>한 프로젝트의 가치</li>
+                            <li>공공 데이터의 활용 가능성 무한함</li>
+                            <li>AI는 도구일 뿐, 문제 정의가 핵심</li>
+                            <li>비개발자도 필요에 의해 개발 가능 (바이브 코딩)</li>
+                            <li>"내가 불편한 것은 다른 사람도 불편하다"</li>
+                            <li>제약사항도 창의적으로 해결 가능</li>
+                            <li>완벽하지 않아도 MVP로 가치 검증 가능</li>
+                            <li>한계를 솔직히 인정하는 것이 더 신뢰를 준다</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 24px;">
+                    <p style="font-size: 20px; text-align: center;">"점진적 개선의 중요성 - MVP → 기능 추가 → 사용자 피드백 → 개선"</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 16: 감사합니다 -->
+        <div class="slide" data-slide="16">
+            <div class="slide-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg class="icon" style="stroke: white;">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M7 10v4M12 8v6M17 6v8"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>통계이야기</h1>
+                        <p>StatsStory</p>
+                    </div>
+                </div>
+                <div class="slide-number">16 / 16</div>
+            </div>
+            <div class="slide-content" style="text-align: center; justify-content: center;">
+                <h2 class="slide-title" style="justify-content: center; font-size: 56px; margin-bottom: 48px;">
+                    감사합니다!
+                </h2>
+                <div class="content-box" style="max-width: 600px; margin: 0 auto; text-align: left;">
+                    <h3>프로젝트 정보</h3>
+                    <ul class="content-list" style="font-size: 18px;">
+                        <li><strong>GitHub:</strong> [프로젝트 링크 추가]</li>
+                        <li><strong>이메일:</strong> [이메일 추가]</li>
+                    </ul>
+                    <div style="margin-top: 32px; padding: 28px; background: #fafafa; border-left: 3px solid #0284c7; text-align: center;">
+                        <p style="font-size: 20px; font-weight: 600; color: #111827; margin-bottom: 12px;">Q & A</p>
+                        <p style="font-size: 16px; color: #6b7280;">추가 질문이 있으시면 언제든 말씀해주세요!</p>
+                    </div>
+                </div>
+                <div class="image-placeholder" style="margin-top: 48px; max-width: 600px; margin-left: auto; margin-right: auto; min-height: 200px;">
+                    프로젝트 로고 또는 대표 이미지 자리
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 네비게이션 버튼 -->
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="prevSlide()">
+            <svg class="icon-sm">
+                <path stroke="currentColor" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+        </button>
+        <button class="nav-btn" id="nextBtn" onclick="nextSlide()">
+            <svg class="icon-sm">
+                <path stroke="currentColor" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 16;
+
+        function updateSlide() {
+            // 모든 슬라이드 숨기기
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+
+            // 현재 슬라이드 표시
+            const slide = document.querySelector(`.slide[data-slide="${currentSlide}"]`);
+            if (slide) {
+                slide.classList.add('active');
+                // 슬라이드 전환 시 맨 위로 스크롤
+                slide.scrollTop = 0;
+            }
+
+            // 진행률 바 업데이트
+            const progress = (currentSlide / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            // 버튼 상태 업데이트
+            document.getElementById('prevBtn').disabled = currentSlide === 1;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        // 키보드 단축키
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // 초기 슬라이드 설정
+        updateSlide();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1787 @@
+{
+  "cache_key": "7a1f9033f61e",
+  "stat_url": "https://stat.molit.go.kr/portal/cate/statView.do?hRsId=79&hFormId=7169&hDivEng=&month_yn=",
+  "saved_at": "2025-10-16T23:29:03.481423",
+  "data_count": 119,
+  "statistics": [
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "다운로드 시간 : 2025-10-16   22:55"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 2020 ~ 2024",
+        "Unnamed: 2": "검색분야 : 항공",
+        "Unnamed: 3": "작성주기 : 매년",
+        "Unnamed: 4": "단위 : 대,%"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": " "
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "년(Annual)",
+        "Unnamed: 1": "관제탑",
+        "Unnamed: 2": "교통량",
+        "Unnamed: 3": "월평균",
+        "Unnamed: 4": "일평균",
+        "Unnamed: 5": "증가율"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2020",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "164,119",
+        "Unnamed: 3": "13,677",
+        "Unnamed: 4": "448",
+        "Unnamed: 5": "-59.9"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2020",
+        "Unnamed: 1": "김포",
+        "Unnamed: 2": "127,632",
+        "Unnamed: 3": "10,636",
+        "Unnamed: 4": "349",
+        "Unnamed: 5": "-17.6"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2020",
+        "Unnamed: 1": "양양",
+        "Unnamed: 2": "25,161",
+        "Unnamed: 3": "2,097",
+        "Unnamed: 4": "69",
+        "Unnamed: 5": "2"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2020",
+        "Unnamed: 1": "제주",
+        "Unnamed: 2": "142,874",
+        "Unnamed: 3": "11,906",
+        "Unnamed: 4": "390",
+        "Unnamed: 5": "-21.4"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2020",
+        "Unnamed: 1": "여수",
+        "Unnamed: 2": "19,574",
+        "Unnamed: 3": "1,631",
+        "Unnamed: 4": "53",
+        "Unnamed: 5": "-17.6"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2020",
+        "Unnamed: 1": "울산",
+        "Unnamed: 2": "18,005",
+        "Unnamed: 3": "1,500",
+        "Unnamed: 4": "49",
+        "Unnamed: 5": "-15"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2020",
+        "Unnamed: 1": "무안",
+        "Unnamed: 2": "45,370",
+        "Unnamed: 3": "3,781",
+        "Unnamed: 4": "124",
+        "Unnamed: 5": "-17.6"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2020",
+        "Unnamed: 1": "울진",
+        "Unnamed: 2": "99,298",
+        "Unnamed: 3": "8,275",
+        "Unnamed: 4": "271",
+        "Unnamed: 5": "-5.6"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2021",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "152,586",
+        "Unnamed: 3": "12,716",
+        "Unnamed: 4": "418",
+        "Unnamed: 5": "-7"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2021",
+        "Unnamed: 1": "김포",
+        "Unnamed: 2": "153,818",
+        "Unnamed: 3": "12,818",
+        "Unnamed: 4": "421",
+        "Unnamed: 5": "20.5"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2021",
+        "Unnamed: 1": "양양",
+        "Unnamed: 2": "26,844",
+        "Unnamed: 3": "2,237",
+        "Unnamed: 4": "74",
+        "Unnamed: 5": "6.7"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2021",
+        "Unnamed: 1": "제주",
+        "Unnamed: 2": "166,056",
+        "Unnamed: 3": "13,838",
+        "Unnamed: 4": "455",
+        "Unnamed: 5": "16.2"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2021",
+        "Unnamed: 1": "여수",
+        "Unnamed: 2": "20,180",
+        "Unnamed: 3": "1,682",
+        "Unnamed: 4": "55",
+        "Unnamed: 5": "3.1"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2021",
+        "Unnamed: 1": "울산",
+        "Unnamed: 2": "15,814",
+        "Unnamed: 3": "1,318",
+        "Unnamed: 4": "43",
+        "Unnamed: 5": "-12.2"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2021",
+        "Unnamed: 1": "무안",
+        "Unnamed: 2": "41,130",
+        "Unnamed: 3": "3,428",
+        "Unnamed: 4": "113",
+        "Unnamed: 5": "-9.3"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2021",
+        "Unnamed: 1": "울진",
+        "Unnamed: 2": "87,173",
+        "Unnamed: 3": "7,264",
+        "Unnamed: 4": "239",
+        "Unnamed: 5": "-12.2"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2022",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "190,244",
+        "Unnamed: 3": "15,854",
+        "Unnamed: 4": "521",
+        "Unnamed: 5": "24.6"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2022",
+        "Unnamed: 1": "김포",
+        "Unnamed: 2": "160,650",
+        "Unnamed: 3": "13,388",
+        "Unnamed: 4": "440",
+        "Unnamed: 5": "4.5"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2022",
+        "Unnamed: 1": "양양",
+        "Unnamed: 2": "22,180",
+        "Unnamed: 3": "1,848",
+        "Unnamed: 4": "61",
+        "Unnamed: 5": "-17.6"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2022",
+        "Unnamed: 1": "제주",
+        "Unnamed: 2": "177,416",
+        "Unnamed: 3": "14,785",
+        "Unnamed: 4": "486",
+        "Unnamed: 5": "6.8"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2022",
+        "Unnamed: 1": "여수",
+        "Unnamed: 2": "17,368",
+        "Unnamed: 3": "1,447",
+        "Unnamed: 4": "48",
+        "Unnamed: 5": "-12.7"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2022",
+        "Unnamed: 1": "울산",
+        "Unnamed: 2": "14,146",
+        "Unnamed: 3": "1,179",
+        "Unnamed: 4": "39",
+        "Unnamed: 5": "-9.3"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2022",
+        "Unnamed: 1": "무안",
+        "Unnamed: 2": "39,428",
+        "Unnamed: 3": "3,286",
+        "Unnamed: 4": "108",
+        "Unnamed: 5": "-4.4"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2022",
+        "Unnamed: 1": "울진",
+        "Unnamed: 2": "96,294",
+        "Unnamed: 3": "8,025",
+        "Unnamed: 4": "264",
+        "Unnamed: 5": "10.5"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2023",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "347,491",
+        "Unnamed: 3": "28,957.58",
+        "Unnamed: 4": "952",
+        "Unnamed: 5": "82.7"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2023",
+        "Unnamed: 1": "김포",
+        "Unnamed: 2": "151,285",
+        "Unnamed: 3": "12,607.08",
+        "Unnamed: 4": "414",
+        "Unnamed: 5": "-5.9"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2023",
+        "Unnamed: 1": "양양",
+        "Unnamed: 2": "19,078",
+        "Unnamed: 3": "1,589.83",
+        "Unnamed: 4": "52",
+        "Unnamed: 5": "-14.8"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2023",
+        "Unnamed: 1": "제주",
+        "Unnamed: 2": "175,037",
+        "Unnamed: 3": "14,586.42",
+        "Unnamed: 4": "480",
+        "Unnamed: 5": "-1.2"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2023",
+        "Unnamed: 1": "여수",
+        "Unnamed: 2": "14,710",
+        "Unnamed: 3": "1,225.83",
+        "Unnamed: 4": "40",
+        "Unnamed: 5": "-16.7"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2023",
+        "Unnamed: 1": "울산",
+        "Unnamed: 2": "12,820",
+        "Unnamed: 3": "1,068.33",
+        "Unnamed: 4": "35",
+        "Unnamed: 5": "-10.3"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2023",
+        "Unnamed: 1": "무안",
+        "Unnamed: 2": "40,538",
+        "Unnamed: 3": "3,378.17",
+        "Unnamed: 4": "111",
+        "Unnamed: 5": "2.8"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2023",
+        "Unnamed: 1": "울진",
+        "Unnamed: 2": "102,455",
+        "Unnamed: 3": "8,537.92",
+        "Unnamed: 4": "281",
+        "Unnamed: 5": "6.4"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2024",
+        "Unnamed: 1": "인천",
+        "Unnamed: 2": "423,493",
+        "Unnamed: 3": "35,291.08",
+        "Unnamed: 4": "1,157.08",
+        "Unnamed: 5": "21.9"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2024",
+        "Unnamed: 1": "김포",
+        "Unnamed: 2": "142,621",
+        "Unnamed: 3": "11,885.08",
+        "Unnamed: 4": "389.67",
+        "Unnamed: 5": "-5.7"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2024",
+        "Unnamed: 1": "양양",
+        "Unnamed: 2": "19,185",
+        "Unnamed: 3": "1,598.75",
+        "Unnamed: 4": "52.42",
+        "Unnamed: 5": "0.6"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2024",
+        "Unnamed: 1": "제주",
+        "Unnamed: 2": "178,369",
+        "Unnamed: 3": "14,864.08",
+        "Unnamed: 4": "487.35",
+        "Unnamed: 5": "1.9"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2024",
+        "Unnamed: 1": "여수",
+        "Unnamed: 2": "14,116",
+        "Unnamed: 3": "1,176.33",
+        "Unnamed: 4": "38.57",
+        "Unnamed: 5": "-4"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2024",
+        "Unnamed: 1": "울산",
+        "Unnamed: 2": "10,901",
+        "Unnamed: 3": "908.42",
+        "Unnamed: 4": "29.78",
+        "Unnamed: 5": "-15"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2024",
+        "Unnamed: 1": "무안",
+        "Unnamed: 2": "44,762",
+        "Unnamed: 3": "3,730.17",
+        "Unnamed: 4": "122.3",
+        "Unnamed: 5": "10.4"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(연도별) (1996 ~ 2024)": "2024",
+        "Unnamed: 1": "울진",
+        "Unnamed: 2": "91,351",
+        "Unnamed: 3": "7,612.58",
+        "Unnamed: 4": "249.59",
+        "Unnamed: 5": "-10.8"
+      },
+      "table_name": "관제탑 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "다운로드 시간 : 2025-10-16   22:56"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 202509 ~ 202509",
+        "Unnamed: 2": "검색분야 : 항공",
+        "Unnamed: 3": "작성주기 : 매월"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 3,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": " "
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "월(Monthly)",
+        "Unnamed: 1": "구분",
+        "Unnamed: 2": "지역",
+        "Unnamed: 3": "교통량(대)"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "교통량",
+        "Unnamed: 2": "합계",
+        "Unnamed: 3": "79,928"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "교통량",
+        "Unnamed: 2": "인천",
+        "Unnamed: 3": "35,366"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "교통량",
+        "Unnamed: 2": "김포",
+        "Unnamed: 3": "12,157"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "교통량",
+        "Unnamed: 2": "양양",
+        "Unnamed: 3": "2,406"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "교통량",
+        "Unnamed: 2": "제주",
+        "Unnamed: 3": "15,459"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "교통량",
+        "Unnamed: 2": "여수",
+        "Unnamed: 3": "1,236"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "교통량",
+        "Unnamed: 2": "울산",
+        "Unnamed: 3": "1,328"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "교통량",
+        "Unnamed: 2": "무안",
+        "Unnamed: 3": "3,962"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "교통량",
+        "Unnamed: 2": "울진",
+        "Unnamed: 3": "8,014"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "일평균",
+        "Unnamed: 2": "합계",
+        "Unnamed: 3": "2,663"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "일평균",
+        "Unnamed: 2": "인천",
+        "Unnamed: 3": "1,179"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "일평균",
+        "Unnamed: 2": "김포",
+        "Unnamed: 3": "405"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "일평균",
+        "Unnamed: 2": "양양",
+        "Unnamed: 3": "80"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "일평균",
+        "Unnamed: 2": "제주",
+        "Unnamed: 3": "515"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "일평균",
+        "Unnamed: 2": "여수",
+        "Unnamed: 3": "41"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "일평균",
+        "Unnamed: 2": "울산",
+        "Unnamed: 3": "44"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "일평균",
+        "Unnamed: 2": "무안",
+        "Unnamed: 3": "132"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 관제탑 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "일평균",
+        "Unnamed: 2": "울진",
+        "Unnamed: 3": "267"
+      },
+      "table_name": "관제탑 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_관제탑 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "다운로드 시간 : 2025-10-16   22:56"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 2020 ~ 2024",
+        "Unnamed: 2": "검색분야 : 항공",
+        "Unnamed: 3": "작성주기 : 매년",
+        "Unnamed: 4": "단위 : 대,%"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": " "
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "년(Annual)",
+        "Unnamed: 1": "접근관제소",
+        "Unnamed: 2": "교통량",
+        "Unnamed: 3": "월평균",
+        "Unnamed: 4": "일평균",
+        "Unnamed: 5": "증가율"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "2020",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "299,246",
+        "Unnamed: 3": "24,937",
+        "Unnamed: 4": "818",
+        "Unnamed: 5": "-48"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "2020",
+        "Unnamed: 1": "김해",
+        "Unnamed: 2": "83,785",
+        "Unnamed: 3": "6,982",
+        "Unnamed: 4": "229",
+        "Unnamed: 5": "-45.7"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "2020",
+        "Unnamed: 1": "제주",
+        "Unnamed: 2": "143,602",
+        "Unnamed: 3": "11,967",
+        "Unnamed: 4": "392",
+        "Unnamed: 5": "-21.8"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "2021",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "313,986",
+        "Unnamed: 3": "26,166",
+        "Unnamed: 4": "860",
+        "Unnamed: 5": "4.9"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "2021",
+        "Unnamed: 1": "김해",
+        "Unnamed: 2": "93,685",
+        "Unnamed: 3": "7,807",
+        "Unnamed: 4": "257",
+        "Unnamed: 5": "11.8"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "2021",
+        "Unnamed: 1": "제주",
+        "Unnamed: 2": "166,324",
+        "Unnamed: 3": "13,860",
+        "Unnamed: 4": "456",
+        "Unnamed: 5": "15.8"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "2022",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "358,521",
+        "Unnamed: 3": "29,877",
+        "Unnamed: 4": "982",
+        "Unnamed: 5": "14.2"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "2022",
+        "Unnamed: 1": "김해",
+        "Unnamed: 2": "97,613",
+        "Unnamed: 3": "8,134",
+        "Unnamed: 4": "267",
+        "Unnamed: 5": "3.9"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "2022",
+        "Unnamed: 1": "제주",
+        "Unnamed: 2": "177,864",
+        "Unnamed: 3": "14,822",
+        "Unnamed: 4": "487",
+        "Unnamed: 5": "6.8"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "2023",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "507,842",
+        "Unnamed: 3": "42,320.17",
+        "Unnamed: 4": "1,391",
+        "Unnamed: 5": "41.6"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "2023",
+        "Unnamed: 1": "김해",
+        "Unnamed: 2": "120,481",
+        "Unnamed: 3": "10,040.08",
+        "Unnamed: 4": "330",
+        "Unnamed: 5": "23.6"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "2023",
+        "Unnamed: 1": "제주",
+        "Unnamed: 2": "175,402",
+        "Unnamed: 3": "14,616.83",
+        "Unnamed: 4": "481",
+        "Unnamed: 5": "-1.2"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "2024",
+        "Unnamed: 1": "서울",
+        "Unnamed: 2": "575,479",
+        "Unnamed: 3": "47,956.58",
+        "Unnamed: 4": "1,572",
+        "Unnamed: 5": "13"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "2024",
+        "Unnamed: 1": "김해",
+        "Unnamed: 2": "132,709",
+        "Unnamed: 3": "11,059.08",
+        "Unnamed: 4": "363",
+        "Unnamed: 5": "10"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(연도별) (1996 ~ 2024)": "2024",
+        "Unnamed: 1": "제주",
+        "Unnamed: 2": "178,853",
+        "Unnamed: 3": "14,904.42",
+        "Unnamed: 4": "489",
+        "Unnamed: 5": "1.7"
+      },
+      "table_name": "접근관제소 관제량(연도별) (1996 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(연도별) (1996 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(월별) (202505 ~ 202509)": "다운로드 시간 : 2025-10-16   22:57"
+      },
+      "table_name": "접근관제소 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 202509 ~ 202509",
+        "Unnamed: 2": "검색분야 : 항공",
+        "Unnamed: 3": "작성주기 : 매월",
+        "Unnamed: 4": "단위 : 대"
+      },
+      "table_name": "접근관제소 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(월별) (202505 ~ 202509)": " "
+      },
+      "table_name": "접근관제소 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(월별) (202505 ~ 202509)": "월(Monthly)",
+        "Unnamed: 1": "총합계",
+        "Unnamed: 2": "총합계",
+        "Unnamed: 3": "서울",
+        "Unnamed: 4": "서울",
+        "Unnamed: 5": "김해",
+        "Unnamed: 6": "김해",
+        "Unnamed: 7": "제주",
+        "Unnamed: 8": "제주"
+      },
+      "table_name": "접근관제소 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 9,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(월별) (202505 ~ 202509)": "월(Monthly)",
+        "Unnamed: 1": "교통량(대)",
+        "Unnamed: 2": "일평균(대)",
+        "Unnamed: 3": "교통량(대)",
+        "Unnamed: 4": "일평균(대)",
+        "Unnamed: 5": "교통량(대)",
+        "Unnamed: 6": "일평균(대)",
+        "Unnamed: 7": "교통량(대)",
+        "Unnamed: 8": "일평균(대)"
+      },
+      "table_name": "접근관제소 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 9,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 접근관제소 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "75,514",
+        "Unnamed: 2": "2,517",
+        "Unnamed: 3": "48,082",
+        "Unnamed: 4": "1,603",
+        "Unnamed: 5": "11,954",
+        "Unnamed: 6": "398",
+        "Unnamed: 7": "15,478",
+        "Unnamed: 8": "516"
+      },
+      "table_name": "접근관제소 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 9,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_접근관제소 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 통과 비행량(연도별) (1997 ~ 2024)": "다운로드 시간 : 2025-10-16   22:57"
+      },
+      "table_name": "통과 비행량(연도별) (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_통과 비행량(연도별) (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 2020 ~ 2024",
+        "Unnamed: 2": "검색분야 : 항공",
+        "Unnamed: 3": "작성주기 : 매년",
+        "Unnamed: 4": "단위 : 대"
+      },
+      "table_name": "통과 비행량(연도별) (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_통과 비행량(연도별) (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 통과 비행량(연도별) (1997 ~ 2024)": " "
+      },
+      "table_name": "통과 비행량(연도별) (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_통과 비행량(연도별) (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 통과 비행량(연도별) (1997 ~ 2024)": "년(Annual)",
+        "Unnamed: 1": "교통량",
+        "Unnamed: 2": "월평균",
+        "Unnamed: 3": "일평균",
+        "Unnamed: 4": "전년대비증가율(%)"
+      },
+      "table_name": "통과 비행량(연도별) (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 5,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_통과 비행량(연도별) (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 통과 비행량(연도별) (1997 ~ 2024)": "2020",
+        "Unnamed: 1": "17,715.0",
+        "Unnamed: 2": "1,476.0",
+        "Unnamed: 3": "48.0",
+        "Unnamed: 4": "-69.3"
+      },
+      "table_name": "통과 비행량(연도별) (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 5,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_통과 비행량(연도별) (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 통과 비행량(연도별) (1997 ~ 2024)": "2021",
+        "Unnamed: 1": "50,244.0",
+        "Unnamed: 2": "4,187.0",
+        "Unnamed: 3": "138.0",
+        "Unnamed: 4": "183.6"
+      },
+      "table_name": "통과 비행량(연도별) (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 5,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_통과 비행량(연도별) (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 통과 비행량(연도별) (1997 ~ 2024)": "2022",
+        "Unnamed: 1": "71,163.0",
+        "Unnamed: 2": "5,930.0",
+        "Unnamed: 3": "195.0",
+        "Unnamed: 4": "41.3"
+      },
+      "table_name": "통과 비행량(연도별) (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 5,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_통과 비행량(연도별) (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 통과 비행량(연도별) (1997 ~ 2024)": "2023",
+        "Unnamed: 1": "115,373.0",
+        "Unnamed: 2": "9,614.4",
+        "Unnamed: 3": "316.0",
+        "Unnamed: 4": "62.1"
+      },
+      "table_name": "통과 비행량(연도별) (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 5,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_통과 비행량(연도별) (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 통과 비행량(연도별) (1997 ~ 2024)": "2024",
+        "Unnamed: 1": "188,201.0",
+        "Unnamed: 2": "15,683.4",
+        "Unnamed: 3": "514.0",
+        "Unnamed: 4": "62.7"
+      },
+      "table_name": "통과 비행량(연도별) (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 5,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_통과 비행량(연도별) (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 통과 비행량(월별) (202505 ~ 202509)": "다운로드 시간 : 2025-10-16   22:57"
+      },
+      "table_name": "통과 비행량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_통과 비행량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 202509 ~ 202509",
+        "Unnamed: 2": "검색분야 : 항공",
+        "Unnamed: 3": "작성주기 : 매월",
+        "Unnamed: 4": "단위 : "
+      },
+      "table_name": "통과 비행량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_통과 비행량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 통과 비행량(월별) (202505 ~ 202509)": " "
+      },
+      "table_name": "통과 비행량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_통과 비행량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 통과 비행량(월별) (202505 ~ 202509)": "월(Monthly)",
+        "Unnamed: 1": "전년도 동월 교통량(대)",
+        "Unnamed: 2": "당월 교통량(대)",
+        "Unnamed: 3": "당월 일평균 교통량(대)",
+        "Unnamed: 4": "전년 동월 대비 교통량 증가율(%)"
+      },
+      "table_name": "통과 비행량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 5,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_통과 비행량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 통과 비행량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "16,573",
+        "Unnamed: 2": "18,971",
+        "Unnamed: 3": "632",
+        "Unnamed: 4": "14.5"
+      },
+      "table_name": "통과 비행량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 5,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_통과 비행량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 항로 관제량(연도별) (1993 ~ 2024)": "다운로드 시간 : 2025-10-16   22:58"
+      },
+      "table_name": "항로 관제량(연도별) (1993 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_항로 관제량(연도별) (1993 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 2020 ~ 2024",
+        "Unnamed: 2": "검색분야 : 항공",
+        "Unnamed: 3": "작성주기 : 매년",
+        "Unnamed: 4": "단위 : 대,%"
+      },
+      "table_name": "항로 관제량(연도별) (1993 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_항로 관제량(연도별) (1993 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 항로 관제량(연도별) (1993 ~ 2024)": " "
+      },
+      "table_name": "항로 관제량(연도별) (1993 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_항로 관제량(연도별) (1993 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 항로 관제량(연도별) (1993 ~ 2024)": "년(Annual)",
+        "Unnamed: 1": "교통량",
+        "Unnamed: 2": "월평균",
+        "Unnamed: 3": "일평균",
+        "Unnamed: 4": "증가율",
+        "Unnamed: 5": "계",
+        "Unnamed: 6": "민",
+        "Unnamed: 7": "군"
+      },
+      "table_name": "항로 관제량(연도별) (1993 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 8,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_항로 관제량(연도별) (1993 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 항로 관제량(연도별) (1993 ~ 2024)": "2020",
+        "Unnamed: 1": "421,343",
+        "Unnamed: 2": "35,112",
+        "Unnamed: 3": "1,151",
+        "Unnamed: 4": "-50",
+        "Unnamed: 5": "421,343",
+        "Unnamed: 6": "0",
+        "Unnamed: 7": "0"
+      },
+      "table_name": "항로 관제량(연도별) (1993 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 8,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_항로 관제량(연도별) (1993 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 항로 관제량(연도별) (1993 ~ 2024)": "2021",
+        "Unnamed: 1": "465,469",
+        "Unnamed: 2": "38,789",
+        "Unnamed: 3": "1,275",
+        "Unnamed: 4": "10.5",
+        "Unnamed: 6": "0",
+        "Unnamed: 7": "0"
+      },
+      "table_name": "항로 관제량(연도별) (1993 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_항로 관제량(연도별) (1993 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 항로 관제량(연도별) (1993 ~ 2024)": "2022",
+        "Unnamed: 1": "539,788",
+        "Unnamed: 2": "44,982",
+        "Unnamed: 3": "1,479",
+        "Unnamed: 4": "16",
+        "Unnamed: 5": "0",
+        "Unnamed: 6": "0",
+        "Unnamed: 7": "0"
+      },
+      "table_name": "항로 관제량(연도별) (1993 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 8,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_항로 관제량(연도별) (1993 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 항로 관제량(연도별) (1993 ~ 2024)": "2023",
+        "Unnamed: 1": "780,635",
+        "Unnamed: 2": "65,052.92",
+        "Unnamed: 3": "2,139",
+        "Unnamed: 4": "44.6",
+        "Unnamed: 5": "0",
+        "Unnamed: 6": "0",
+        "Unnamed: 7": "0"
+      },
+      "table_name": "항로 관제량(연도별) (1993 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 8,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_항로 관제량(연도별) (1993 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 항로 관제량(연도별) (1993 ~ 2024)": "2024",
+        "Unnamed: 1": "951,934",
+        "Unnamed: 2": "79,327.83",
+        "Unnamed: 3": "2,601",
+        "Unnamed: 4": "21.6",
+        "Unnamed: 5": "951,934",
+        "Unnamed: 6": "921,281",
+        "Unnamed: 7": "30,653"
+      },
+      "table_name": "항로 관제량(연도별) (1993 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 8,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_항로 관제량(연도별) (1993 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 항로 관제량(월별) (202505 ~ 202509)": "다운로드 시간 : 2025-10-16   22:58"
+      },
+      "table_name": "항로 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_항로 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 202509 ~ 202509",
+        "Unnamed: 2": "검색분야 : 항공",
+        "Unnamed: 3": "작성주기 : 매월",
+        "Unnamed: 4": "단위 : "
+      },
+      "table_name": "항로 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_항로 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 항로 관제량(월별) (202505 ~ 202509)": " "
+      },
+      "table_name": "항로 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_항로 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 항로 관제량(월별) (202505 ~ 202509)": "월(Monthly)",
+        "Unnamed: 1": "전년도 동월 교통량(대)",
+        "Unnamed: 2": "당월 교통량(대)",
+        "Unnamed: 3": "당월 일평균 교통량(대)",
+        "Unnamed: 4": "전년 동월 대비 교통량 증가율(%)"
+      },
+      "table_name": "항로 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 5,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_항로 관제량(월별) (202505 ~ 202509).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "항공교통관제업무통계(Air Traffic Statistics) / 항로 관제량(월별) (202505 ~ 202509)": "2025-09",
+        "Unnamed: 1": "80,720",
+        "Unnamed: 2": "84,310",
+        "Unnamed: 3": "2,810",
+        "Unnamed: 4": "4.4"
+      },
+      "table_name": "항로 관제량(월별) (202505 ~ 202509)",
+      "period_text": "2025-10",
+      "raw_data_count": 5,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\항공교통관제업무통계_항로 관제량(월별) (202505 ~ 202509).xlsx"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "cache_key": "7f5566040859",
+  "stat_url": "https://stat.molit.go.kr/portal/cate/statView.do?hRsId=476&hFormId=5409&hDivEng=&month_yn=",
+  "saved_at": "2025-10-17T02:19:36.188694",
+  "data_count": 5,
+  "statistics": [
+    {
+      "year": 2025,
+      "data": {
+        "건설기계 현황 통계 / 건설기계 현황통계 (201101 ~ 202503)": "다운로드 시간 : 2025-10-17   02:17"
+      },
+      "table_name": "건설기계 현황통계 (201101 ~ 202503)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설기계 현황 통계_건설기계 현황통계 (201101 ~ 202503).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 202503 ~ 202503",
+        "Unnamed: 2": "검색분야 : 건설산업"
+      },
+      "table_name": "건설기계 현황통계 (201101 ~ 202503)",
+      "period_text": "2025-10",
+      "raw_data_count": 2,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설기계 현황 통계_건설기계 현황통계 (201101 ~ 202503).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설기계 현황 통계 / 건설기계 현황통계 (201101 ~ 202503)": " "
+      },
+      "table_name": "건설기계 현황통계 (201101 ~ 202503)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설기계 현황 통계_건설기계 현황통계 (201101 ~ 202503).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설기계 현황 통계 / 건설기계 현황통계 (201101 ~ 202503)": "분기(Quarterly)",
+        "Unnamed: 1": "참고",
+        "Unnamed: 2": "첨부파일을 참조하시기 바랍니다."
+      },
+      "table_name": "건설기계 현황통계 (201101 ~ 202503)",
+      "period_text": "2025-10",
+      "raw_data_count": 3,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설기계 현황 통계_건설기계 현황통계 (201101 ~ 202503).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설기계 현황 통계 / 건설기계 현황통계 (201101 ~ 202503)": "2025/03",
+        "Unnamed: 1": "0",
+        "Unnamed: 2": "0"
+      },
+      "table_name": "건설기계 현황통계 (201101 ~ 202503)",
+      "period_text": "2025-10",
+      "raw_data_count": 3,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설기계 현황 통계_건설기계 현황통계 (201101 ~ 202503).xlsx"
+    }
+  ]
+}

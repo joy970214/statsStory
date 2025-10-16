@@ -1,0 +1,281 @@
+{
+  "cache_key": "f88ac7c379d9",
+  "stat_url": "https://stat.molit.go.kr/portal/cate/statView.do?hRsId=451&hFormId=4830&hDivEng=&month_yn=",
+  "saved_at": "2025-10-17T01:03:17.821081",
+  "data_count": 18,
+  "statistics": [
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전력설비 현황 (1997 ~ 2024)": "다운로드 시간 : 2025-10-17   00:58"
+      },
+      "table_name": "전력설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전력설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 2020 ~ 2024",
+        "Unnamed: 2": "검색분야 : 철도",
+        "Unnamed: 3": "작성주기 : 매년",
+        "Unnamed: 4": "단위 : ㎞,본,대,개,면"
+      },
+      "table_name": "전력설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전력설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전력설비 현황 (1997 ~ 2024)": " "
+      },
+      "table_name": "전력설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전력설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전력설비 현황 (1997 ~ 2024)": "년(Annual)",
+        "Unnamed: 1": "철도거리[㎞]",
+        "Unnamed: 2": "배전선[㎞]",
+        "Unnamed: 3": "배전주[본]",
+        "Unnamed: 4": "변압기[대]",
+        "Unnamed: 5": "조명등[개]",
+        "Unnamed: 6": "배전반[면]",
+        "Unnamed: 7": "분전함[면]"
+      },
+      "table_name": "전력설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 8,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전력설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전력설비 현황 (1997 ~ 2024)": "2020",
+        "Unnamed: 1": "4,162.5",
+        "Unnamed: 2": "20,094.9",
+        "Unnamed: 3": "9,005",
+        "Unnamed: 4": "6,896",
+        "Unnamed: 5": "1,004,558",
+        "Unnamed: 6": "14,789",
+        "Unnamed: 7": "15,849"
+      },
+      "table_name": "전력설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 8,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전력설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전력설비 현황 (1997 ~ 2024)": "2021",
+        "Unnamed: 1": "4,127.7",
+        "Unnamed: 2": "19,818.2",
+        "Unnamed: 3": "10,303",
+        "Unnamed: 4": "6,773",
+        "Unnamed: 5": "1,033,547",
+        "Unnamed: 6": "15,488",
+        "Unnamed: 7": "15,731"
+      },
+      "table_name": "전력설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 8,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전력설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전력설비 현황 (1997 ~ 2024)": "2022",
+        "Unnamed: 1": "4,207.2",
+        "Unnamed: 2": "19,818.2"
+      },
+      "table_name": "전력설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 3,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전력설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전력설비 현황 (1997 ~ 2024)": "2023",
+        "Unnamed: 1": "4,223.7",
+        "Unnamed: 2": "20,029.1",
+        "Unnamed: 3": "7,056",
+        "Unnamed: 4": "6,790",
+        "Unnamed: 5": "1,145,410",
+        "Unnamed: 6": "15,690",
+        "Unnamed: 7": "17,280"
+      },
+      "table_name": "전력설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 8,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전력설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전력설비 현황 (1997 ~ 2024)": "2024",
+        "Unnamed: 1": "4,478.1",
+        "Unnamed: 2": "21,129.9",
+        "Unnamed: 3": "10,223",
+        "Unnamed: 4": "7,205",
+        "Unnamed: 5": "1,150,099",
+        "Unnamed: 6": "18,551",
+        "Unnamed: 7": "20,550"
+      },
+      "table_name": "전력설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 8,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전력설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전철설비 현황 (1997 ~ 2024)": "다운로드 시간 : 2025-10-17   00:58"
+      },
+      "table_name": "전철설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전철설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 2020 ~ 2024",
+        "Unnamed: 2": "검색분야 : 철도",
+        "Unnamed: 3": "작성주기 : 매년",
+        "Unnamed: 4": "단위 : km,개,본"
+      },
+      "table_name": "전철설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전철설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전철설비 현황 (1997 ~ 2024)": " "
+      },
+      "table_name": "전철설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전철설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전철설비 현황 (1997 ~ 2024)": "년(Annual)",
+        "Unnamed: 1": "철도거리[km]",
+        "Unnamed: 2": "전차선로(연장)[km]",
+        "Unnamed: 3": "구분장치[개]",
+        "Unnamed: 4": "지지물[본]",
+        "Unnamed: 5": "애자[개]",
+        "Unnamed: 6": "장력조정장치[개]"
+      },
+      "table_name": "전철설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전철설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전철설비 현황 (1997 ~ 2024)": "2020",
+        "Unnamed: 1": "4,162.5",
+        "Unnamed: 2": "9,202.4",
+        "Unnamed: 3": "3,554",
+        "Unnamed: 4": "152,711",
+        "Unnamed: 5": "1,013,488",
+        "Unnamed: 6": "16,999"
+      },
+      "table_name": "전철설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전철설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전철설비 현황 (1997 ~ 2024)": "2021",
+        "Unnamed: 1": "4,127.7",
+        "Unnamed: 2": "9,738.1",
+        "Unnamed: 3": "3,782",
+        "Unnamed: 4": "163,309",
+        "Unnamed: 5": "1,033,920",
+        "Unnamed: 6": "17,932"
+      },
+      "table_name": "전철설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전철설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전철설비 현황 (1997 ~ 2024)": "2022",
+        "Unnamed: 1": "4,207.2",
+        "Unnamed: 2": "9,778.7"
+      },
+      "table_name": "전철설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 3,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전철설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전철설비 현황 (1997 ~ 2024)": "2023",
+        "Unnamed: 1": "4,223.7",
+        "Unnamed: 2": "10,007.7",
+        "Unnamed: 3": "3,774",
+        "Unnamed: 4": "166,654",
+        "Unnamed: 5": "1,042,372",
+        "Unnamed: 6": "18,222"
+      },
+      "table_name": "전철설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전철설비 현황 (1997 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "전철전력설비 현황 / 전철설비 현황 (1997 ~ 2024)": "2024",
+        "Unnamed: 1": "4,478.1",
+        "Unnamed: 2": "10,879.5",
+        "Unnamed: 3": "3,907",
+        "Unnamed: 4": "178,131",
+        "Unnamed: 5": "1,079,379",
+        "Unnamed: 6": "19,732"
+      },
+      "table_name": "전철설비 현황 (1997 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\전철전력설비 현황_전철설비 현황 (1997 ~ 2024).xlsx"
+    }
+  ]
+}

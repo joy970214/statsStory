@@ -335,13 +335,13 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
                 </div>
 
                 <div className="flex flex-col space-y-2 ml-6">
-                  <button
+                  {/* <button
                     onClick={() => onSelectStat(stat.stat_name)}
                     className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium whitespace-nowrap flex items-center gap-2"
                   >
                     <ChartBarIcon className="w-4 h-4" />
                     상세 분석
-                  </button>
+                  </button> */}
                   <button
                     onClick={() => window.open(stat.stat_url, '_blank')}
                     className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium whitespace-nowrap flex items-center gap-2"

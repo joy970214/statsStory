@@ -1,0 +1,848 @@
+{
+  "cache_key": "3500592fb3c0",
+  "stat_url": "https://stat.molit.go.kr/portal/cate/statView.do?hRsId=514&hFormId=6019&hDivEng=&month_yn=",
+  "saved_at": "2025-10-17T03:59:00.342912",
+  "data_count": 61,
+  "statistics": [
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 계약규모 순위별 건설공사계약 금액 (201401 ~ 202502)": "다운로드 시간 : 2025-10-17   03:42"
+      },
+      "table_name": "계약규모 순위별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_계약규모 순위별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 202502 ~ 202502",
+        "Unnamed: 2": "검색분야 : 건설산업",
+        "Unnamed: 3": "작성주기 : 분기",
+        "Unnamed: 4": "단위 : 억원"
+      },
+      "table_name": "계약규모 순위별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_계약규모 순위별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 계약규모 순위별 건설공사계약 금액 (201401 ~ 202502)": " "
+      },
+      "table_name": "계약규모 순위별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_계약규모 순위별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 계약규모 순위별 건설공사계약 금액 (201401 ~ 202502)": "분기(Quarterly)",
+        "Unnamed: 1": "합계",
+        "Unnamed: 2": "1~50위",
+        "Unnamed: 3": "51~100위",
+        "Unnamed: 4": "101~300위",
+        "Unnamed: 5": "301~1000위",
+        "Unnamed: 6": "1000위~"
+      },
+      "table_name": "계약규모 순위별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_계약규모 순위별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 계약규모 순위별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "633,709.6",
+        "Unnamed: 2": "282,863.8",
+        "Unnamed: 3": "54,703.5",
+        "Unnamed: 4": "46,967.8",
+        "Unnamed: 5": "54,123.8",
+        "Unnamed: 6": "195,050.8"
+      },
+      "table_name": "계약규모 순위별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_계약규모 순위별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 발주자별 공종별건설공사계약액 추이 (201401 ~ 202502)": "다운로드 시간 : 2025-10-17   03:42"
+      },
+      "table_name": "발주자별 공종별건설공사계약액 추이 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_발주자별 공종별건설공사계약액 추이 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 202502 ~ 202502",
+        "Unnamed: 2": "검색분야 : 건설산업",
+        "Unnamed: 3": "작성주기 : 분기",
+        "Unnamed: 4": "단위 : 억원"
+      },
+      "table_name": "발주자별 공종별건설공사계약액 추이 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_발주자별 공종별건설공사계약액 추이 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 발주자별 공종별건설공사계약액 추이 (201401 ~ 202502)": " "
+      },
+      "table_name": "발주자별 공종별건설공사계약액 추이 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_발주자별 공종별건설공사계약액 추이 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 발주자별 공종별건설공사계약액 추이 (201401 ~ 202502)": "분기(Quarterly)",
+        "Unnamed: 1": "전체",
+        "Unnamed: 2": "발주자별",
+        "Unnamed: 3": "발주자별",
+        "Unnamed: 4": "공종별",
+        "Unnamed: 5": "공종별"
+      },
+      "table_name": "발주자별 공종별건설공사계약액 추이 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_발주자별 공종별건설공사계약액 추이 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 발주자별 공종별건설공사계약액 추이 (201401 ~ 202502)": "분기(Quarterly)",
+        "Unnamed: 1": "전체",
+        "Unnamed: 2": "공공",
+        "Unnamed: 3": "민간",
+        "Unnamed: 4": "토목계",
+        "Unnamed: 5": "건축"
+      },
+      "table_name": "발주자별 공종별건설공사계약액 추이 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_발주자별 공종별건설공사계약액 추이 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 발주자별 공종별건설공사계약액 추이 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "635,196.5",
+        "Unnamed: 2": "173,777.6",
+        "Unnamed: 3": "461,419",
+        "Unnamed: 4": "162,131.8",
+        "Unnamed: 5": "473,064.7"
+      },
+      "table_name": "발주자별 공종별건설공사계약액 추이 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_발주자별 공종별건설공사계약액 추이 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "다운로드 시간 : 2025-10-17   03:43"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 202502 ~ 202502",
+        "Unnamed: 2": "검색분야 : 건설산업",
+        "Unnamed: 3": "작성주기 : 분기"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 3,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": " "
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "분기(Quarterly)",
+        "Unnamed: 1": "구분",
+        "Unnamed: 2": "시도별",
+        "Unnamed: 3": "건설공사계약 금액"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "전국",
+        "Unnamed: 2": "전국",
+        "Unnamed: 3": "633,709.59"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "수도권",
+        "Unnamed: 2": "서울",
+        "Unnamed: 3": "263,672.35"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "수도권",
+        "Unnamed: 2": "인천",
+        "Unnamed: 3": "19,437.45"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "수도권",
+        "Unnamed: 2": "경기",
+        "Unnamed: 3": "110,971.09"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "부산",
+        "Unnamed: 3": "17,517.75"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "대구",
+        "Unnamed: 3": "19,333.26"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "광주",
+        "Unnamed: 3": "16,196.13"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "대전",
+        "Unnamed: 3": "14,381.23"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "울산",
+        "Unnamed: 3": "7,008.39"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "세종",
+        "Unnamed: 3": "887.69"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "강원",
+        "Unnamed: 3": "16,671.81"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "충북",
+        "Unnamed: 3": "16,195.22"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "충남",
+        "Unnamed: 3": "18,365.08"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "전북",
+        "Unnamed: 3": "15,559.27"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "전남",
+        "Unnamed: 3": "31,424.86"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "경북",
+        "Unnamed: 3": "42,686.9"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "경남",
+        "Unnamed: 3": "18,454.45"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 본사소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "제주",
+        "Unnamed: 3": "4,946.66"
+      },
+      "table_name": "본사소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_본사소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 세부공종별 건설공사계약액 추이 (201401 ~ 202502)": "다운로드 시간 : 2025-10-17   03:43"
+      },
+      "table_name": "세부공종별 건설공사계약액 추이 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_세부공종별 건설공사계약액 추이  (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 202502 ~ 202502",
+        "Unnamed: 2": "검색분야 : 건설산업",
+        "Unnamed: 3": "작성주기 : 분기",
+        "Unnamed: 4": "단위 : 억원"
+      },
+      "table_name": "세부공종별 건설공사계약액 추이 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_세부공종별 건설공사계약액 추이  (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 세부공종별 건설공사계약액 추이 (201401 ~ 202502)": " "
+      },
+      "table_name": "세부공종별 건설공사계약액 추이 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_세부공종별 건설공사계약액 추이  (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 세부공종별 건설공사계약액 추이 (201401 ~ 202502)": "분기(Quarterly)",
+        "Unnamed: 1": "토목",
+        "Unnamed: 2": "토목",
+        "Unnamed: 3": "토목",
+        "Unnamed: 4": "토목",
+        "Unnamed: 5": "건축"
+      },
+      "table_name": "세부공종별 건설공사계약액 추이 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_세부공종별 건설공사계약액 추이  (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 세부공종별 건설공사계약액 추이 (201401 ~ 202502)": "분기(Quarterly)",
+        "Unnamed: 1": "토목계",
+        "Unnamed: 2": "토목",
+        "Unnamed: 3": "산업설비",
+        "Unnamed: 4": "조경",
+        "Unnamed: 5": "건축"
+      },
+      "table_name": "세부공종별 건설공사계약액 추이 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_세부공종별 건설공사계약액 추이  (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 세부공종별 건설공사계약액 추이 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "162,131.8",
+        "Unnamed: 2": "99,642.6",
+        "Unnamed: 3": "53,007.5",
+        "Unnamed: 4": "9,481.7",
+        "Unnamed: 5": "473,064.7"
+      },
+      "table_name": "세부공종별 건설공사계약액 추이 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 6,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_세부공종별 건설공사계약액 추이  (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "다운로드 시간 : 2025-10-17   03:43"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 202502 ~ 202502",
+        "Unnamed: 2": "검색분야 : 건설산업",
+        "Unnamed: 3": "작성주기 : 분기"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 3,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": " "
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "분기(Quarterly)",
+        "Unnamed: 1": "구분",
+        "Unnamed: 2": "시도별",
+        "Unnamed: 3": "건설공사계약 금액"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "전국",
+        "Unnamed: 2": "전국",
+        "Unnamed: 3": "635,196.5"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "수도권",
+        "Unnamed: 2": "서울",
+        "Unnamed: 3": "89,625.8"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "수도권",
+        "Unnamed: 2": "인천",
+        "Unnamed: 3": "44,551.9"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "수도권",
+        "Unnamed: 2": "경기",
+        "Unnamed: 3": "216,161.8"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "부산",
+        "Unnamed: 3": "20,680.8"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "대구",
+        "Unnamed: 3": "13,027.6"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "광주",
+        "Unnamed: 3": "6,396.6"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "대전",
+        "Unnamed: 3": "11,058.4"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "울산",
+        "Unnamed: 3": "26,710.7"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "세종",
+        "Unnamed: 3": "3,312.9"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "강원",
+        "Unnamed: 3": "23,630.2"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "충북",
+        "Unnamed: 3": "33,170.8"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "충남",
+        "Unnamed: 3": "23,938.5"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "전북",
+        "Unnamed: 3": "20,139.2"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "전남",
+        "Unnamed: 3": "26,764"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "경북",
+        "Unnamed: 3": "27,781.5"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "경남",
+        "Unnamed: 3": "40,353"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "건설공사계약통계(Constuction contract statistics) / 현장소재지별 건설공사계약 금액 (201401 ~ 202502)": "2025/02",
+        "Unnamed: 1": "지방",
+        "Unnamed: 2": "제주",
+        "Unnamed: 3": "7,892.8"
+      },
+      "table_name": "현장소재지별 건설공사계약 금액 (201401 ~ 202502)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\건설공사계약통계_현장소재지별 건설공사계약 금액 (201401 ~ 202502).xlsx"
+    }
+  ]
+}

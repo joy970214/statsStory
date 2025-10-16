@@ -1,0 +1,316 @@
+{
+  "cache_key": "d05e3386fff6",
+  "stat_url": "https://stat.molit.go.kr/portal/cate/statView.do?hRsId=302&hFormId=4746&hDivEng=&month_yn=",
+  "saved_at": "2025-10-17T00:44:55.751577",
+  "data_count": 19,
+  "statistics": [
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "다운로드 시간 : 2025-10-17   00:40"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "Unnamed: 1": "검색기간  : 2020 ~ 2024",
+        "Unnamed: 2": "검색분야 : 철도",
+        "Unnamed: 3": "작성주기 : 매년",
+        "Unnamed: 4": "단위 : 개소"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 4,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": " "
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 1,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "년(Annual)",
+        "Unnamed: 1": "구분",
+        "Unnamed: 2": "합계",
+        "Unnamed: 3": "1㎞미만",
+        "Unnamed: 4": "1～5㎞이상",
+        "Unnamed: 5": "5㎞이상",
+        "Unnamed: 6": "총연장(km)"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "2020",
+        "Unnamed: 1": "계",
+        "Unnamed: 2": "844",
+        "Unnamed: 3": "599",
+        "Unnamed: 4": "215",
+        "Unnamed: 5": "30",
+        "Unnamed: 6": "985.3"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "2020",
+        "Unnamed: 1": "고속철도",
+        "Unnamed: 2": "134",
+        "Unnamed: 3": "77",
+        "Unnamed: 4": "47",
+        "Unnamed: 5": "10",
+        "Unnamed: 6": "275.5"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "2020",
+        "Unnamed: 1": "일반철도",
+        "Unnamed: 2": "710",
+        "Unnamed: 3": "522",
+        "Unnamed: 4": "168",
+        "Unnamed: 5": "20",
+        "Unnamed: 6": "709.8"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "2021",
+        "Unnamed: 1": "계",
+        "Unnamed: 2": "871",
+        "Unnamed: 3": "611",
+        "Unnamed: 4": "228",
+        "Unnamed: 5": "32",
+        "Unnamed: 6": "1,040.3"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "2021",
+        "Unnamed: 1": "고속철도",
+        "Unnamed: 2": "132",
+        "Unnamed: 3": "76",
+        "Unnamed: 4": "46",
+        "Unnamed: 5": "10",
+        "Unnamed: 6": "274"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "2021",
+        "Unnamed: 1": "일반철도",
+        "Unnamed: 2": "739",
+        "Unnamed: 3": "535",
+        "Unnamed: 4": "182",
+        "Unnamed: 5": "22",
+        "Unnamed: 6": "766.3"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "2022",
+        "Unnamed: 1": "계",
+        "Unnamed: 2": "1,052.594",
+        "Unnamed: 3": "198.577",
+        "Unnamed: 4": "498.805",
+        "Unnamed: 5": "355.212",
+        "Unnamed: 6": "1,052.594"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "2022",
+        "Unnamed: 1": "고속철도",
+        "Unnamed: 2": "272.161",
+        "Unnamed: 3": "29.503",
+        "Unnamed: 4": "109.793",
+        "Unnamed: 5": "132.865",
+        "Unnamed: 6": "272.161"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "2022",
+        "Unnamed: 1": "일반철도",
+        "Unnamed: 2": "780.433",
+        "Unnamed: 3": "169.074",
+        "Unnamed: 4": "389.012",
+        "Unnamed: 5": "222.347",
+        "Unnamed: 6": "780.433"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "2023",
+        "Unnamed: 1": "계",
+        "Unnamed: 2": "878",
+        "Unnamed: 3": "611",
+        "Unnamed: 4": "234",
+        "Unnamed: 5": "33",
+        "Unnamed: 6": "1,072.2"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "2023",
+        "Unnamed: 1": "고속철도",
+        "Unnamed: 2": "132",
+        "Unnamed: 3": "76",
+        "Unnamed: 4": "46",
+        "Unnamed: 5": "10",
+        "Unnamed: 6": "274"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "2023",
+        "Unnamed: 1": "일반철도",
+        "Unnamed: 2": "746",
+        "Unnamed: 3": "535",
+        "Unnamed: 4": "188",
+        "Unnamed: 5": "23",
+        "Unnamed: 6": "798.2"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "2024",
+        "Unnamed: 1": "계",
+        "Unnamed: 2": "974",
+        "Unnamed: 3": "660",
+        "Unnamed: 4": "277",
+        "Unnamed: 5": "37",
+        "Unnamed: 6": "1,208.6"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "2024",
+        "Unnamed: 1": "고속철도",
+        "Unnamed: 2": "132",
+        "Unnamed: 3": "74",
+        "Unnamed: 4": "48",
+        "Unnamed: 5": "10",
+        "Unnamed: 6": "272.11"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    },
+    {
+      "year": 2025,
+      "data": {
+        "철도터널현황_연도별 / 철도터널현황_연도별 (2005 ~ 2024)": "2024",
+        "Unnamed: 1": "일반철도",
+        "Unnamed: 2": "842",
+        "Unnamed: 3": "586",
+        "Unnamed: 4": "229",
+        "Unnamed: 5": "27",
+        "Unnamed: 6": "936.5"
+      },
+      "table_name": "철도터널현황_연도별 (2005 ~ 2024)",
+      "period_text": "2025-10",
+      "raw_data_count": 7,
+      "collection_status": "success",
+      "downloaded_file_path": "C:\\Users\\jyj96\\statsStory\\backend\\downloads\\철도터널현황_연도별_철도터널현황_연도별 (2005 ~ 2024).xlsx"
+    }
+  ]
+}
