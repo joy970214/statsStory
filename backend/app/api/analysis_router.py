@@ -396,13 +396,14 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
                     progress_tracker.update_progress(task_id, "AI분석", 90, f"통계표별 인사이트 생성 중... ({len(tables_data)}개 통계표)")
                     await asyncio.sleep(0.1)
 
-                    # 동기 함수를 별도 스레드에서 실행
+                    # 동기 함수를 별도 스레드에서 실행 (취소 체크 콜백 전달)
                     loop = asyncio.get_event_loop()
                     ai_insights = await loop.run_in_executor(
                         None,
                         lambda: ollama_service.generate_statistical_insights_by_tables(
                             metadata=metadata.dict() if metadata else {},
-                            tables_data=tables_data
+                            tables_data=tables_data,
+                            cancellation_checker=check_cancellation  # 취소 체크 콜백 전달
                         )
                     )
 
@@ -430,6 +431,12 @@ async def run_optimized_analysis(task_id: str, request: GenerateStoryRequest):
                         progress_tracker.update_progress(task_id, "AI분석", 90, "벡터 데이터가 없어 기본 인사이트를 사용합니다")
                         await asyncio.sleep(0.1)
             except Exception as ai_error:
+                # 취소로 인한 예외인지 확인
+                if "취소" in str(ai_error) or check_cancellation():
+                    print(f"[AI] AI 인사이트 생성 취소됨: {task_id}")
+                    progress_tracker.update_progress(task_id, "취소됨", 100, "AI 인사이트 생성이 취소되었습니다")
+                    return
+
                 print(f"[AI] 인사이트 생성 오류: {ai_error}")
                 progress_tracker.update_progress(task_id, "AI분석", 90, f"AI 인사이트 생성 중 오류 발생, 기본 인사이트 사용")
                 await asyncio.sleep(0.1)

@@ -360,21 +360,30 @@ export const RealTimeProgressViewer: React.FC<RealTimeProgressViewerProps> = ({
           {/* 단계들 */}
           <div className="relative flex justify-between items-start" style={{ zIndex: 1 }}>
             {[
-              { name: '초기화', key: 'init', Icon: RocketLaunchIcon, threshold: 0 },
-              { name: '통계표목록', key: 'tables', Icon: ClipboardDocumentListIcon, threshold: 15 },
-              { name: '데이터수집', key: 'data', Icon: ChartBarIcon, threshold: 30 },
-              { name: '데이터분석', key: 'stats', Icon: MagnifyingGlassIcon, threshold: 80 },
-              { name: '벡터DB', key: 'vector', Icon: CircleStackIcon, threshold: 82 },
-              { name: 'AI분석', key: 'ai', Icon: CpuChipIcon, threshold: 88 },
-              { name: '완료', key: 'complete', Icon: CheckBadgeIcon, threshold: 100 }
+              { name: '초기화', key: 'init', Icon: RocketLaunchIcon, threshold: 0, endThreshold: 15 },
+              { name: '통계표목록', key: 'tables', Icon: ClipboardDocumentListIcon, threshold: 15, endThreshold: 30 },
+              { name: '데이터수집', key: 'data', Icon: ChartBarIcon, threshold: 30, endThreshold: 80 },
+              { name: '데이터분석', key: 'stats', Icon: MagnifyingGlassIcon, threshold: 80, endThreshold: 82 },
+              { name: '벡터DB', key: 'vector', Icon: CircleStackIcon, threshold: 82, endThreshold: 88 },
+              { name: 'AI분석', key: 'ai', Icon: CpuChipIcon, threshold: 88, endThreshold: 100 },
+              { name: '완료', key: 'complete', Icon: CheckBadgeIcon, threshold: 100, endThreshold: 101 }
             ].map((step, index) => {
-              const isActive = progress.stage.toLowerCase().includes(step.key) ||
-                             step.name === progress.stage ||
-                             (step.key === 'data' && progress.stage.includes('데이터')) ||
-                             (step.key === 'stats' && progress.stage.includes('분석') && progress.progress >= 80 && progress.progress < 82) ||
-                             (step.key === 'vector' && (progress.stage.includes('벡터') || progress.stage.includes('DB'))) ||
-                             (step.key === 'ai' && (progress.stage.includes('AI') || progress.message.includes('Ollama') || progress.message.includes('인사이트')));
-              const isCompleted = progress.progress >= step.threshold;
+              // 진행률 범위로 현재 활성 단계 판단 (더 정확함)
+              const isInProgressRange = progress.progress >= step.threshold && progress.progress < step.endThreshold;
+              
+              // 텍스트 기반 추가 체크 (보조적)
+              const isActiveByText = progress.stage.toLowerCase().includes(step.key) ||
+                                   step.name === progress.stage ||
+                                   (step.key === 'data' && progress.stage.includes('데이터')) ||
+                                   (step.key === 'stats' && progress.stage.includes('분석') && progress.progress >= 80 && progress.progress < 82) ||
+                                   (step.key === 'vector' && (progress.stage.includes('벡터') || progress.stage.includes('DB'))) ||
+                                   (step.key === 'ai' && (progress.stage.includes('AI') || progress.message.includes('Ollama') || progress.message.includes('인사이트')));
+              
+              // 진행률 범위 또는 텍스트 매칭으로 활성 판단
+              const isActive = isInProgressRange || isActiveByText;
+              
+              // 완료: 진행률이 단계 범위를 넘었고 활성 상태가 아님
+              const isCompleted = progress.progress >= step.endThreshold;
               
               return (
                 <motion.div 

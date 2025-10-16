@@ -28,7 +28,8 @@ class OllamaService:
     def generate_statistical_insights_by_tables(
         self,
         metadata: Dict[str, Any],
-        tables_data: Dict[str, List[Dict]]  # {table_name: [data1, data2, ...]}
+        tables_data: Dict[str, List[Dict]],  # {table_name: [data1, data2, ...]}
+        cancellation_checker: Optional[callable] = None  # 취소 체크 콜백
     ) -> Dict[str, Any]:
         """
         통계표별로 나눠서 AI 인사이트 생성 (16K 컨텍스트 제한 대응)
@@ -36,6 +37,7 @@ class OllamaService:
         Args:
             metadata: 통계 메타데이터
             tables_data: {통계표명: 데이터리스트} 딕셔너리
+            cancellation_checker: 취소 여부를 확인하는 콜백 함수
 
         Returns:
             종합된 인사이트
@@ -47,6 +49,11 @@ class OllamaService:
 
             # 각 통계표별로 개별 인사이트 생성
             for idx, (table_name, table_data) in enumerate(tables_data.items(), 1):
+                # 취소 체크
+                if cancellation_checker and cancellation_checker():
+                    print(f"[Ollama] AI 인사이트 생성이 사용자에 의해 취소되었습니다 (진행: {idx-1}/{len(tables_data)})")
+                    raise Exception("AI 인사이트 생성이 취소되었습니다")
+
                 print(f"[Ollama] [{idx}/{len(tables_data)}] '{table_name}' 분석 중... ({len(table_data)}개 데이터)")
 
                 # 통계표별 기본 통계량 계산
@@ -76,6 +83,9 @@ class OllamaService:
             return combined_insights
 
         except Exception as e:
+            # 취소 예외는 그대로 전파
+            if "취소" in str(e):
+                raise
             print(f"[Ollama] 통계표별 인사이트 생성 실패: {e}")
             return self._create_fallback_insights(metadata, {}, list(tables_data.keys()))
 
@@ -104,7 +114,7 @@ class OllamaService:
                         "temperature": 0.3,
                         "top_p": 0.9,
                         "num_predict": 500,  # 통계표당 500 토큰
-                        "num_ctx": 16384
+                        "num_ctx": 8192  # 8K 컨텍스트 (메모리 절약)
                     }
                 },
                 timeout=self.timeout

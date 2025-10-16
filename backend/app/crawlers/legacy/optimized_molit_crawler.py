@@ -1425,10 +1425,17 @@ class OptimizedMolitCrawler:
             # 다운로드 수집 시작 전 취소 체크
             check_cancellation()
 
-            # 통계표 선택 후 항상 조회 버튼 클릭 (데이터 갱신을 위해 필수)
-            # 날짜 입력은 시도하지 않음 (통계표명에 이미 전체 기간이 포함되어 있음)
-            print(f"조회 버튼 클릭: {table_info['name']}")
-            await self._click_search_button(driver)
+            # YYYY 형식이면 날짜 범위 설정 (5년치)
+            if date_format == "YYYY":
+                print(f"YYYY 형식 감지 - 5년치 날짜 범위 설정: {table_info['name']}")
+                await self._set_date_range_for_download(driver, date_format)
+                # _set_date_range_for_download가 이미 조회 버튼을 클릭함
+            else:
+                # YYYYMM 등 다른 형식은 기존대로 전체 다운로드
+                # (통계표명에 이미 전체 기간이 포함되어 있음)
+                print(f"조회 버튼 클릭: {table_info['name']}")
+                await self._click_search_button(driver)
+            
             check_cancellation()
 
             # 파일 다운로드 방식으로 데이터 수집
@@ -1445,8 +1452,9 @@ class OptimizedMolitCrawler:
             self.browser_pool.return_browser(driver)
 
     async def _set_date_range_for_download(self, driver, date_format: str = "YYYYMM"):
-        """다운로드 전 날짜 범위 설정 (5년치)"""
+        """다운로드 전 날짜 범위 설정 (5년치) - 텍스트 입력과 드롭다운 모두 지원"""
         from datetime import datetime, timedelta
+        from selenium.webdriver.support.ui import Select
 
         # 5년치 날짜 계산
         end_date = datetime.now()
@@ -1466,22 +1474,84 @@ class OptimizedMolitCrawler:
             start_value = start_date.strftime('%Y%m')  # 기본값
             end_value = end_date.strftime('%Y%m')
 
-        print(f"날짜 범위 설정 ({date_format}): {start_value} ~ {end_value}")
+        print(f"날짜 범위 설정 시도 ({date_format}): {start_value} ~ {end_value}")
 
-        # #sStart와 #sEnd 설정
+        # sStart와 sEnd 설정 (텍스트 입력 또는 드롭다운)
         try:
             start_element = driver.find_element(By.ID, "sStart")
-            start_element.clear()
-            start_element.send_keys(start_value)
-
             end_element = driver.find_element(By.ID, "sEnd")
-            end_element.clear()
-            end_element.send_keys(end_value)
-
-            print("날짜 범위 입력 완료")
+            
+            # 요소 타입 확인 (select인지 input인지)
+            start_tag = start_element.tag_name.lower()
+            
+            if start_tag == "select":
+                # 드롭다운 방식
+                print("드롭다운(select) 방식 날짜 입력")
+                start_select = Select(start_element)
+                end_select = Select(end_element)
+                
+                # 사용 가능한 옵션 확인
+                start_options = [opt.get_attribute("value") for opt in start_select.options if opt.get_attribute("value")]
+                end_options = [opt.get_attribute("value") for opt in end_select.options if opt.get_attribute("value")]
+                
+                print(f"사용 가능한 시작 년도: {len(start_options)}개, 종료 년도: {len(end_options)}개")
+                
+                # 시작 년도 선택 (5년 전 또는 가장 가까운 년도)
+                try:
+                    if start_value in start_options:
+                        start_select.select_by_value(start_value)
+                        print(f"시작 년도 선택: {start_value}")
+                    else:
+                        # 5년 전이 없으면 사용 가능한 가장 오래된 년도 선택
+                        # 단, 요청한 년도보다 이후 년도면 그것 선택
+                        available_years = sorted([y for y in start_options if y.isdigit()])
+                        if available_years:
+                            selected_start = available_years[0]
+                            for year in available_years:
+                                if year >= start_value:
+                                    selected_start = year
+                                    break
+                            start_select.select_by_value(selected_start)
+                            print(f"시작 년도 {start_value} 없음 → 대체: {selected_start}")
+                except Exception as e:
+                    print(f"시작 년도 선택 실패: {e}, 첫 번째 옵션 사용")
+                    if len(start_select.options) > 0:
+                        start_select.select_by_index(0)
+                
+                # 종료 년도 선택 (현재 년도 또는 가장 최근 년도)
+                try:
+                    if end_value in end_options:
+                        end_select.select_by_value(end_value)
+                        print(f"종료 년도 선택: {end_value}")
+                    else:
+                        # 현재 년도가 없으면 가장 최근 년도 선택
+                        available_years = sorted([y for y in end_options if y.isdigit()], reverse=True)
+                        if available_years:
+                            selected_end = available_years[0]
+                            end_select.select_by_value(selected_end)
+                            print(f"종료 년도 {end_value} 없음 → 대체: {selected_end}")
+                except Exception as e:
+                    print(f"종료 년도 선택 실패: {e}, 마지막 옵션 사용")
+                    if len(end_select.options) > 0:
+                        end_select.select_by_index(len(end_select.options) - 1)
+                
+                print("드롭다운 날짜 범위 선택 완료")
+                
+            else:
+                # 텍스트 입력 방식 (기존 로직)
+                print("텍스트 입력(input) 방식 날짜 입력")
+                start_element.clear()
+                start_element.send_keys(start_value)
+                
+                end_element.clear()
+                end_element.send_keys(end_value)
+                
+                print("텍스트 날짜 범위 입력 완료")
 
         except Exception as e:
             print(f"날짜 범위 입력 실패: {e}")
+            import traceback
+            traceback.print_exc()
             # 날짜 설정 실패해도 계속 진행
 
         # 날짜 설정 성공/실패 여부와 무관하게 조회 버튼 클릭 (데이터 갱신 필수)
@@ -2001,28 +2071,50 @@ class OptimizedMolitCrawler:
         return table_metadata
 
     async def _detect_date_format(self, driver) -> str:
-        """날짜 입력 필드 형식 자동 감지"""
+        """날짜 입력 필드 형식 자동 감지 - 텍스트 입력과 드롭다운 모두 지원"""
         try:
+            from selenium.webdriver.support.ui import Select
+            
             # #sStart 필드 확인
             start_element = driver.find_element(By.ID, "sStart")
             
-            # placeholder나 기본값 확인
-            placeholder = start_element.get_attribute("placeholder") or ""
-            value = start_element.get_attribute("value") or ""
-            
-            # 형식 판단
-            if "-" in placeholder or "-" in value:
-                return "YYYY-MM"
-            elif len(placeholder) == 6 or len(value) == 6:
-                return "YYYYMM"
-            elif len(placeholder) == 4 or len(value) == 4:
-                return "YYYY"
+            # 요소 타입 확인
+            if start_element.tag_name.lower() == "select":
+                # 드롭다운인 경우 옵션 값으로 형식 판단
+                print("드롭다운(select) 형식 날짜 필드 감지")
+                select = Select(start_element)
+                options = select.options
+                if len(options) > 1:
+                    # 첫 번째 실제 옵션 값 확인 (0번은 보통 placeholder)
+                    first_value = options[1].get_attribute("value") or ""
+                    if len(first_value) == 4:
+                        return "YYYY"
+                    elif len(first_value) == 6:
+                        return "YYYYMM"
+                    elif "-" in first_value:
+                        return "YYYY-MM"
+                return "YYYY"  # 드롭다운은 보통 년도 단위
             else:
-                # 기본값은 YYYYMM
-                return "YYYYMM"
+                # 텍스트 입력인 경우 placeholder나 기본값 확인
+                print("텍스트 입력(input) 형식 날짜 필드 감지")
+                placeholder = start_element.get_attribute("placeholder") or ""
+                value = start_element.get_attribute("value") or ""
+                
+                # 형식 판단
+                if "-" in placeholder or "-" in value:
+                    return "YYYY-MM"
+                elif len(placeholder) == 6 or len(value) == 6:
+                    return "YYYYMM"
+                elif len(placeholder) == 4 or len(value) == 4:
+                    return "YYYY"
+            
+            # 기본값
+            return "YYYYMM"
                 
         except Exception as e:
             print(f"날짜 형식 감지 실패: {e}")
+            import traceback
+            traceback.print_exc()
             return "YYYYMM"  # 기본값
 
     async def _click_search_button(self, driver):
