@@ -50,7 +50,7 @@
             justify-content: flex-start;
             align-items: center;
             padding: 4rem;
-            background: white;
+            background: #f1f5f9;
             overflow-y: auto;
         }
         
@@ -148,11 +148,45 @@
         }
         
         .content-box {
-            background: #f8fafc;
+            background: white;
             padding: 2rem;
             border-radius: 12px;
             margin-bottom: 1.5rem;
-            border-left: 4px solid #0284c7;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+        
+        .content-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0284c7 0%, #0ea5e9 100%);
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .toc-box::before,
+        .toc-box::after {
+            display: none;
+        }
+        
+        .future-box::before {
+            background: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 100%);
+        }
+        
+        .future-box {
+            border-color: #e9d5ff;
+        }
+        
+        .future-box h4 {
+            color: #8b5cf6;
+        }
+        
+        .future-box .content-list li::before {
+            background: #8b5cf6;
         }
         
         .content-box h4 {
@@ -187,6 +221,80 @@
             border-radius: 50%;
         }
         
+        ol.content-list {
+            list-style: none;
+            counter-reset: item;
+            margin-left: 0;
+        }
+        
+        ol.content-list > li {
+            counter-increment: item;
+            padding-left: 0;
+            margin-bottom: 1.25rem;
+            position: relative;
+        }
+        
+        ol.content-list > li::before {
+            content: counter(item);
+            position: static;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+            border-radius: 50%;
+            transform: none;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+        
+        ol.content-list > li {
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 1.125rem;
+            display: flex;
+            align-items: flex-start;
+            font-family: 'Paperlogy', 'Pretendard', sans-serif;
+        }
+        
+        ol.content-list ul {
+            list-style: none;
+            margin-left: 0;
+            margin-top: 0.625rem;
+            flex: 1;
+        }
+        
+        ol.content-list ul li {
+            padding: 0.375rem 0;
+            padding-left: 1.25rem;
+            font-size: 0.9375rem;
+            color: #64748b;
+            font-weight: 400;
+            position: relative;
+            line-height: 1.5;
+        }
+        
+        ol.content-list ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 5px;
+            height: 5px;
+            background: #94a3b8;
+            border-radius: 50%;
+        }
+        
+        ol.content-list > li > span {
+            flex: 1;
+            padding-top: 0.25rem;
+        }
+        
         /* Two Column Layout */
         .two-column {
             display: grid;
@@ -208,14 +316,145 @@
         
         /* Architecture Diagram */
         .arch-diagram {
-            background: #f8fafc;
-            padding: 2rem;
+            background: white;
+            padding: 3rem 2rem;
             border-radius: 12px;
-            font-family: 'Courier New', monospace;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+        }
+        
+        .arch-box {
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+            color: white;
+            padding: 1.5rem 2.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+            min-width: 280px;
+        }
+        
+        .arch-box h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+        
+        .arch-box p {
             font-size: 0.875rem;
-            line-height: 1.6;
-            white-space: pre;
-            overflow-x: auto;
+            margin: 0.25rem 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .arch-arrow {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #0284c7 0%, #0ea5e9 100%);
+            position: relative;
+        }
+        
+        .arch-arrow::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 10px solid #0ea5e9;
+        }
+        
+        .arch-arrow-label {
+            position: absolute;
+            left: 50%;
+            top: -25px;
+            transform: translateX(-50%);
+            font-size: 0.875rem;
+            color: #64748b;
+            white-space: nowrap;
+        }
+        
+        .arch-components {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .arch-component {
+            background: white;
+            border: 2px solid #0284c7;
+            padding: 0.875rem 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s;
+            min-width: 180px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .arch-component:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+        }
+        
+        .arch-component h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #0284c7;
+            margin: 0;
+            flex-shrink: 0;
+        }
+        
+        .arch-component p {
+            font-size: 0.8125rem;
+            color: #64748b;
+            margin: 0;
+            text-align: left;
+        }
+        
+        .arch-connector {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+            position: relative;
+        }
+        
+        .arch-connector::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #0284c7 0%, #0ea5e9 100%);
+        }
+        
+        .arch-mini-arrow {
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, #0284c7 0%, #0ea5e9 100%);
+            position: relative;
+        }
+        
+        .arch-mini-arrow::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-left: 8px solid #0ea5e9;
         }
         
         /* Features Grid */
@@ -254,11 +493,24 @@
         
         /* Highlight Box */
         .highlight-box {
-            background: #eff6ff;
+            background: white;
             border: 2px solid #0284c7;
             border-radius: 12px;
             padding: 1.5rem;
             margin: 1.5rem 0;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.1);
+            position: relative;
+        }
+        
+        .highlight-box::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            height: 4px;
+            background: linear-gradient(90deg, #0284c7 0%, #0ea5e9 100%);
+            border-radius: 12px 12px 0 0;
         }
         
         .highlight-box strong {
@@ -277,8 +529,9 @@
         .stat-item {
             text-align: center;
             padding: 2rem;
-            background: #f8fafc;
+            background: white;
             border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
         
         .stat-number {
@@ -296,7 +549,6 @@
         /* Screenshot Container */
         .screenshot {
             width: 100%;
-            max-height: 500px;
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
             object-fit: contain;
@@ -322,9 +574,10 @@
         }
         
         .tech-category {
-            background: #f8fafc;
+            background: white;
             padding: 1.5rem;
             border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
         
         .tech-category h4 {
@@ -345,8 +598,8 @@
         <!-- Slide 1: Title -->
         <div class="slide active title-slide">
             <div class="slide-content" style="text-align: center;">
-                <h1>통계이야기</h1>
-                <p class="subtitle">AI 기반 통계 분석 시스템</p>
+                <h1>통계누리 <span style="color: #38bdf8;">최신 통계 분석</span></h1>
+                <p class="subtitle">통계이야기 생성을 위한 AI 기반 통계 분석 시스템</p>
                 <p class="date">발표일: 2025년 10월 17일</p>
             </div>
         </div>
@@ -355,23 +608,29 @@
         <div class="slide">
             <div class="slide-content">
                 <h2 class="slide-title">목차</h2>
-                <div class="content-list" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
-                    <div class="content-box">
-                        <ul class="content-list">
-                            <li>프로젝트 개요</li>
-                            <li>시스템 아키텍처</li>
-                            <li>핵심 기능</li>
-                            <li>핵심 기술</li>
-                        </ul>
-                    </div>
-                    <div class="content-box">
-                        <ul class="content-list">
-                            <li>개발 방법론</li>
-                            <li>주요 챌린지 & 해결책</li>
-                            <li>한계점 & 향후 계획</li>
-                            <li>시연 및 Q&A</li>
-                        </ul>
-                    </div>
+                <div class="content-box toc-box" style="padding: 3rem 4rem;">
+                    <ol class="content-list" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem 1.5rem; max-width: 1100px; margin: 0 auto;">
+                        <li><span>프로젝트 개요</span></li>
+                        <li><span>시스템 아키텍처</span></li>
+                        <li><span>핵심 기능
+                            <ul>
+                                <li>통계 자동 수집</li>
+                                <li>AI 인사이트 생성</li>
+                                <li>AI 채팅 (RAG)</li>
+                            </ul></span>
+                        </li>
+                        <li><span>핵심 기술
+                            <ul>
+                                <li>동적 웹 크롤링</li>
+                                <li>AI 분석 (Ollama)</li>
+                                <li>RAG 채팅</li>
+                            </ul></span>
+                        </li>
+                        <li><span>개발 방법론 - 바이브 코딩</span></li>
+                        <li><span>주요 챌린지 & 해결책</span></li>
+                        <li><span>한계점 & 향후 계획</span></li>
+                        <li><span>시연 및 Q&A</span></li>
+                    </ol>
                 </div>
             </div>
         </div>
@@ -383,7 +642,7 @@
                 <h3 class="section-title">왜 만들게 되었나?</h3>
                 
                 <div class="content-box">
-                    <h4>배경: 매달 "통계이야기" 카드뉴스 제작 업무</h4>
+                    <h4 style="margin-bottom: 0;">배경: 매달 "통계이야기" 카드뉴스 제작 업무</h4>
                 </div>
                 
                 <div class="two-column">
@@ -421,18 +680,19 @@
                     <div class="content-box">
                         <h4>현재 (1단계 완료)</h4>
                         <ul class="content-list">
-                            <li>통계 자동 수집</li>
+                            <li>통계 자동 수집 (새로고침시)</li>
+                            <li>통계표 자동 수집 (분석하기 클릭시)</li>
                             <li>AI 인사이트 생성</li>
                             <li>RAG 기반 AI 채팅</li>
                             <li>CPU 환경: 통계당 5-10분 소요</li>
                         </ul>
                     </div>
-                    <div class="content-box">
+                    <div class="content-box future-box">
                         <h4>향후 목표 (2단계)</h4>
                         <ul class="content-list">
                             <li>HTML 차트 기반 시각화</li>
                             <li>카드뉴스 형태로 결과 제공</li>
-                            <li>성능 최적화 (GPU 활용)</li>
+                            <li>성능 최적화 및 인사이트 품질 개선</li>
                         </ul>
                     </div>
                 </div>
@@ -444,36 +704,60 @@
             <div class="slide-content">
                 <h2 class="slide-title">2. 시스템 아키텍처</h2>
                 
-                <div class="arch-diagram">┌──────────────────────┐
-│   Frontend (React)   │  사용자 UI
-└──────────┬───────────┘  - 통계 목록/선택
-           │              - 실시간 진행률
-           │              - AI 채팅
-           │ REST API / SSE
-┌──────────▼───────────┐
-│  Backend (FastAPI)   │  API 서버
-└──────────┬───────────┘  - 크롤링/분석
-           │
-    ┌──────┴─────┬────────┬────────┐
-    ▼            ▼        ▼        ▼
-┌────────┐  ┌────────┐ ┌──────┐ ┌─────────┐
-│Selenium│  │Ollama  │ │Cache │ │ChromaDB │
-│크롤링   │  │AI분석  │ │저장  │ │RAG검색  │
-└────────┘  └────────┘ └──────┘ └─────────┘</div>
-                
-                <h3 class="section-title" style="margin-top: 2rem;">핵심 컴포넌트</h3>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <h4>Selenium</h4>
-                        <p>동적 웹 크롤링</p>
+                <div class="arch-diagram">
+                    <!-- Frontend -->
+                    <div class="arch-box">
+                        <h4>Frontend<br>(React)</h4>
+                        <p>통계 목록/선택</p>
+                        <p>실시간 진행률</p>
+                        <p>AI 채팅</p>
                     </div>
-                    <div class="feature-card">
-                        <h4>Ollama</h4>
-                        <p>로컬 LLM (Llama 3.1)</p>
+                    
+                    <!-- Arrow -->
+                    <div style="position: relative;">
+                        <div class="arch-arrow"></div>
+                        <div class="arch-arrow-label">REST API / SSE</div>
                     </div>
-                    <div class="feature-card">
-                        <h4>ChromaDB</h4>
-                        <p>벡터 검색 (RAG)</p>
+                    
+                    <!-- Backend -->
+                    <div class="arch-box">
+                        <h4>Backend<br>(FastAPI)</h4>
+                        <p>크롤링 / 분석</p>
+                    </div>
+                    
+                    <!-- Arrow -->
+                    <div class="arch-arrow"></div>
+                    
+                    <!-- Components -->
+                    <div class="arch-connector">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="arch-mini-arrow"></div>
+                            <div class="arch-component">
+                                <h5>Selenium</h5>
+                                <p>동적 웹 크롤링</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="arch-mini-arrow"></div>
+                            <div class="arch-component">
+                                <h5>Ollama</h5>
+                                <p>로컬 LLM AI 분석</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="arch-mini-arrow"></div>
+                            <div class="arch-component">
+                                <h5>Cache</h5>
+                                <p>결과 저장</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="arch-mini-arrow"></div>
+                            <div class="arch-component">
+                                <h5>ChromaDB</h5>
+                                <p>벡터 DB RAG 검색</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -484,84 +768,114 @@
             <div class="slide-content">
                 <h2 class="slide-title">3. 핵심 기능</h2>
                 
-                <div class="content-box">
-                    <h4>① 통계 자동 수집</h4>
-                    <ul class="content-list">
-                        <li>최근 1개월 통계 크롤링</li>
-                        <li>엑셀 다운로드 + 직접 수집 (이중 전략)</li>
-                        <li>실시간 진행률 표시 (SSE)</li>
-                    </ul>
-                </div>
-                
-                <div class="content-box">
-                    <h4>② AI 인사이트 생성</h4>
-                    <ul class="content-list">
-                        <li>통계표별 자동 분석</li>
-                        <li>트렌드, 변화 시점 탐지</li>
-                        <li>쉬운 텍스트 요약</li>
-                    </ul>
-                </div>
-                
-                <div class="content-box">
-                    <h4>③ AI 채팅 (RAG)</h4>
-                    <ul class="content-list">
-                        <li>통계 데이터에 대해 질문</li>
-                        <li>벡터 검색으로 관련 데이터만 추출</li>
-                        <li>정확한 답변 생성</li>
-                    </ul>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="content-box">
+                        <h4>① 통계 자동 수집</h4>
+                        <ul class="content-list">
+                            <li>최근 1개월 통계 크롤링</li>
+                            <li>엑셀 다운로드 + 직접 수집 (이중 전략)</li>
+                            <li>실시간 진행률 표시 (SSE)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="content-box">
+                        <h4>② AI 인사이트 생성</h4>
+                        <ul class="content-list">
+                            <li>통계표별 자동 분석</li>
+                            <li>트렌드, 변화 시점 탐지</li>
+                            <li>쉬운 텍스트 요약</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="content-box">
+                        <h4>③ AI 채팅 (RAG)</h4>
+                        <ul class="content-list">
+                            <li>통계 데이터에 대해 질문</li>
+                            <li>벡터 검색으로 관련 데이터만 추출</li>
+                            <li>정확한 답변 생성</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 7: 시스템 스크린샷 - 통계 목록 -->
+        <!-- Slide : 시스템 스크린샷 - 최신 통계 목록 -->
         <div class="slide">
             <div class="slide-content">
-                <h2 class="slide-title">시스템 화면 - 통계 목록</h2>
+                <h2 class="slide-title"><span style="font-weight: 400;">시스템 화면 - </span>수집된 최신 통계 목록</h2>
                 <img src="presentation_assets/stats_list.JPG" alt="통계 목록 화면" class="screenshot">
-                <p style="text-align: center; color: #64748b; margin-top: 1rem;">20개 통계표 수집 완료 화면</p>
+                <!-- <p style="text-align: center; color: #64748b; margin-top: 1rem;">20개 통계표 수집 완료 화면</p> -->
             </div>
         </div>
 
-        <!-- Slide 8: 시스템 스크린샷 - 수집된 통계 -->
+        <!-- Slide : 시스템 스크린샷 - AI 분석 -->
         <div class="slide">
             <div class="slide-content">
-                <h2 class="slide-title">시스템 화면 - 수집된 통계</h2>
-                <img src="presentation_assets/collected_stats.JPG" alt="수집된 통계 화면" class="screenshot">
-                <p style="text-align: center; color: #64748b; margin-top: 1rem;">수집된 통계 목록 및 상태 표시</p>
-            </div>
-        </div>
-
-        <!-- Slide 9: 시스템 스크린샷 - AI 분석 -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2 class="slide-title">시스템 화면 - AI 분석 진행</h2>
+                <h2 class="slide-title"><span style="font-weight: 400;">시스템 화면 - </span>통계 수집시 프론트 화면</h2>
                 <img src="presentation_assets/ai_analysis.JPG" alt="AI 분석 화면" class="screenshot">
                 <p style="text-align: center; color: #64748b; margin-top: 1rem;">통계표별 인사이트 생성 중 (10개 통계표)</p>
             </div>
         </div>
 
-        <!-- Slide 10: 시스템 스크린샷 - AI 채팅 -->
+        <!-- Slide : 시스템 스크린샷 - 분석하기 수집로그 -->
         <div class="slide">
             <div class="slide-content">
-                <h2 class="slide-title">시스템 화면 - AI 채팅</h2>
+                <h2 class="slide-title"><span style="font-weight: 400;">시스템 화면 - </span>통계 수집 로그 화면</h2>
+                <img src="presentation_assets/log.jpg" alt="통계 수집 로그 화면" class="screenshot">
+                <!-- <p style="text-align: center; color: #64748b; margin-top: 1rem;">20개 통계표 수집 완료 화면</p> -->
+            </div>
+        </div>
+
+        <!-- Slide : 시스템 스크린샷 - 통계 목록 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title"><span style="font-weight: 400;">시스템 화면 - </span>통계 현황 결과 화면</h2>
+                <img src="presentation_assets/Screenshot 2025-10-17 at 07.54.45.JPG" alt="통계 목록 화면" class="screenshot">
+                <!-- <p style="text-align: center; color: #64748b; margin-top: 1rem;">20개 통계표 수집 완료 화면</p> -->
+            </div>
+        </div>
+
+        <!-- Slide: 시스템 스크린샷 - AI 채팅 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title"><span style="font-weight: 400;">시스템 화면 - </span>AI 채팅 (프론트화면)</h2>
                 <img src="presentation_assets/ai_chat.jpg" alt="AI 채팅 화면" class="screenshot">
                 <p style="text-align: center; color: #64748b; margin-top: 1rem;">데이터 기반 질의응답 - "2022년 인구밀도는?"</p>
             </div>
         </div>
 
-        <!-- Slide 11: 백로그 화면 -->
+        <!-- Slide: 백로그 화면 -->
         <div class="slide">
             <div class="slide-content">
-                <h2 class="slide-title">시스템 화면 - 분석 작업 관리</h2>
+                <h2 class="slide-title"><span style="font-weight: 400;">시스템 화면 - </span>AI 채팅 (백엔드 로그)</h2>
                 <img src="presentation_assets/backlog.png" alt="백로그 화면" class="screenshot">
-                <p style="text-align: center; color: #64748b; margin-top: 1rem;">42개 통계표 분석 작업 관리</p>
+                
             </div>
         </div>
+
+        <!-- Slide: ai 로그 화면 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title"><span style="font-weight: 400;">시스템 화면 - </span>AI 질문시 답변시간 표시</h2>
+                <img src="presentation_assets/KakaoTalk_20251016_204955809.png" alt="AI 질문시 답변시간 표시 화면" class="screenshot">
+                
+            </div>
+        </div>
+
+        <!-- Slide : 시스템 스크린샷 - 수집된 통계 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 class="slide-title"><span style="font-weight: 400;">시스템 화면 - </span>수집된 통계</h2>
+                <img src="presentation_assets/collected_stats.JPG" alt="수집된 통계 화면" class="screenshot">
+                <p style="text-align: center; color: #64748b; margin-top: 1rem;">수집된 통계 목록 및 상태 표시</p>
+            </div>
+        </div>
+
 
         <!-- Slide 12: 핵심 기술 - 크롤링 -->
         <div class="slide">
             <div class="slide-content">
-                <h2 class="slide-title">4. 핵심 기술 ① - 동적 웹 크롤링</h2>
+                <h2 class="slide-title"><span style="font-weight: 400;">4. 핵심 기술 ① - </span>동적 웹 크롤링</h2>
                 
                 <h3 class="section-title">도전 과제</h3>
                 <div class="content-box">
@@ -572,19 +886,19 @@
                     </ul>
                 </div>
                 
-                <h3 class="section-title">해결 방법: 이중 전략</h3>
+                <h3 class="section-title" style="margin-bottom: 1rem;">해결 방법: 이중 전략</h3>
                 <div class="two-column">
-                    <div class="highlight-box">
-                        <h4 style="color: #0284c7; margin-bottom: 0.75rem;">1순위: 엑셀 다운로드</h4>
-                        <ul class="content-list" style="font-size: 0.9375rem;">
+                    <div class="content-box">
+                        <h4>1순위: 엑셀 다운로드</h4>
+                        <ul class="content-list">
                             <li>Selenium으로 다운로드 버튼 클릭</li>
                             <li>Pandas로 파일 파싱</li>
                             <li>가장 정확, 구조화 쉬움</li>
                         </ul>
                     </div>
-                    <div class="highlight-box">
-                        <h4 style="color: #0284c7; margin-bottom: 0.75rem;">2순위: 직접 테이블 수집</h4>
-                        <ul class="content-list" style="font-size: 0.9375rem;">
+                    <div class="content-box">
+                        <h4>2순위: 직접 테이블 수집</h4>
+                        <ul class="content-list">
                             <li>Selenium + BeautifulSoup</li>
                             <li>JavaScript 로딩 후 DOM 파싱</li>
                             <li>백업 전략</li>
@@ -597,7 +911,7 @@
         <!-- Slide 13: 핵심 기술 - AI 분석 -->
         <div class="slide">
             <div class="slide-content">
-                <h2 class="slide-title">4. 핵심 기술 ② - AI 분석 (Ollama)</h2>
+                <h2 class="slide-title"><span style="font-weight: 400;">4. 핵심 기술 ② - </span>AI 분석 (Ollama)</h2>
                 
                 <div class="content-box">
                     <h4>Ollama 로컬 LLM</h4>
@@ -619,8 +933,8 @@
                         <h4 style="color: #dc2626; margin-bottom: 1rem; font-size: 1.25rem;">제약사항 & 극복</h4>
                         <ul class="content-list">
                             <li>16K 토큰 제한 → 통계표별 분할 분석</li>
-                            <li>CPU 성능 제한 → 배치 처리 활용</li>
-                            <li>통계당 5-10분 소요 → 밤사이 자동 처리</li>
+                            <li>CPU 성능 제한 (개선 필요)</li>
+                            <li>통계당 5-10분 소요 (개선 필요)</li>
                         </ul>
                     </div>
                 </div>
@@ -630,7 +944,7 @@
         <!-- Slide 14: 핵심 기술 - RAG -->
         <div class="slide">
             <div class="slide-content">
-                <h2 class="slide-title">4. 핵심 기술 ③ - RAG 채팅</h2>
+                <h2 class="slide-title"><span style="font-weight: 400;">4. 핵심 기술 ③ - </span>RAG 채팅</h2>
                 
                 <h3 class="section-title">RAG (Retrieval-Augmented Generation)</h3>
                 
@@ -664,15 +978,6 @@
             </div>
         </div>
 
-        <!-- Slide 15: 백로그 스크린샷 -->
-        <div class="slide">
-            <div class="slide-content">
-                <h2 class="slide-title">백엔드 로그 - AI 분석 과정</h2>
-                <img src="presentation_assets/backend_log.jpg" alt="백엔드 로그" class="screenshot">
-                <p style="text-align: center; color: #64748b; margin-top: 1rem;">VectorDB 구성, 통계표별 인사이트 생성 과정</p>
-            </div>
-        </div>
-
         <!-- Slide 16: 개발 방법론 -->
         <div class="slide">
             <div class="slide-content">
@@ -686,8 +991,8 @@
                 
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-number">2-3주</div>
-                        <div class="stat-label">개발 기간 (40-60시간)</div>
+                        <div class="stat-number">3-4주</div>
+                        <div class="stat-label">개발 기간 (60시간)</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">1명</div>
@@ -703,7 +1008,7 @@
                     <div class="content-box">
                         <h4 style="color: #16a34a;">결과</h4>
                         <ul class="content-list">
-                            <li>비개발자가 풀스택 시스템 구축</li>
+                            <li>풀스택 시스템 구축</li>
                             <li>전통 방식 대비 2-3배 빠름</li>
                         </ul>
                     </div>
@@ -762,7 +1067,7 @@
                         <div class="content-box">
                             <h4 style="color: #dc2626;">② 분석 품질</h4>
                             <ul class="content-list">
-                                <li>Claude/GPT 대비 30-40% 품질 차이</li>
+                                <li>Claude/GPT 대비 50% - 60% 품질 차이</li>
                                 <li>복잡한 해석 한계</li>
                             </ul>
                         </div>
@@ -796,8 +1101,8 @@
                         <p>원본 파일 및 벡터 DB 포함 완전 삭제, 데이터 복구 불가</p>
                     </div>
                     <div class="feature-card">
-                        <h4>실시간 서버 연결</h4>
-                        <p>서버 상태 실시간 모니터링 및 연결 상태 표시</p>
+                        <h4>인사이트 문서 다운로드</h4>
+                        <p>분석 결과를 MD, PDF 문서로 다운로드 가능</p>
                     </div>
                     <div class="feature-card">
                         <h4>진행률 추적</h4>
@@ -876,16 +1181,30 @@
 
     <script>
         let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-        const totalSlides = slides.length;
+        let slides = null;
+        let totalSlides = 0;
         
-        document.getElementById('total-slides').textContent = totalSlides;
+        function initSlides() {
+            slides = document.querySelectorAll('.slide');
+            totalSlides = slides.length;
+            
+            const totalSlidesEl = document.getElementById('total-slides');
+            if (totalSlidesEl) {
+                totalSlidesEl.textContent = totalSlides;
+            }
+        }
         
         function showSlide(n) {
+            if (!slides || slides.length === 0) return;
+            
             slides[currentSlide].classList.remove('active');
             currentSlide = (n + totalSlides) % totalSlides;
             slides[currentSlide].classList.add('active');
-            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            const currentSlideEl = document.getElementById('current-slide');
+            if (currentSlideEl) {
+                currentSlideEl.textContent = currentSlide + 1;
+            }
         }
         
         function nextSlide() {
@@ -894,6 +1213,13 @@
         
         function prevSlide() {
             showSlide(currentSlide - 1);
+        }
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSlides);
+        } else {
+            initSlides();
         }
         
         // Keyboard navigation
