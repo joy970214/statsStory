@@ -137,21 +137,21 @@ class OllamaService:
         table_summary: Dict[str, Any],
         metadata: Dict[str, Any]
     ) -> str:
-        """단일 통계표 분석용 프롬프트 (간결 버전)"""
+        """단일 통계표 분석용 프롬프트 (영어 프롬프트, 한국어 응답)"""
 
         # 최신 데이터 50개만 사용 (16K 컨텍스트 제한)
         sample_data = table_data[-50:] if len(table_data) > 50 else table_data
 
-        prompt = f"""당신은 통계 데이터 분석 전문가입니다. '{table_name}' 통계표를 분석해주세요.
+        prompt = f"""You are a statistical data analyst. Analyze the table '{table_name}' and respond in Korean.
 
-## 통계표 정보
-- 통계표명: {table_name}
-- 데이터 수: {len(table_data):,}개
-- 평균: {table_summary.get('mean', 0):,.2f}
-- 최댓값: {table_summary.get('max', 0):,.2f}
-- 최솟값: {table_summary.get('min', 0):,.2f}
+## Table Information
+- Table name: {table_name}
+- Data count: {len(table_data):,}
+- Mean: {table_summary.get('mean', 0):,.2f}
+- Max: {table_summary.get('max', 0):,.2f}
+- Min: {table_summary.get('min', 0):,.2f}
 
-## 데이터 샘플 (최신 {len(sample_data)}개)
+## Data Samples (Latest {len(sample_data)} items)
 """
 
         # 샘플 데이터 추가
@@ -166,16 +166,18 @@ class OllamaService:
                     main_values.append(f"{k}={v}")
 
             if main_values:
-                prompt += f"{idx}. [{year}년] {', '.join(main_values)}\n"
+                prompt += f"{idx}. [Year {year}] {', '.join(main_values)}\n"
 
         prompt += """
-## 분석 요청
-이 통계표의 주요 특징을 2-3문장으로 간결하게 분석해주세요:
-- 전체 규모 및 추세
-- 주요 특징 (최댓값/최솟값, 증감 패턴 등)
-- 한줄 요약
+## Analysis Request
+Analyze the key characteristics of this table in 2-3 sentences **in Korean**:
+- Overall scale and trends
+- Key features (max/min values, change patterns, etc.)
+- One-line summary
 
-답변:"""
+IMPORTANT: Your response must be in Korean language.
+
+Answer (in Korean):"""
 
         return prompt
 
@@ -549,19 +551,19 @@ class OllamaService:
         context: Dict[str, Any],
         chat_history: Optional[List[Dict[str, str]]] = None
     ) -> str:
-        """채팅용 프롬프트 작성 (RAG 방식 - ChromaDB 검색 결과 활용)"""
+        """채팅용 프롬프트 작성 (영어 프롬프트, 한국어 응답)"""
 
         metadata = context.get('metadata', {})
         insights = context.get('ai_insights', {})
         relevant_data = context.get('relevant_data', {})
 
-        prompt = f"""당신은 통계 데이터 분석 전문가입니다. 사용자의 질문에 답변할 때 반드시 아래의 데이터만을 참고하세요.
+        prompt = f"""You are a statistical data analyst. Answer the user's question using only the data provided below. Respond in Korean.
 
-## 통계 정보
-- 통계명: {metadata.get('title', '알 수 없음')}
-- 담당 부서: {metadata.get('department', '정보 없음')}
+## Statistics Information
+- Statistics name: {metadata.get('title', 'Unknown')}
+- Department: {metadata.get('department', 'Unknown')}
 
-## 분석 인사이트 (종합 분석)
+## Analysis Insights (Summary)
 """
 
         # AI 인사이트 요약 (간결하게)
@@ -580,7 +582,7 @@ class OllamaService:
         relevant_metas = relevant_data.get('metadatas', [])
 
         if relevant_docs:
-            prompt += f"\n## 질문과 관련된 상세 데이터 ({len(relevant_docs)}개)\n"
+            prompt += f"\n## Relevant Data ({len(relevant_docs)} items)\n"
             # 최대 5개만 포함 (타임아웃 방지)
             for idx, (doc, meta) in enumerate(zip(relevant_docs[:5], relevant_metas[:5]), 1):
                 year = meta.get('year', '')
@@ -588,7 +590,7 @@ class OllamaService:
 
                 prompt += f"\n{idx}. "
                 if year:
-                    prompt += f"[{year}년] "
+                    prompt += f"[Year {year}] "
                 if table_name:
                     prompt += f"{table_name}: "
                 # 문서 길이 제한 (200자)
@@ -596,29 +598,29 @@ class OllamaService:
 
         # 대화 히스토리 추가
         if chat_history:
-            prompt += "\n## 이전 대화\n"
+            prompt += "\n## Previous Conversation\n"
             for chat in chat_history[-3:]:  # 최근 3개만
                 role = chat.get('role', '')
                 content = chat.get('content', '')
                 if role == 'user':
-                    prompt += f"사용자: {content}\n"
+                    prompt += f"User: {content}\n"
                 elif role == 'assistant':
                     prompt += f"AI: {content}\n"
 
         prompt += f"""
-## 사용자 질문
+## User Question (in Korean)
 {message}
 
-**중요 규칙:**
-1. 위에 제공된 "분석 인사이트"와 "질문과 관련된 상세 데이터"를 모두 활용하여 답변하세요
-2. 구체적인 수치가 필요한 질문이라면 "질문과 관련된 상세 데이터"를 우선 참고하세요
-3. 전반적인 추세나 요약이 필요한 질문이라면 "분석 인사이트"를 우선 참고하세요
-4. 데이터에 없는 내용은 "제공된 데이터에는 해당 정보가 없습니다"라고 답변하세요
-5. 추측하거나 외부 지식을 사용하지 마세요
-6. 객관적이고 간결하게 답변하세요 (2-4문장)
-7. 한국어로 답변하세요
+**Important Rules:**
+1. Use both "Analysis Insights" and "Relevant Data" to answer
+2. For specific numbers, prioritize "Relevant Data"
+3. For overall trends or summaries, prioritize "Analysis Insights"
+4. If data is not available, say "제공된 데이터에는 해당 정보가 없습니다" in Korean
+5. Do not speculate or use external knowledge
+6. Be objective and concise (2-4 sentences)
+7. **Your response must be in Korean**
 
-답변:"""
+Answer (in Korean):"""
 
         return prompt
 
