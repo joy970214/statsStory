@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_ORIGIN } from '../services/api';
 
 interface KeyMetrics {
   total_records: number;
@@ -60,7 +61,7 @@ export const StatSummaryViewer: React.FC<Props> = ({ statName, onBack }) => {
       console.log(`객관적 현황 요약 API 호출: ${statName}`);
 
       // 1. 기본 요약 데이터 로드
-      const response = await fetch(`/api/stats-summary/${encodeURIComponent(statName)}`);
+      const response = await fetch(`${API_ORIGIN}/api/stats-summary/${encodeURIComponent(statName)}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -70,7 +71,7 @@ export const StatSummaryViewer: React.FC<Props> = ({ statName, onBack }) => {
 
       // 2. 상세 메타데이터를 위해 기본통계분석 API도 호출
       try {
-        const basicStatsResponse = await fetch(`/api/generate-advanced-cardnews`, {
+        const basicStatsResponse = await fetch(`${API_ORIGIN}/api/generate-advanced-cardnews`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

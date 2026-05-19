@@ -9,6 +9,7 @@ import {
   TableCellsIcon,
   TagIcon
 } from '@heroicons/react/24/outline';
+import { API_ORIGIN } from '../services/api';
 
 interface TableDetail {
   total_records: number;
@@ -82,7 +83,7 @@ export const StatDetailViewer: React.FC<Props> = ({
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`/api/stats-detail/${encodeURIComponent(statName)}`);
+      const response = await fetch(`${API_ORIGIN}/api/stats-detail/${encodeURIComponent(statName)}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }

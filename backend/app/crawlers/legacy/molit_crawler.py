@@ -10,8 +10,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
+from app.crawlers.base_crawler import _resolve_chrome_binary
 from app.models.stat_models import StatItem, StatMetadata, StatData
 
 class MolitCrawler:
@@ -29,8 +29,12 @@ class MolitCrawler:
         chrome_options.add_argument('--window-size=1920,1080')
         chrome_options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
         
-        # ChromeDriver 자동 설치 및 서비스 설정
-        service = Service(ChromeDriverManager().install())
+        chrome_binary = _resolve_chrome_binary()
+        if chrome_binary:
+            chrome_options.binary_location = chrome_binary
+
+        # Selenium Manager가 설치된 Chrome 버전에 맞는 ChromeDriver를 자동 해석
+        service = Service()
         driver = webdriver.Chrome(service=service, options=chrome_options)
         driver.set_page_load_timeout(30)
         

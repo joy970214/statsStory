@@ -9,7 +9,10 @@ class Settings:
     RECENT_STATS_URL: str = f"{MOLIT_BASE_URL}/portal/cate/recentStatView.do"
     
     # CORS settings
-    BACKEND_CORS_ORIGINS: list = ["http://localhost:3000", "http://localhost:3005"]
+    BACKEND_CORS_ORIGINS: list = [
+        "http://localhost:3000", "http://localhost:3005",
+        "http://localhost:17200", "http://175.213.188.161:17200",
+    ]
     
     # Rate limiting
     MAX_REQUESTS_PER_MINUTE: int = 30

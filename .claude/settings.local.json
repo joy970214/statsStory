@@ -26,7 +26,8 @@
       "PowerShell(Start-Process powershell -Verb RunAs -ArgumentList \"-Command route add 192.168.100.0 mask 255.255.255.0 20.0.0.10; pause\" -WindowStyle Normal)",
       "PowerShell($r = Invoke-RestMethod -Uri \"http://192.168.100.53:8000/v1/models\" -Method Get; $r.data | Select-Object id)",
       "Bash(npm list *)",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "Bash(curl -s http://localhost:11434/api/tags)"
     ],
     "deny": [],
     "ask": []

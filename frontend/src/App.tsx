@@ -10,7 +10,8 @@ import StatDistributionViewer from './components/StatDistributionViewer';
 import StatSummaryViewer from './components/StatSummaryViewer';
 import {
   statsAPI,
-  StatItem
+  StatItem,
+  API_ORIGIN
 } from './services/api';
 import { 
   ChartBarIcon, 
@@ -167,7 +168,7 @@ function App() {
 
   const loadCollectedStatNames = useCallback(async () => {
     try {
-      const response = await fetch('/api/stats-list');
+      const response = await fetch(`${API_ORIGIN}/api/stats-list`);
       if (response.ok) {
         const data = await response.json();
         

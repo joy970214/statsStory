@@ -1,6 +1,12 @@
 import axios from 'axios';
 
-const API_BASE_URL = '/api';
+// 개발(dev server)에서는 package.json proxy(/api) 사용, 프로덕션에서는 백엔드 포트(17202)로 직접 호출
+export const API_ORIGIN = process.env.NODE_ENV === 'production'
+  ? `${window.location.protocol}//${window.location.hostname}:17202`
+  : '';
+const API_BASE_URL = `${API_ORIGIN}/api`;
+// SSE는 CRA dev proxy에서 buffering 이슈가 있어 dev에서도 백엔드 직결 사용
+const SSE_ORIGIN = API_ORIGIN || `${window.location.protocol}//${window.location.hostname}:17202`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -201,7 +207,7 @@ export const statsAPI = {
   // SSE 진행률 스트림 구독
   subscribeToProgress(taskId: string, onProgress: (data: any) => void): EventSource {
     // 프록시를 우회하고 직접 백엔드로 연결 시도
-    const sseUrl = `http://localhost:8001/api/analysis/progress/${taskId}`;
+    const sseUrl = `${SSE_ORIGIN}/api/analysis/progress/${taskId}`;
     console.log('[API] SSE 연결 시작 (직접 연결):', sseUrl);
     console.log('[API] 현재 위치:', window.location.href);
     

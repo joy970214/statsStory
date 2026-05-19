@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { AdvancedCardNewsResponse } from '../services/api';
+import { AdvancedCardNewsResponse, API_ORIGIN } from '../services/api';
 import {
   downloadMarkdown,
   downloadPDF,
@@ -143,7 +143,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     setLoading(true);
     try {
       // Fetch actual stored data to process
-      const response = await fetch('/api/data/raw-view', {
+      const response = await fetch(`${API_ORIGIN}/api/data/raw-view`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stat_name: analysisData.stat_name })
@@ -368,7 +368,7 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
     setChatLoading(true);
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch(`${API_ORIGIN}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

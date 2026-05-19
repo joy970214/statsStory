@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_ORIGIN } from '../services/api';
 
 interface BasicStatistics {
   count: number;
@@ -77,7 +78,7 @@ export const StatDistributionViewer: React.FC<Props> = ({ statName, onBack }) =>
       setError(null);
       console.log(`분포 특성 분석 API 호출: ${statName}`);
 
-      const response = await fetch(`/api/stats-distribution/${encodeURIComponent(statName)}`);
+      const response = await fetch(`${API_ORIGIN}/api/stats-distribution/${encodeURIComponent(statName)}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }

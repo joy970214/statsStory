@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { DocumentArrowDownIcon } from '@heroicons/react/24/outline';
+import { API_ORIGIN } from '../services/api';
 
 interface TableAnalysisData {
   stat_name: string;
@@ -63,7 +64,7 @@ export const TableAnalysisViewer: React.FC<TableAnalysisViewerProps> = ({ statNa
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/api/table-analysis/${encodeURIComponent(statName)}`);
+      const response = await fetch(`${API_ORIGIN}/api/table-analysis/${encodeURIComponent(statName)}`);
       if (!response.ok) {
         throw new Error(`분석 데이터 로드 실패: ${response.status}`);
       }
@@ -158,7 +159,7 @@ export const TableAnalysisViewer: React.FC<TableAnalysisViewerProps> = ({ statNa
                   onClick={async (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    const downloadUrl = `/api/download-file?file_path=${encodeURIComponent(tableData.downloaded_file!.path)}`;
+                    const downloadUrl = `${API_ORIGIN}/api/download-file?file_path=${encodeURIComponent(tableData.downloaded_file!.path)}`;
 
                     try {
                       const response = await fetch(downloadUrl);

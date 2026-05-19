@@ -14,8 +14,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
+from app.crawlers.base_crawler import _resolve_chrome_binary
 from app.models.stat_models import StatMetadata, StatData
 from app.services.progress_service import progress_tracker
 try:
@@ -147,7 +147,11 @@ class BrowserPool:
             }
             chrome_options.add_experimental_option("prefs", prefs)
 
-        service = Service(ChromeDriverManager().install())
+        chrome_binary = _resolve_chrome_binary()
+        if chrome_binary:
+            chrome_options.binary_location = chrome_binary
+
+        service = Service()
         driver = webdriver.Chrome(service=service, options=chrome_options)
         driver.set_page_load_timeout(60)  # 타임아웃 증가 (30 -> 60초)
         driver.set_script_timeout(60)  # 스크립트 타임아웃 추가

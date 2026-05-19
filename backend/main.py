@@ -13,7 +13,11 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3005", "http://localhost:3006", "http://localhost:3001", "http://localhost:3002"],
+    allow_origins=[
+        "http://localhost:3000", "http://localhost:3005", "http://localhost:3006",
+        "http://localhost:3001", "http://localhost:3002",
+        "http://localhost:17200", "http://175.213.188.161:17200",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -33,4 +37,4 @@ async def root():
     return {"message": "통계이야기 API 서버"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=17202)

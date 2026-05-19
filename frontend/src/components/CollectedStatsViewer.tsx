@@ -12,6 +12,7 @@ import {
   ExclamationTriangleIcon,
   ArrowPathIcon
 } from '@heroicons/react/24/outline';
+import { API_ORIGIN } from '../services/api';
 
 interface StatInfo {
   stat_name: string;
@@ -52,7 +53,7 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('/api/stats-list');
+      const response = await fetch(`${API_ORIGIN}/api/stats-list`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -74,7 +75,7 @@ export const CollectedStatsViewer: React.FC<Props> = ({ onSelectStat, onBack }) 
 
     try {
 
-      const response = await fetch(`/api/stats/${cacheKey}`, {
+      const response = await fetch(`${API_ORIGIN}/api/stats/${cacheKey}`, {
         method: 'DELETE',
       });
 

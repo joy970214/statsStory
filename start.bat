@@ -26,13 +26,13 @@ timeout /t 5 /nobreak >nul
 
 REM Start Frontend Development Server
 echo Starting Frontend Server...
-start "Frontend" cmd /k "cd /d %~dp0frontend && npm start"
+start "Frontend" cmd /k "cd /d %~dp0frontend && set PORT=17200 && set HOST=0.0.0.0 && npm start"
 
 REM Browser will be opened automatically by npm start
 REM timeout /t 10 /nobreak >nul
-REM start http://localhost:3006
+REM start http://localhost:17200
 
 echo Service Started Successfully!
-echo Backend: http://localhost:8001
-echo Frontend: http://localhost:3006
+echo Backend: http://localhost:17202
+echo Frontend: http://localhost:17200
 pause~
