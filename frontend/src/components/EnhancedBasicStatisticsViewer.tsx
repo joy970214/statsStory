@@ -1,4 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { AdvancedCardNewsResponse } from '../services/api';
 import {
   downloadMarkdown,
@@ -58,7 +60,67 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
   onViewTableAnalysis
 }) => {
   const contentRef = useRef<HTMLDivElement>(null);
-  const aiInsightsRef = useRef<HTMLDivElement>(null); // AI 인사이트 전용 ref
+  const aiInsightsRef = useRef<HTMLDivElement>(null);
+
+  // 마크다운 커스텀 렌더러
+  const mdComponents: any = {
+    table: ({ children }: any) => (
+      <div style={{ overflowX: 'auto', margin: '0.75rem 0' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem', border: '1px solid #94a3b8' }}>
+          {children}
+        </table>
+      </div>
+    ),
+    thead: ({ children }: any) => (
+      <thead style={{ backgroundColor: '#0284c7' }}>{children}</thead>
+    ),
+    tbody: ({ children }: any) => (
+      <tbody>{children}</tbody>
+    ),
+    tr: ({ children, ...props }: any) => (
+      <tr style={{ borderBottom: '1px solid #cbd5e1' }} {...props}>{children}</tr>
+    ),
+    th: ({ children }: any) => (
+      <th style={{
+        padding: '8px 12px',
+        color: '#ffffff',
+        fontWeight: 600,
+        textAlign: 'left',
+        border: '1px solid #0369a1',
+        whiteSpace: 'nowrap',
+        backgroundColor: '#0284c7',
+      }}>{children}</th>
+    ),
+    td: ({ children }: any) => (
+      <td style={{
+        padding: '6px 12px',
+        border: '1px solid #cbd5e1',
+        color: '#1e293b',
+        verticalAlign: 'middle',
+      }}>{children}</td>
+    ),
+    h3: ({ children }: any) => (
+      <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#075985', margin: '0.75rem 0 0.25rem', borderBottom: '1px solid #bae6fd', paddingBottom: '2px' }}>{children}</h3>
+    ),
+    h4: ({ children }: any) => (
+      <h4 style={{ fontSize: '0.825rem', fontWeight: 600, color: '#0369a1', margin: '0.5rem 0 0.2rem' }}>{children}</h4>
+    ),
+    strong: ({ children }: any) => (
+      <strong style={{ fontWeight: 700, color: '#1e293b' }}>{children}</strong>
+    ),
+    p: ({ children }: any) => (
+      <p style={{ margin: '0.4rem 0', color: '#374151', lineHeight: 1.7 }}>{children}</p>
+    ),
+    ul: ({ children }: any) => (
+      <ul style={{ margin: '0.3rem 0', paddingLeft: '1.2rem', listStyleType: 'disc' }}>{children}</ul>
+    ),
+    ol: ({ children }: any) => (
+      <ol style={{ margin: '0.3rem 0', paddingLeft: '1.2rem', listStyleType: 'decimal' }}>{children}</ol>
+    ),
+    li: ({ children }: any) => (
+      <li style={{ margin: '0.2rem 0', color: '#374151', lineHeight: 1.6 }}>{children}</li>
+    ),
+  };
   const [processedStats, setProcessedStats] = useState<ProcessedStatistics | null>(null);
   const [selectedTableName, setSelectedTableName] = useState<string | null>(null);
   const [rawDataByTable, setRawDataByTable] = useState<Record<string, any[]>>({});
@@ -1067,7 +1129,9 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                                     ? 'bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 text-white border border-emerald-400/30'
                                     : 'bg-white text-gray-800 border border-gray-200'
                                 }`}>
-                                  <div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>
+                                  <div className="leading-relaxed insight-markdown">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{msg.content}</ReactMarkdown>
+                  </div>
                                 </div>
                               </motion.div>
                             ))
@@ -1144,15 +1208,8 @@ export const EnhancedBasicStatisticsViewer: React.FC<EnhancedBasicStatisticsView
                                   <h6 className="font-semibold text-primary-800 text-base mb-3">
                                     {insight.title || insight.category}
                                   </h6>
-                                  <div className="text-sm text-gray-800 leading-relaxed space-y-2">
-                                    {insight.content.split('. ').map((sentence: string, idx: number) => {
-                                      if (!sentence.trim()) return null;
-                                      return (
-                                        <p key={idx} className="text-gray-700">
-                                          • {sentence.trim()}{sentence.trim().endsWith('.') ? '' : '.'}
-                                        </p>
-                                      );
-                                    })}
+                                  <div className="text-sm text-gray-800 leading-relaxed insight-markdown">
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{insight.content}</ReactMarkdown>
                                   </div>
                                 </div>
                               </div>

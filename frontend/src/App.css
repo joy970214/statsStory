@@ -2,6 +2,102 @@
   text-align: center;
 }
 
+/* 마크다운 인사이트 스타일 */
+.insight-markdown p {
+  margin: 0.4rem 0;
+  color: #374151;
+  line-height: 1.7;
+}
+.insight-markdown h3 {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #075985;
+  margin: 0.75rem 0 0.25rem 0;
+  padding-bottom: 2px;
+  border-bottom: 1px solid #bae6fd;
+}
+.insight-markdown h4 {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: #0369a1;
+  margin: 0.5rem 0 0.2rem 0;
+}
+.insight-markdown strong {
+  font-weight: 700;
+  color: #1e293b;
+}
+.insight-markdown ul {
+  margin: 0.3rem 0;
+  padding-left: 1.2rem;
+  list-style-type: disc;
+}
+.insight-markdown ol {
+  margin: 0.3rem 0;
+  padding-left: 1.2rem;
+  list-style-type: decimal;
+}
+.insight-markdown li {
+  margin: 0.2rem 0;
+  color: #374151;
+  line-height: 1.6;
+}
+.insight-markdown li strong {
+  color: #0369a1;
+}
+.insight-markdown blockquote {
+  border-left: 3px solid #38bdf8;
+  padding-left: 0.75rem;
+  margin: 0.5rem 0;
+  color: #475569;
+  font-style: italic;
+}
+
+/* 마크다운 표 스타일 */
+.insight-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+  font-size: 0.8rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  overflow: hidden;
+  display: table;
+}
+.insight-markdown thead {
+  background-color: #0284c7;
+}
+.insight-markdown thead tr {
+  background-color: #0284c7;
+}
+.insight-markdown th {
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #ffffff;
+  border: 1px solid #0369a1;
+  white-space: nowrap;
+}
+.insight-markdown td {
+  padding: 6px 12px;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+  vertical-align: middle;
+}
+.insight-markdown tbody tr:nth-child(even) {
+  background-color: #f0f9ff;
+}
+.insight-markdown tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+.insight-markdown tbody tr:hover {
+  background-color: #e0f2fe;
+  transition: background-color 0.15s;
+}
+/* 표 overflow 처리 */
+.insight-markdown {
+  overflow-x: auto;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

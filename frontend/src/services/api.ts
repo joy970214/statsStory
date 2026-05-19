@@ -54,6 +54,13 @@ export interface StatMetadata {
   };
 }
 
+export interface OllamaModel {
+  name: string;
+  size_gb: number;
+  modified_at: string;
+  is_current: boolean;
+}
+
 export interface CardNewsSection {
   title: string;
   content: string;
@@ -291,6 +298,22 @@ export const statsAPI = {
   // 통계표별 상세 분석
   async getTableAnalysis(statName: string): Promise<any> {
     const response = await api.get(`/table-analysis/${encodeURIComponent(statName)}`);
+    return response.data;
+  },
+
+  // Ollama 모델 관리
+  async getOllamaModels(): Promise<{ models: OllamaModel[]; current_model: string }> {
+    const response = await api.get('/ollama/models');
+    return response.data;
+  },
+
+  async setOllamaModel(modelName: string): Promise<{ success: boolean; current_model: string }> {
+    const response = await api.post('/ollama/model', { model_name: modelName });
+    return response.data;
+  },
+
+  async getCurrentModel(): Promise<{ current_model: string; ollama_available: boolean }> {
+    const response = await api.get('/ollama/model');
     return response.data;
   },
 };
