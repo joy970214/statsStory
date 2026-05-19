@@ -1438,8 +1438,8 @@ class OptimizedMolitCrawler:
             
             check_cancellation()
 
-            # 파일 다운로드 방식으로 데이터 수집
-            download_result = await self._collect_table_data_via_download(driver, table_info['name'], file_type="excel")
+            # 파일 다운로드: Excel(사용자용) + CSV(AI 분석용) 둘 다 수집
+            download_result = await self._collect_table_data_via_download(driver, table_info['name'], file_type="both")
 
             if download_result and len(download_result) > 0:
                 print(f"파일 다운로드 방식 수집 성공: {len(download_result)}개 데이터")
@@ -1616,24 +1616,28 @@ class OptimizedMolitCrawler:
                 print(f"다운로드 모달 열기 실패: {e}")
                 return None
 
-            # 2. 파일 형식 선택 (Excel 또는 TXT)
+            # 2. 파일 형식 선택 (Excel / CSV / TXT)
             try:
                 if file_type.lower() == "excel":
-                    # Excel 옵션 선택 - settingRadio의 xlsx 값 선택
-                    # 라디오 버튼이 DOM에 존재하고 클릭 가능할 때까지 대기
-                    excel_option = WebDriverWait(driver, 10).until(
+                    # Excel 옵션 선택
+                    option = WebDriverWait(driver, 10).until(
                         EC.presence_of_element_located((By.CSS_SELECTOR, "input[name='settingRadio'][value='xlsx']"))
                     )
-
-                    # JavaScript로 클릭 (visibility 문제 우회)
-                    driver.execute_script("arguments[0].click();", excel_option)
+                    driver.execute_script("arguments[0].click();", option)
                     print("Excel 형식 선택 (xlsx)")
+                elif file_type.lower() == "csv":
+                    # CSV 옵션 선택
+                    option = WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, "input[name='settingRadio'][value='csv']"))
+                    )
+                    driver.execute_script("arguments[0].click();", option)
+                    print("CSV 형식 선택")
                 else:
                     # TXT 옵션 선택
-                    txt_option = WebDriverWait(driver, 10).until(
+                    option = WebDriverWait(driver, 10).until(
                         EC.presence_of_element_located((By.CSS_SELECTOR, "input[name='settingRadio'][value='txt']"))
                     )
-                    driver.execute_script("arguments[0].click();", txt_option)
+                    driver.execute_script("arguments[0].click();", option)
                     print("TXT 형식 선택")
 
                 await asyncio.sleep(1)  # 선택 후 대기
@@ -1652,7 +1656,12 @@ class OptimizedMolitCrawler:
                 print(f"[다운로드 경로] {download_path}")
 
                 # 다운로드 전 기존 파일 개수 확인
-                file_pattern = "*.xls*" if file_type.lower() == "excel" else "*.txt"
+                if file_type.lower() == "excel":
+                    file_pattern = "*.xls*"
+                elif file_type.lower() == "csv":
+                    file_pattern = "*.csv"
+                else:
+                    file_pattern = "*.txt"
                 files_before = list(download_path.glob(file_pattern))
                 print(f"[다운로드 전] {len(files_before)}개 파일 존재")
 
@@ -1750,7 +1759,9 @@ class OptimizedMolitCrawler:
 
     async def _parse_downloaded_file(self, file_path: str, table_name: str) -> List[StatData]:
         """
-        다운로드된 파일을 파싱하여 StatData로 변환
+        다운로드된 파일을 파싱하여 StatData로 변환.
+        CSV/TXT 파일은 원본 텍스트를 그대로 AI 분석용으로 보존.
+        Excel 파일은 동적 헤더 감지 후 구조화.
 
         Args:
             file_path: 다운로드된 파일 경로
@@ -1761,57 +1772,33 @@ class OptimizedMolitCrawler:
         """
         try:
             print(f"파일 파싱 시작: {file_path}")
-
-            # 파일 확장자 확인
             file_ext = Path(file_path).suffix.lower()
+            current_year = datetime.now().year
 
-            # Excel 파일 파싱
-            if file_ext in ['.xls', '.xlsx']:
-                df = pd.read_excel(file_path)
-            # TXT/CSV 파일 파싱
-            elif file_ext in ['.txt', '.csv']:
-                # 탭 구분자로 시도
-                try:
-                    df = pd.read_csv(file_path, sep='\t', encoding='cp949')
-                except:
-                    # 쉼표 구분자로 재시도
-                    df = pd.read_csv(file_path, sep=',', encoding='cp949')
+            # ── CSV / TXT: 원본 텍스트를 그대로 보존 ──────────────────────
+            if file_ext in ['.csv', '.txt']:
+                raw_text = self._read_csv_txt(file_path)
+                if not raw_text:
+                    return []
+
+                stat_data = StatData(
+                    year=current_year,
+                    data={"_raw_csv": raw_text, "_table_name": table_name},
+                    table_name=table_name,
+                    period_text=datetime.now().strftime('%Y-%m'),
+                    raw_data_count=len(raw_text.splitlines()),
+                    downloaded_file_path=file_path
+                )
+                print(f"CSV/TXT 파싱 완료: {len(raw_text.splitlines())}행")
+                return [stat_data]
+
+            # ── Excel: 동적 헤더 감지 후 구조화 ──────────────────────────
+            elif file_ext in ['.xls', '.xlsx']:
+                return self._parse_excel_dynamic(file_path, table_name, current_year)
+
             else:
                 print(f"지원하지 않는 파일 형식: {file_ext}")
                 return []
-
-            print(f"파일 로드 성공: {len(df)} 행, {len(df.columns)} 열")
-
-            # DataFrame을 StatData로 변환
-            stat_data_list = []
-            current_year = datetime.now().year
-
-            # 각 행을 개별 StatData로 변환
-            for idx, row in df.iterrows():
-                # NaN 값 제거 및 문자열 변환
-                data_dict = {}
-                for col in df.columns:
-                    value = row[col]
-                    if pd.notna(value):
-                        data_dict[str(col)] = str(value)
-
-                if data_dict:  # 빈 행 제외
-                    stat_data = StatData(
-                        year=current_year,
-                        data=data_dict,
-                        table_name=table_name,
-                        period_text=f"{datetime.now().strftime('%Y-%m')}",
-                        raw_data_count=len(data_dict),
-                        downloaded_file_path=file_path  # 다운로드된 파일 경로 저장
-                    )
-                    stat_data_list.append(stat_data)
-
-            print(f"파싱 완료: {len(stat_data_list)}개 데이터")
-
-            # 원본 파일 보관 (삭제하지 않음)
-            print(f"원본 파일 보관됨: {file_path}")
-
-            return stat_data_list
 
         except Exception as e:
             print(f"파일 파싱 오류: {e}")
@@ -1819,30 +1806,205 @@ class OptimizedMolitCrawler:
             traceback.print_exc()
             return []
 
-    async def _collect_table_data_via_download(self, driver, table_name: str, file_type: str = "excel") -> List[StatData]:
+    def _read_csv_txt(self, file_path: str) -> str:
+        """CSV/TXT 파일을 텍스트로 읽기 (인코딩 자동 감지)"""
+        encodings = ['utf-8-sig', 'utf-8', 'cp949', 'euc-kr']
+        for enc in encodings:
+            try:
+                with open(file_path, 'r', encoding=enc) as f:
+                    text = f.read()
+                print(f"파일 읽기 성공 (encoding={enc}): {len(text)} chars")
+                return text
+            except (UnicodeDecodeError, Exception):
+                continue
+        print(f"파일 읽기 실패: {file_path}")
+        return ""
+
+    def _parse_excel_dynamic(self, file_path: str, table_name: str, current_year: int) -> List[StatData]:
         """
-        파일 다운로드 방식으로 통계표 데이터 수집
+        국토부 Excel 파일 동적 파싱.
+        - row 0~3: 메타정보 (제목/다운로드시각/조건/빈행) → 스킵
+        - row 4~: 헤더 시작. 첫 셀이 '연(Annual/Monthly)' 형태인 행이 헤더
+        - 헤더가 2행인 경우 (row4 그룹 + row5 세부) 합성 컬럼명 생성
+        - 헤더 다음 행부터 실제 데이터
+        """
+        try:
+            df_raw = pd.read_excel(file_path, header=None, dtype=str)
+            df_raw = df_raw.fillna('')
+            rows = df_raw.values.tolist()
+            n_rows = len(rows)
+
+            if n_rows < 5:
+                print(f"행 수 부족 ({n_rows}행), 파싱 불가")
+                return []
+
+            # ── 헤더 시작 행 감지 ─────────────────────────────────────────
+            # row 4(index=4)부터 확인. 첫 셀에 '연' 또는 '(Annual'/'(Monthly' 포함 → 헤더 행
+            header_start = None
+            for i in range(4, min(8, n_rows)):
+                cell = str(rows[i][0]).strip()
+                if any(kw in cell for kw in ['연(', '월(', 'Annual', 'Monthly', '연도', '기간']):
+                    header_start = i
+                    break
+
+            if header_start is None:
+                # 감지 실패 시 row 4를 헤더로 가정
+                header_start = 4
+                print(f"헤더 자동 감지 실패 → row {header_start} 사용")
+            else:
+                print(f"헤더 감지: row {header_start}")
+
+            # ── 2행 헤더 여부 판단 ────────────────────────────────────────
+            # row(header_start)와 row(header_start+1) 둘 다 헤더인지 확인
+            # 기준: 두 번째 행 첫 셀이 첫 번째 행 첫 셀과 같거나 비어있으면 sub-header
+            is_two_row_header = False
+            data_start = header_start + 1
+            if header_start + 1 < n_rows:
+                next_cell = str(rows[header_start + 1][0]).strip()
+                first_cell = str(rows[header_start][0]).strip()
+                # 두 번째 헤더 행 조건: 첫 셀이 동일하거나 비어있음
+                if next_cell == first_cell or next_cell == '':
+                    # 그리고 두 번째 행이 실제 데이터가 아님 (숫자로 시작하지 않음)
+                    import re
+                    if not re.match(r'^\d{4}', next_cell):
+                        is_two_row_header = True
+                        data_start = header_start + 2
+                        print(f"2행 헤더 감지: row {header_start} + row {header_start+1}")
+
+            # ── 컬럼명 합성 ───────────────────────────────────────────────
+            n_cols = len(rows[header_start])
+            col_names = []
+
+            if is_two_row_header:
+                row1 = [str(v).strip() for v in rows[header_start]]
+                row2 = [str(v).strip() for v in rows[header_start + 1]]
+
+                # row1에서 그룹명 앞방향 채우기 (빈 셀은 앞 값 유지)
+                filled_row1 = []
+                last_val = ''
+                for v in row1:
+                    if v and v != rows[header_start][0]:  # 첫 셀(기간열) 제외
+                        last_val = v
+                    filled_row1.append(last_val if v == '' else v)
+
+                for i in range(n_cols):
+                    g = filled_row1[i] if i < len(filled_row1) else ''
+                    s = row2[i] if i < len(row2) else ''
+                    # 첫 번째 열(기간/연도)은 row2 값만 사용
+                    if i == 0:
+                        col_names.append(s if s else g)
+                    elif g and s and g != s:
+                        col_names.append(f"{g}_{s}")
+                    elif s:
+                        col_names.append(s)
+                    else:
+                        col_names.append(g if g else f"col_{i}")
+            else:
+                col_names = [str(v).strip() if str(v).strip() else f"col_{i}"
+                             for i, v in enumerate(rows[header_start])]
+
+            print(f"컬럼명: {col_names}")
+
+            # ── 데이터 행 파싱 ────────────────────────────────────────────
+            stat_data_list = []
+            for row in rows[data_start:]:
+                if not any(str(v).strip() for v in row):
+                    continue  # 완전 빈 행 스킵
+
+                data_dict = {}
+                for i, val in enumerate(row):
+                    col = col_names[i] if i < len(col_names) else f"col_{i}"
+                    v = str(val).strip()
+                    if v and v != 'nan':
+                        data_dict[col] = v
+
+                if not data_dict:
+                    continue
+
+                # 연도/기간 추출 (첫 번째 컬럼)
+                period_val = str(row[0]).strip() if row else ''
+                try:
+                    year = int(period_val[:4]) if period_val else current_year
+                except (ValueError, IndexError):
+                    year = current_year
+
+                stat_data_list.append(StatData(
+                    year=year,
+                    data=data_dict,
+                    table_name=table_name,
+                    period_text=period_val,
+                    raw_data_count=len(data_dict),
+                    downloaded_file_path=file_path
+                ))
+
+            print(f"Excel 파싱 완료: {len(stat_data_list)}개 데이터행")
+            return stat_data_list
+
+        except Exception as e:
+            print(f"Excel 동적 파싱 오류: {e}")
+            import traceback
+            traceback.print_exc()
+            return []
+
+    async def _collect_table_data_via_download(self, driver, table_name: str, file_type: str = "both") -> List[StatData]:
+        """
+        파일 다운로드 방식으로 통계표 데이터 수집.
+        file_type="both" 일 때 Excel(사용자 다운로드용) + CSV(AI 분석용) 둘 다 수집.
 
         Args:
             driver: Selenium WebDriver
             table_name: 통계표명
-            file_type: 다운로드 파일 형식 ("excel" 또는 "txt")
+            file_type: "both"(기본) / "excel" / "csv" / "txt"
 
         Returns:
             StatData 리스트
         """
         try:
-            # 1. 파일 다운로드
-            file_path = await self._download_table_file(driver, table_name, file_type)
+            excel_path = None
+            csv_path = None
 
-            if not file_path:
-                print(f"파일 다운로드 실패: {table_name}")
-                return []
+            if file_type == "both":
+                # ① Excel 먼저 다운로드 (사용자 제공용)
+                print(f"[다운로드] Excel 다운로드 시작: {table_name}")
+                excel_path = await self._download_table_file(driver, table_name, "excel")
+                if excel_path:
+                    print(f"[다운로드] Excel 완료: {excel_path}")
+                else:
+                    print(f"[다운로드] Excel 실패")
 
-            # 2. 다운로드된 파일 파싱
-            stat_data_list = await self._parse_downloaded_file(file_path, table_name)
+                # ② CSV 다운로드 (AI 분석용)
+                print(f"[다운로드] CSV 다운로드 시작: {table_name}")
+                csv_path = await self._download_table_file(driver, table_name, "csv")
+                if csv_path:
+                    print(f"[다운로드] CSV 완료: {csv_path}")
+                else:
+                    print(f"[다운로드] CSV 실패")
 
-            return stat_data_list
+                # 둘 다 실패 시
+                if not excel_path and not csv_path:
+                    print(f"[다운로드] Excel/CSV 모두 실패: {table_name}")
+                    return []
+
+                # CSV로 파싱 (AI용), Excel 경로는 메타로 보존
+                parse_path = csv_path or excel_path
+                stat_data_list = await self._parse_downloaded_file(parse_path, table_name)
+
+                # 각 StatData에 두 경로 모두 기록
+                for stat in stat_data_list:
+                    if excel_path:
+                        stat.downloaded_file_path = excel_path
+                    if csv_path:
+                        stat.csv_file_path = csv_path
+
+                return stat_data_list
+
+            else:
+                # 단일 형식 다운로드 (기존 방식)
+                file_path = await self._download_table_file(driver, table_name, file_type)
+                if not file_path:
+                    print(f"파일 다운로드 실패: {table_name}")
+                    return []
+                return await self._parse_downloaded_file(file_path, table_name)
 
         except Exception as e:
             print(f"다운로드 방식 데이터 수집 오류: {e}")

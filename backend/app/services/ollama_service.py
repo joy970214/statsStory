@@ -149,11 +149,44 @@ class OllamaService:
         table_summary: Dict[str, Any],
         metadata: Dict[str, Any]
     ) -> str:
-        """단일 통계표에 대한 인사이트 생성"""
+        """단일 통계표에 대한 인사이트 생성.
+        CSV raw 텍스트(_raw_csv)가 있으면 그대로 AI에 전달, 없으면 구조화 데이터 사용.
+        """
         try:
-            system_msg, user_msg = self._build_single_table_prompt(
-                table_name, table_data, table_summary, metadata
-            )
+            # CSV 파일 우선 사용 (AI 분석용)
+            # 1순위: csv_file_path 에서 직접 읽기
+            # 2순위: data 딕셔너리의 _raw_csv 키 (이전 방식 호환)
+            raw_csv = None
+            if table_data:
+                # csv_file_path 가 있으면 파일에서 직접 읽기
+                csv_file_path = table_data[0].get('csv_file_path')
+                if csv_file_path:
+                    import os
+                    if os.path.exists(csv_file_path):
+                        encodings = ['utf-8-sig', 'utf-8', 'cp949', 'euc-kr']
+                        for enc in encodings:
+                            try:
+                                with open(csv_file_path, 'r', encoding=enc) as f:
+                                    raw_csv = f.read()
+                                print(f"[vLLM] CSV 파일 읽기 성공 ({enc}): {csv_file_path}")
+                                break
+                            except Exception:
+                                continue
+                    else:
+                        print(f"[vLLM] CSV 파일 없음: {csv_file_path}")
+
+                # csv_file_path 실패 시 _raw_csv 키 확인 (fallback)
+                if not raw_csv:
+                    first_data = table_data[0].get('data', {})
+                    raw_csv = first_data.get('_raw_csv')
+
+            if raw_csv:
+                system_msg, user_msg = self._build_csv_raw_prompt(table_name, raw_csv, metadata)
+            else:
+                system_msg, user_msg = self._build_single_table_prompt(
+                    table_name, table_data, table_summary, metadata
+                )
+
             messages = [
                 {"role": "system", "content": system_msg},
                 {"role": "user", "content": user_msg},
@@ -162,6 +195,61 @@ class OllamaService:
         except Exception as e:
             print(f"[vLLM] 통계표 '{table_name}' 인사이트 생성 실패: {e}")
             return f"{table_name}: 분석 실패"
+
+    def _build_csv_raw_prompt(self, table_name: str, raw_csv: str, metadata: Dict[str, Any]):
+        """CSV 원본 텍스트를 그대로 AI에게 전달하는 프롬프트"""
+        stat_name = metadata.get('title', table_name)
+
+        system_msg = (
+            "당신은 국토교통부 통계 데이터를 분석하는 데이터 분석가입니다.\n"
+            "규칙:\n"
+            "1. 제공된 CSV 데이터의 실제 수치만 사용하세요. 데이터에 없는 수치는 절대 작성하지 마세요.\n"
+            "2. 추측·원인 분석·정책적 해석·시사점은 작성하지 마세요.\n"
+            "3. 기술통계(빈도, 평균, 비율, 증감률, 순위) 수준의 객관적 사실만 기술하세요.\n"
+            "4. 지정된 섹션 형식을 반드시 지키세요. 섹션을 임의로 추가하거나 생략하지 마세요.\n"
+            "5. 마크다운 형식으로 작성하세요."
+        )
+
+        # CSV 토큰 제한: 최대 3000자
+        csv_preview = raw_csv[:3000] + ("\n...(이하 생략)" if len(raw_csv) > 3000 else "")
+
+        user_msg = f"""다음은 '{stat_name}' 통계의 '{table_name}' CSV 원본 데이터입니다.
+
+## CSV 원본 데이터
+```
+{csv_preview}
+```
+
+---
+
+## 작성 요청
+
+위 데이터를 분석하여 아래 5개 섹션을 순서대로 작성하세요. 실제 수치만 인용하세요.
+
+### 📊 현황 1: 전체 규모 및 기본 현황
+- 가장 최근 기간 기준 전체 규모 수치 기술
+- 전체 합계, 평균, 데이터 수 등 기본 통계량 나열
+
+### 📋 현황 2: 주요 항목별 구성 현황
+데이터의 주요 항목을 표로 나열:
+| 항목 | 수치 | 비율(%) |
+|------|------|---------|
+
+### 📈 현황 3: 기간별 증감 현황
+- 시작~최근 기간의 증감량, 증감률
+- 연도/기간별 수치를 표로 정리:
+
+| 기간 | 주요수치 | 전기대비 증감 |
+|------|---------|------------|
+
+### 🏆 현황 4: 순위 현황
+수치 기준 상위 3개, 하위 3개 항목 나열
+
+### 📉 현황 5: 분포 및 집중도 현황
+- 상위 항목 집중도(비율)
+- 수치 범위(최대-최소) 및 분포 특징
+"""
+        return system_msg, user_msg
 
     def _build_single_table_prompt(
         self,

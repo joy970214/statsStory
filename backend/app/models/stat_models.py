@@ -44,7 +44,8 @@ class StatData(BaseModel):
     raw_data_count: Optional[int] = None  # 수집된 데이터 항목 수
     collection_status: Optional[str] = "success"  # success, partial, failed
     data_quality_score: Optional[float] = None  # 데이터 품질 점수 (0-1)
-    downloaded_file_path: Optional[str] = None  # 다운로드된 원본 파일 경로
+    downloaded_file_path: Optional[str] = None  # 다운로드된 Excel 원본 파일 경로 (사용자 다운로드용)
+    csv_file_path: Optional[str] = None          # 다운로드된 CSV 파일 경로 (AI 분석용)
 
 class ComprehensiveStatAnalysis(BaseModel):
     """종합 통계 분석 결과"""
