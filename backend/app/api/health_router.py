@@ -1,10 +1,5 @@
 from fastapi import APIRouter
 from datetime import datetime
-try:
-    from app.crawlers.optimized_molit_crawler import OptimizedMolitCrawler
-except ImportError as e:
-    print(f"OptimizedMolitCrawler import 실패: {e}")
-    OptimizedMolitCrawler = None
 
 router = APIRouter()
 
@@ -14,7 +9,6 @@ async def health_check():
     return {
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
-        "optimized_crawler_available": OptimizedMolitCrawler is not None
     }
 
 @router.post("/test-simple")

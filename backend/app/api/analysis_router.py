@@ -4,17 +4,13 @@ from typing import List, Optional, Dict, Any
 from pathlib import Path
 from app.models.stat_models import (
     GenerateStoryRequest,
-    StoryResponse,
     InspectionResult,
     StatTable,
     TableColumn,
     TableRow
 )
 from app.services.crawler_service import CrawlerService
-from app.services.ai_service import AIService
 from app.services.data_storage import DataStorageService
-from app.services.mcp_client import mcp_client
-from app.services.mcp_analysis_service import mcp_analysis_service
 from app.services.progress_service import progress_tracker, stream_progress, ProgressCallback
 from app.services.stat_name_storage import stat_name_storage
 import asyncio
@@ -27,7 +23,6 @@ import numpy as np
 
 router = APIRouter()
 crawler_service = CrawlerService()
-ai_service = AIService()
 storage_service = DataStorageService()
 
 # 작업 결과 저장소 (실제로는 Redis나 DB 사용 권장)

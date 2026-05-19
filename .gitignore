@@ -60,6 +60,15 @@ config/secrets.py
 temp/
 tmp/
 
+# 다운로드된 원본 통계 파일 (크롤링 결과물, 용량 큼)
+backend/downloads/
+
+# 수집된 통계 데이터 캐시 (재수집 가능)
+backend/data/excel/
+backend/data/metadata/
+backend/data/statistics/
+backend/data/vector_db/
+
 # Windows specific
 nul
 CON
