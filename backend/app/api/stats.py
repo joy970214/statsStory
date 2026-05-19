@@ -5,6 +5,7 @@ from app.api.health_router import router as health_router
 from app.api.stats_manager import router as stats_router
 from app.api.analysis_router import router as analysis_router
 from app.api.data_router import router as data_router
+from app.api.ollama_router import router as ollama_router
 
 # 메인 라우터 생성
 router = APIRouter()
@@ -14,3 +15,4 @@ router.include_router(health_router, tags=["health"])
 router.include_router(stats_router, tags=["stats"])
 router.include_router(analysis_router, tags=["analysis"])
 router.include_router(data_router, tags=["data"])
+router.include_router(ollama_router, tags=["ollama"])

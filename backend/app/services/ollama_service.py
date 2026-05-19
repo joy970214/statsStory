@@ -1,29 +1,82 @@
 """
-Ollama 오프라인 LLM 서비스
+외부 vLLM 서버 기반 LLM 서비스
 기술통계 중심의 통계 데이터 분석 인사이트 생성
+OpenAI 호환 API (/v1/chat/completions) 사용
 """
 import requests
 import json
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 
+# 외부 vLLM 서버 설정
+VLLM_BASE_URL = "http://192.168.100.53:8000"
+VLLM_MODEL = "google/gemma-4-31B-it"
+
 
 class OllamaService:
-    """Ollama LLM 서비스 - 기술통계 분석 특화"""
+    """외부 vLLM 서버 기반 LLM 서비스 - 기술통계 분석 특화"""
 
-    def __init__(self, base_url: str = "http://localhost:11434", model: str = "llama3.1:8b-instruct-q4_K_M"):
-        self.base_url = base_url
+    def __init__(self, base_url: str = VLLM_BASE_URL, model: str = VLLM_MODEL):
+        self.base_url = base_url.rstrip('/')
         self.model = model
-        self.timeout = 600  # 10분 타임아웃 (통계표별 분석)
-        self.chat_timeout = 120  # 2분 타임아웃 (채팅용)
+        self.timeout = 600
+        self.chat_timeout = 120
+
+    def _chat_completions(self, messages: List[Dict], max_tokens: int = 1000, temperature: float = 0.3) -> str:
+        """OpenAI 호환 /v1/chat/completions API 호출"""
+        response = requests.post(
+            f"{self.base_url}/v1/chat/completions",
+            json={
+                "model": self.model,
+                "messages": messages,
+                "max_tokens": max_tokens,
+                "temperature": temperature,
+                "top_p": 0.9,
+            },
+            timeout=self.timeout
+        )
+        if response.status_code != 200:
+            raise Exception(f"vLLM API 오류: {response.status_code} - {response.text[:200]}")
+        result = response.json()
+        return result['choices'][0]['message']['content'].strip()
 
     def is_available(self) -> bool:
-        """Ollama 서버가 실행 중인지 확인"""
+        """vLLM 서버가 실행 중인지 확인"""
         try:
-            response = requests.get(f"{self.base_url}/api/tags", timeout=5)
+            response = requests.get(f"{self.base_url}/v1/models", timeout=5)
             return response.status_code == 200
         except:
             return False
+
+    def get_available_models(self) -> List[Dict[str, Any]]:
+        """vLLM 서버의 모델 목록 반환"""
+        try:
+            response = requests.get(f"{self.base_url}/v1/models", timeout=5)
+            if response.status_code != 200:
+                return []
+            data = response.json()
+            models = []
+            for m in data.get('data', []):
+                models.append({
+                    'name': m.get('id', ''),
+                    'size_gb': 0,
+                    'modified_at': '',
+                    'is_current': m.get('id', '') == self.model
+                })
+            return models
+        except Exception as e:
+            print(f"[vLLM] 모델 목록 조회 실패: {e}")
+            return []
+
+    def set_model(self, model_name: str) -> bool:
+        """사용할 모델 변경"""
+        self.model = model_name
+        print(f"[vLLM] 모델 변경: {model_name}")
+        return True
+
+    def get_current_model(self) -> str:
+        """현재 사용 중인 모델명 반환"""
+        return self.model
 
     def generate_statistical_insights_by_tables(
         self,
@@ -96,38 +149,18 @@ class OllamaService:
         table_summary: Dict[str, Any],
         metadata: Dict[str, Any]
     ) -> str:
-        """단일 통계표에 대한 인사이트 생성 (간단 버전)"""
+        """단일 통계표에 대한 인사이트 생성"""
         try:
-            # 프롬프트 구성 (간결한 버전)
-            prompt = self._build_single_table_prompt(
+            system_msg, user_msg = self._build_single_table_prompt(
                 table_name, table_data, table_summary, metadata
             )
-
-            # Ollama API 호출
-            response = requests.post(
-                f"{self.base_url}/api/generate",
-                json={
-                    "model": self.model,
-                    "prompt": prompt,
-                    "stream": False,
-                    "options": {
-                        "temperature": 0.3,
-                        "top_p": 0.9,
-                        "num_predict": 500,  # 통계표당 500 토큰
-                        "num_ctx": 8192  # 8K 컨텍스트 (메모리 절약)
-                    }
-                },
-                timeout=self.timeout
-            )
-
-            if response.status_code != 200:
-                raise Exception(f"Ollama API 오류: {response.status_code}")
-
-            result = response.json()
-            return result.get('response', '').strip()
-
+            messages = [
+                {"role": "system", "content": system_msg},
+                {"role": "user", "content": user_msg},
+            ]
+            return self._chat_completions(messages, max_tokens=1200, temperature=0.3)
         except Exception as e:
-            print(f"[Ollama] 통계표 '{table_name}' 인사이트 생성 실패: {e}")
+            print(f"[vLLM] 통계표 '{table_name}' 인사이트 생성 실패: {e}")
             return f"{table_name}: 분석 실패"
 
     def _build_single_table_prompt(
@@ -136,50 +169,142 @@ class OllamaService:
         table_data: List[Dict],
         table_summary: Dict[str, Any],
         metadata: Dict[str, Any]
-    ) -> str:
-        """단일 통계표 분석용 프롬프트 (영어 프롬프트, 한국어 응답)"""
+    ):
+        """단일 통계표 분석용 프롬프트 (system, user 튜플 반환)"""
 
-        # 최신 데이터 50개만 사용 (16K 컨텍스트 제한)
         sample_data = table_data[-50:] if len(table_data) > 50 else table_data
 
-        prompt = f"""You are a statistical data analyst. Analyze the table '{table_name}' and respond in Korean.
+        # 데이터 전처리: 변화율 계산
+        trend_info = self._calculate_trend(table_data)
 
-## Table Information
-- Table name: {table_name}
-- Data count: {len(table_data):,}
-- Mean: {table_summary.get('mean', 0):,.2f}
-- Max: {table_summary.get('max', 0):,.2f}
-- Min: {table_summary.get('min', 0):,.2f}
+        system_msg = (
+            "당신은 국토교통부 통계 데이터를 분석하는 데이터 분석가입니다.\n"
+            "규칙:\n"
+            "1. 제공된 실제 수치만 사용하세요. 데이터에 없는 수치는 절대 작성하지 마세요.\n"
+            "2. 추측·원인 분석·정책적 해석·시사점은 작성하지 마세요.\n"
+            "3. 기술통계(빈도, 평균, 비율, 증감률, 순위) 수준의 객관적 사실만 기술하세요.\n"
+            "4. 지정된 섹션 형식을 반드시 지키세요. 섹션을 임의로 추가하거나 생략하지 마세요.\n"
+            "5. 마크다운 형식으로 작성하세요."
+        )
 
-## Data Samples (Latest {len(sample_data)} items)
+        # 전체 데이터에서 연도별 주요 수치 추출
+        yearly_summary = {}
+        for item in table_data:
+            year = item.get('year', '')
+            if not year:
+                continue
+            values = item.get('data', {})
+            nums = {k: v for k, v in values.items() if not k.startswith('_') and v}
+            if nums:
+                yearly_summary[str(year)] = nums
+
+        sorted_years = sorted(yearly_summary.keys())
+        full_data_text = ""
+        for year in sorted_years:
+            vals = yearly_summary[year]
+            val_str = ", ".join([f"{k}: {v}" for k, v in list(vals.items())[:8]])
+            full_data_text += f"- {year}년: {val_str}\n"
+
+        # 항목 목록 추출 (첫 번째 데이터 기준)
+        field_names = []
+        if table_data:
+            sample = table_data[0].get('data', {})
+            field_names = [k for k in sample.keys() if not k.startswith('_')]
+
+        period_str = f"{sorted_years[0]}~{sorted_years[-1]}년" if len(sorted_years) >= 2 else (sorted_years[0] + "년" if sorted_years else "")
+
+        user_msg = f"""다음 통계표를 분석해주세요.
+
+## 통계표명
+{table_name}
+
+## 데이터 구조
+- 수집 기간: {period_str}
+- 전체 데이터 수: {len(table_data):,}개
+- 주요 항목: {', '.join(field_names[:10]) if field_names else '없음'}
+
+## 기본 통계량
+- 수치 평균: {table_summary.get('mean', 0):,.2f}
+- 최댓값: {table_summary.get('max', 0):,.2f}
+- 최솟값: {table_summary.get('min', 0):,.2f}
+{trend_info}
+
+## 전체 연도별 데이터
+{full_data_text if full_data_text else "데이터 없음"}
+
+---
+
+## 작성 요청
+
+아래 5개 섹션을 순서대로 작성하세요. 각 섹션은 반드시 포함하고, 실제 수치만 인용하세요.
+
+### 📊 현황 1: 전체 규모 및 기본 현황
+- 가장 최근 연도 기준 전체 규모 수치 기술
+- 전체 합계, 평균, 데이터 수 등 기본 통계량 나열
+- 수치는 단위와 함께 표기
+
+### 📋 현황 2: 주요 항목별 구성 현황
+데이터의 주요 항목을 구성비(%) 또는 수치로 나열:
+| 항목 | 수치 | 비율(%) |
+|------|------|---------|
+| (항목명) | (수치) | (비율) |
+
+### 📈 현황 3: 기간별 증감 현황 ({period_str})
+- 시작 연도 수치 → 최근 연도 수치: 증감량, 증감률
+- 최고값: (연도) (수치)
+- 최저값: (연도) (수치)
+- 연도별 수치를 표로 정리:
+
+| 연도 | 주요수치 | 전년대비 증감 |
+|------|---------|------------|
+(데이터에서 추출하여 작성)
+
+### 🏆 현황 4: 순위 현황
+항목 중 수치 기준 상위 3개와 하위 3개를 순위별로 나열:
+- 1위: (항목명) (수치)
+- 2위: (항목명) (수치)
+- 3위: (항목명) (수치)
+
+### 📉 현황 5: 분포 및 집중도 현황
+- 상위 항목이 전체에서 차지하는 비율
+- 수치 범위(최댓값 - 최솟값) 및 평균 대비 분포 기술
+- 데이터가 특정 항목/구간에 집중되어 있는지 수치로 기술
 """
+        return system_msg, user_msg
 
-        # 샘플 데이터 추가
-        for idx, data in enumerate(sample_data[:30], 1):  # 최대 30개만
-            year = data.get('year', '')
-            values = data.get('data', {})
+    def _calculate_trend(self, table_data: List[Dict]) -> str:
+        """연도별 트렌드 정보 계산"""
+        try:
+            yearly = {}
+            for item in table_data:
+                year = item.get('year', '')
+                if not year:
+                    continue
+                values = item.get('data', {})
+                nums = []
+                for k, v in values.items():
+                    if k.startswith('_'):
+                        continue
+                    try:
+                        nums.append(float(str(v).replace(',', '').replace('%', '')))
+                    except:
+                        pass
+                if nums:
+                    yearly[str(year)] = sum(nums) / len(nums)
 
-            # 주요 값만 추출 (최대 5개)
-            main_values = []
-            for k, v in list(values.items())[:5]:
-                if not k.startswith('_'):
-                    main_values.append(f"{k}={v}")
+            if len(yearly) < 2:
+                return ""
 
-            if main_values:
-                prompt += f"{idx}. [Year {year}] {', '.join(main_values)}\n"
-
-        prompt += """
-## Analysis Request
-Analyze the key characteristics of this table in 2-3 sentences **in Korean**:
-- Overall scale and trends
-- Key features (max/min values, change patterns, etc.)
-- One-line summary
-
-IMPORTANT: Your response must be in Korean language.
-
-Answer (in Korean):"""
-
-        return prompt
+            sorted_years = sorted(yearly.keys())
+            first_val = yearly[sorted_years[0]]
+            last_val = yearly[sorted_years[-1]]
+            if first_val != 0:
+                change_rate = (last_val - first_val) / abs(first_val) * 100
+                direction = "증가" if change_rate > 0 else "감소"
+                return f"- 기간 변화율: {sorted_years[0]}→{sorted_years[-1]} {abs(change_rate):.1f}% {direction}"
+            return ""
+        except:
+            return ""
 
     def _calculate_table_statistics(self, table_data: List[Dict]) -> Dict[str, Any]:
         """통계표별 기본 통계량 계산"""
@@ -269,62 +394,26 @@ Answer (in Korean):"""
         """
         try:
             import time
-
-            # 프롬프트 구성
-            start_prompt = time.time()
-            prompt = self._build_descriptive_stats_prompt(
+            system_msg, user_msg = self._build_descriptive_stats_prompt(
                 metadata, data_summary, table_names, raw_data_sample
             )
-            prompt_time = time.time() - start_prompt
-
-            print(f"[Ollama] 기술통계 인사이트 생성 시작...")
-            print(f"[Ollama] 모델: {self.model}")
-            print(f"[Ollama] 프롬프트 생성 시간: {prompt_time:.2f}초")
-            print(f"[Ollama] 프롬프트 길이: {len(prompt):,}자 ({len(prompt.encode('utf-8')):,} bytes)")
-            print(f"[Ollama] 데이터 샘플 개수: {len(raw_data_sample) if raw_data_sample else 0}개")
-
-            # Ollama API 호출
-            print(f"[Ollama] API 요청 전송 중...")
+            print(f"[vLLM] 기술통계 인사이트 생성 시작... 모델: {self.model}")
             start_api = time.time()
+            messages = [
+                {"role": "system", "content": system_msg},
+                {"role": "user", "content": user_msg},
+            ]
+            generated_text = self._chat_completions(messages, max_tokens=1500, temperature=0.3)
+            print(f"[vLLM] 응답 수신 완료: {time.time() - start_api:.2f}초, {len(generated_text)}자")
 
-            response = requests.post(
-                f"{self.base_url}/api/generate",
-                json={
-                    "model": self.model,
-                    "prompt": prompt,
-                    "stream": False,
-                    "options": {
-                        "temperature": 0.3,  # 낮은 temperature로 객관적 분석
-                        "top_p": 0.9,
-                        "num_predict": 1000,  # 10개 인사이트를 위해 늘림
-                        "num_ctx": 16384  # 16K 토큰 컨텍스트 (기본 8K → 16K)
-                    }
-                },
-                timeout=self.timeout
-            )
-
-            api_time = time.time() - start_api
-            print(f"[Ollama] API 응답 수신 완료: {api_time:.2f}초 소요")
-
-            if response.status_code != 200:
-                raise Exception(f"Ollama API 오류: {response.status_code}")
-
-            result = response.json()
-            generated_text = result.get('response', '')
-
-            print(f"[Ollama] 인사이트 생성 완료 (응답 길이: {len(generated_text)}자)")
-            print(f"[Ollama] 총 소요 시간: {prompt_time + api_time:.2f}초")
-
-            # 생성된 텍스트를 10개 카테고리로 구조화
             insights = self._parse_descriptive_insights(generated_text)
             insights['generated_at'] = datetime.now().isoformat()
             insights['model'] = self.model
             insights['stat_name'] = metadata.get('title', '알 수 없음')
-
             return insights
 
         except Exception as e:
-            print(f"[Ollama] 인사이트 생성 실패: {e}")
+            print(f"[vLLM] 인사이트 생성 실패: {e}")
             return self._create_fallback_insights(metadata, data_summary, table_names)
 
     def chat(
@@ -333,52 +422,30 @@ Answer (in Korean):"""
         context: Dict[str, Any],
         chat_history: Optional[List[Dict[str, str]]] = None
     ) -> str:
-        """
-        통계 데이터 기반 채팅
-
-        Args:
-            message: 사용자 메시지
-            context: 통계 데이터 컨텍스트 (메타데이터 + 인사이트)
-            chat_history: 이전 대화 히스토리
-
-        Returns:
-            AI 응답 텍스트
-        """
+        """통계 데이터 기반 채팅"""
         try:
-            # 채팅 프롬프트 구성
-            prompt = self._build_chat_prompt(message, context, chat_history)
+            system_msg, user_msg = self._build_chat_prompt(message, context, chat_history)
+            print(f"[vLLM Chat] 사용자: {message[:50]}...")
 
-            print(f"[Ollama Chat] 사용자: {message[:50]}...")
+            messages = []
+            messages.append({"role": "system", "content": system_msg})
 
-            # Ollama API 호출
-            response = requests.post(
-                f"{self.base_url}/api/generate",
-                json={
-                    "model": self.model,
-                    "prompt": prompt,
-                    "stream": False,
-                    "options": {
-                        "temperature": 0.3,
-                        "top_p": 0.9,
-                        "num_predict": 500,  # 짧은 답변 유도
-                        "num_ctx": 16384  # 16K 토큰 컨텍스트 (채팅용)
-                    }
-                },
-                timeout=self.chat_timeout
-            )
+            # 대화 히스토리 포함
+            if chat_history:
+                for chat in chat_history[-4:]:
+                    role = chat.get('role', '')
+                    content = chat.get('content', '')
+                    if role in ('user', 'assistant') and content:
+                        messages.append({"role": role, "content": content})
 
-            if response.status_code != 200:
-                raise Exception(f"Ollama API 오류: {response.status_code}")
+            messages.append({"role": "user", "content": user_msg})
 
-            result = response.json()
-            ai_response = result.get('response', '')
-
-            print(f"[Ollama Chat] AI: {ai_response[:50]}...")
-
-            return ai_response.strip()
+            ai_response = self._chat_completions(messages, max_tokens=500, temperature=0.3)
+            print(f"[vLLM Chat] AI: {ai_response[:50]}...")
+            return ai_response
 
         except Exception as e:
-            print(f"[Ollama Chat] 오류: {e}")
+            print(f"[vLLM Chat] 오류: {e}")
             return "죄송합니다. 현재 응답을 생성할 수 없습니다. 잠시 후 다시 시도해주세요."
 
     def _build_descriptive_stats_prompt(
@@ -387,15 +454,15 @@ Answer (in Korean):"""
         data_summary: Dict[str, Any],
         table_names: List[str],
         raw_data_sample: Optional[List[Dict]] = None
-    ) -> str:
-        """기술통계 분석용 프롬프트 작성 (10개 카테고리)"""
+    ):
+        """기술통계 분석용 프롬프트 작성 (system, user 튜플 반환)"""
 
         stat_name = metadata.get('title', '알 수 없는 통계')
         stat_info = metadata.get('statistical_info', {})
 
-        prompt = f"""당신은 통계 데이터 분석 전문가입니다. 아래 통계 데이터에 대해 **기술통계 중심의 현황 분석**을 수행해주세요.
+        system_msg = "당신은 국토교통부 통계 데이터 분석 전문가입니다. 기술통계 중심의 현황 분석을 수행하고 지정된 형식으로 한국어 인사이트를 작성하세요."
 
-## 통계 기본 정보
+        prompt = f"""## 통계 기본 정보
 - 통계명: {stat_name}
 - 담당 부서: {metadata.get('department', '정보 없음')}
 - 수집 통계표: {len(table_names)}개 ({', '.join(table_names[:3])}{' 외' if len(table_names) > 3 else ''})
@@ -543,86 +610,52 @@ Answer (in Korean):"""
 추천 차트 유형: 수평 막대그래프 + 파이차트 조합 (Y축: 연령대, X축: 면적(km²))
 """
 
-        return prompt
+        return system_msg, prompt
 
     def _build_chat_prompt(
         self,
         message: str,
         context: Dict[str, Any],
         chat_history: Optional[List[Dict[str, str]]] = None
-    ) -> str:
-        """채팅용 프롬프트 작성 (영어 프롬프트, 한국어 응답)"""
+    ):
+        """채팅용 프롬프트 (system, user 튜플 반환)"""
 
         metadata = context.get('metadata', {})
         insights = context.get('ai_insights', {})
         relevant_data = context.get('relevant_data', {})
 
-        prompt = f"""You are a statistical data analyst. Answer the user's question using only the data provided below. Respond in Korean.
+        system_msg = (
+            f"당신은 '{metadata.get('title', '통계')}' 데이터를 전문적으로 분석하는 통계 분석가입니다. "
+            "제공된 데이터와 인사이트만 활용하여 정확하고 간결하게 한국어로 답변하세요. "
+            "데이터에 없는 내용은 추측하지 말고 '제공된 데이터에는 해당 정보가 없습니다'라고 하세요."
+        )
 
-## Statistics Information
-- Statistics name: {metadata.get('title', 'Unknown')}
-- Department: {metadata.get('department', 'Unknown')}
+        user_msg = f"## 통계 기본 정보\n- 통계명: {metadata.get('title', '')}\n- 담당부서: {metadata.get('department', '')}\n"
 
-## Analysis Insights (Summary)
-"""
-
-        # AI 인사이트 요약 (간결하게)
+        # AI 인사이트 요약
         if insights and insights.get('insights_count', 0) > 0:
-            prompt += "\n"
-            # 주요 인사이트만 3개 포함 (타임아웃 방지)
-            for i in [1, 3, 10]:  # 기본현황, 순위현황, 요약
+            user_msg += "\n## 분석 인사이트\n"
+            for i in range(1, min(insights.get('insights_count', 0) + 1, 6)):
                 key = f'insight_{i}'
                 if key in insights:
                     insight = insights[key]
-                    content = insight.get('content', '')[:150]  # 150자로 제한
-                    prompt += f"- {insight.get('category', '')}: {content}\n"
+                    title = insight.get('title', '')
+                    content = insight.get('content', '')[:200]
+                    user_msg += f"- {title}: {content}\n"
 
-        # ChromaDB에서 검색된 관련 데이터 추가 (RAG)
+        # 관련 데이터 (RAG)
         relevant_docs = relevant_data.get('documents', [])
         relevant_metas = relevant_data.get('metadatas', [])
-
         if relevant_docs:
-            prompt += f"\n## Relevant Data ({len(relevant_docs)} items)\n"
-            # 최대 5개만 포함 (타임아웃 방지)
+            user_msg += f"\n## 관련 데이터 ({len(relevant_docs)}건)\n"
             for idx, (doc, meta) in enumerate(zip(relevant_docs[:5], relevant_metas[:5]), 1):
                 year = meta.get('year', '')
                 table_name = meta.get('table_name', '')
+                user_msg += f"{idx}. [{year}년] {table_name}: {doc[:200]}\n"
 
-                prompt += f"\n{idx}. "
-                if year:
-                    prompt += f"[Year {year}] "
-                if table_name:
-                    prompt += f"{table_name}: "
-                # 문서 길이 제한 (200자)
-                prompt += f"{doc[:200]}\n"
+        user_msg += f"\n## 질문\n{message}"
 
-        # 대화 히스토리 추가
-        if chat_history:
-            prompt += "\n## Previous Conversation\n"
-            for chat in chat_history[-3:]:  # 최근 3개만
-                role = chat.get('role', '')
-                content = chat.get('content', '')
-                if role == 'user':
-                    prompt += f"User: {content}\n"
-                elif role == 'assistant':
-                    prompt += f"AI: {content}\n"
-
-        prompt += f"""
-## User Question (in Korean)
-{message}
-
-**Important Rules:**
-1. Use both "Analysis Insights" and "Relevant Data" to answer
-2. For specific numbers, prioritize "Relevant Data"
-3. For overall trends or summaries, prioritize "Analysis Insights"
-4. If data is not available, say "제공된 데이터에는 해당 정보가 없습니다" in Korean
-5. Do not speculate or use external knowledge
-6. Be objective and concise (2-4 sentences)
-7. **Your response must be in Korean**
-
-Answer (in Korean):"""
-
-        return prompt
+        return system_msg, user_msg
 
     def _parse_descriptive_insights(self, generated_text: str) -> Dict[str, Any]:
         """
