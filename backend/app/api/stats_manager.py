@@ -707,17 +707,17 @@ async def delete_collected_stat(cache_key: str):
                 with open(stats_file, 'r', encoding='utf-8') as f:
                     stats_data = json.load(f)
 
-                # 통계 데이터에서 downloaded_file_path 추출
+                # 통계 데이터에서 downloaded_file_path / csv_file_path 추출
                 if 'statistics' in stats_data:
                     for stat_item in stats_data['statistics']:
-                        downloaded_path = stat_item.get('downloaded_file_path')
-                        if downloaded_path:
-                            # 상대 경로를 절대 경로로 변환
-                            full_path = Path(downloaded_path)
-                            if full_path.exists() and str(full_path) not in download_files_set:
-                                download_files_set.add(str(full_path))
-                                files_to_delete.append(full_path)
-                                print(f"다운로드 파일 삭제 대상 추가: {full_path}")
+                        for path_key in ('downloaded_file_path', 'csv_file_path'):
+                            path_val = stat_item.get(path_key)
+                            if path_val:
+                                full_path = Path(path_val)
+                                if full_path.exists() and str(full_path) not in download_files_set:
+                                    download_files_set.add(str(full_path))
+                                    files_to_delete.append(full_path)
+                                    print(f"다운로드 파일 삭제 대상 추가 ({path_key}): {full_path}")
         except Exception as e:
             print(f"다운로드 파일 경로 확인 중 오류 (무시하고 계속): {e}")
 

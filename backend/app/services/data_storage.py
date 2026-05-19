@@ -114,6 +114,8 @@ class DataStorageService:
                 stat_dict['data_quality_score'] = stat.data_quality_score
             if hasattr(stat, 'downloaded_file_path') and stat.downloaded_file_path:
                 stat_dict['downloaded_file_path'] = stat.downloaded_file_path
+            if hasattr(stat, 'csv_file_path') and stat.csv_file_path:
+                stat_dict['csv_file_path'] = stat.csv_file_path
 
             data['statistics'].append(stat_dict)
         
@@ -201,7 +203,8 @@ class DataStorageService:
                     raw_data_count=stat_dict.get('raw_data_count'),
                     collection_status=stat_dict.get('collection_status', 'success'),
                     data_quality_score=stat_dict.get('data_quality_score'),
-                    downloaded_file_path=stat_dict.get('downloaded_file_path')
+                    downloaded_file_path=stat_dict.get('downloaded_file_path'),
+                    csv_file_path=stat_dict.get('csv_file_path')
                 ))
             
             print(f"통계 데이터 캐시 로드 성공: {cache_key} -> {len(stat_data)}년치")

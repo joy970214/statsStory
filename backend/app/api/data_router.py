@@ -2,13 +2,11 @@ from fastapi import APIRouter, HTTPException, Query, BackgroundTasks, Request
 from typing import List, Optional, Dict, Any
 from app.models.stat_models import GenerateStoryRequest
 from app.services.crawler_service import CrawlerService
-from app.services.ai_service import AIService
 from app.services.data_storage import DataStorageService
 from datetime import datetime
 
 router = APIRouter()
 crawler_service = CrawlerService()
-ai_service = AIService()
 storage_service = DataStorageService()
 
 def _analyze_data_types(stat_data):
